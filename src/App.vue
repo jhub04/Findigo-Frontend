@@ -29,7 +29,7 @@ nav {
   justify-content: flex-start;
   gap: 1.5rem;
   align-items: center;
-  background-color: lightblue;
+  background-color: #5B95E6;
   padding: 25px;
 }
 
