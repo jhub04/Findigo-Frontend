@@ -3,7 +3,7 @@
 import { useTokenStore } from '@/stores/token.ts'
 import { onMounted, ref } from 'vue';
 import userApi from '@/services/userApi.ts'
-import type { User } from '@/types/CalculationDTO.ts'
+import type { User } from '@/types/dto.ts'
 
 const tokenStore = useTokenStore();
 const user = ref<User | null>(null);

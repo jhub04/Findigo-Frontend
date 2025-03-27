@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import { getJwtToken } from '@/services/authApi.ts'
-import type { TokenResponse } from '@/types/CalculationDTO.ts'
+import { getJwtToken } from '@/services/authApi.ts';
+import type { TokenResponse } from '@/types/dto.ts';
 
 export const useTokenStore = defineStore("token", () => {
   const jwtToken = ref<string | null>(sessionStorage.getItem("jwtToken"));

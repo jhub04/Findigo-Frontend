@@ -4,6 +4,9 @@ import MapView from '@/views/MapView.vue'
 import NewListingView from '@/views/NewListingView.vue'
 import NotificationsView from '@/views/NotificationsView.vue'
 import MessagesView from '@/views/MessagesView.vue'
+import LoginView from '@/views/LoginView.vue'
+import RegisterView from '@/views/RegisterView.vue'
+import { useTokenStore } from '@/stores/token'
 
 const routes = [
   { path: '/home', component: HomeView, name: 'Home' },
