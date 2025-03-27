@@ -1,5 +1,5 @@
 import apiClient from '@/services/apiClient.ts'
-import type { TokenResponse } from '@/types/CalculationDTO.ts'
+import type { TokenResponse } from '@/types/dto.ts'
 
 // Registrerer en ny bruker i backend
 export const registerUser = async (username: string, password: string) => {
