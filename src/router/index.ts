@@ -5,35 +5,35 @@ import NewListingView from '@/views/NewListingView.vue'
 import NotificationsView from '@/views/NotificationsView.vue'
 import MessagesView from '@/views/MessagesView.vue'
 
+const routes = [
+  { path: '/home', component: HomeView, name: 'Home' },
+  { path: '/login', component: LoginView, name: 'Login' },
+  { path: '/register', component: RegisterView, name: 'Register' },
+  { path: '/map', component: MapView, name: 'Map' },
+  { path: '/listing', component: NewListingView, name: 'Listing' },
+  { path: '/notification', component: NotificationsView, name: 'Notifications' },
+  { path: '/messages', component: MessagesView, name: 'Messages' },
+  { path: '/', redirect: '/home' }
+];
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: '/',
-      name: 'home',
-      component: HomeView,
-    },
-    {
-      path: '/map',
-      name: 'map',
-      component: MapView,
-    },
-    {
-      path: '/listing',
-      name: 'listing',
-      component: NewListingView,
-    },
-    {
-      path: '/notifications',
-      name: 'notifications',
-      component: NotificationsView,
-    },
-    {
-      path: '/messages',
-      name: 'messages',
-      component: MessagesView,
-    },
-  ],
+  routes
 })
+
+
+router.beforeEach((to) => {
+  const tokenStore = useTokenStore();
+
+  // If the user is not logged in and tries to access a protected page → redirect to log in.
+  if (to.name !== 'Login' && to.name !== 'Register' && !tokenStore.jwtToken) {
+    return { name: 'Login' };
+  }
+
+  // If the user is logged in and tries to access the login page → redirect to "/home".
+  if (to.name === 'Login' && tokenStore.jwtToken) {
+    return { name: 'Home' };
+  }
+});
 
 export default router
