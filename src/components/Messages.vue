@@ -3,4 +3,5 @@
 
 <template>
     <p>This is the MessagesView component</p>
+    <h1>YOYOYO</h1>
 </template>

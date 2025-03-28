@@ -2,39 +2,40 @@
 import { useTokenStore } from '@/stores/token.ts'
 import { useRouter } from 'vue-router'
 
-const tokenStore = useTokenStore();
-const router = useRouter();
+const tokenStore = useTokenStore()
+const router = useRouter()
 
 const logout = () => {
-  tokenStore.logout();
-  router.push("/login");
-};
+  tokenStore.logout()
+  router.push('/login')
+}
 </script>
 
 <template>
-  <div class="navbar-container">
-    <nav v-if="tokenStore.loggedInUser" class="main-navbar">
-      <div class="navbar-brand">
-        <span class="welcome-message">Welcome, {{ tokenStore.loggedInUser }}!</span>
-      </div>
-      
-      
-      <div class="navbar-menu">
-        <router-link to="/home" class="nav-link">Home</router-link>
-        <router-link to="/map" class="nav-link">Map</router-link>
-        <router-link to="/listing" class="nav-link">New Listing</router-link>
-        <router-link to="/notifications" class="nav-link">
-          Notifications
-          <span class="notification-badge">0</span>
-        </router-link>
-        <router-link to="/messages" class="nav-link">Messages</router-link>
-        
-        <button @click="logout" class="logout-button">
-          Log out
-        </button>
-      </div>
-    </nav>
-    <router-view />
+  <div>
+    <header class="navbar-container">
+      <nav v-if="tokenStore.loggedInUser" class="main-navbar">
+        <div class="navbar-brand">
+          <span class="app-name">Findigo</span>
+        </div>
+
+        <div class="navbar-menu">
+          <router-link to="/home" class="nav-link">Home</router-link>
+          <router-link to="/map" class="nav-link">Map</router-link>
+          <router-link to="/listing" class="nav-link">New Listing</router-link>
+          <router-link to="/notifications" class="nav-link">
+            Notifications
+            <span class="notification-badge">0</span>
+          </router-link>
+          <router-link to="/messages" class="nav-link">Messages</router-link>
+
+          <button @click="logout" class="logout-button">Log out</button>
+        </div>
+      </nav>
+    </header>
+    <main>
+      <router-view />
+    </main>
   </div>
 </template>
 
@@ -42,7 +43,7 @@ const logout = () => {
 .navbar-container {
   width: 100%;
   background-color: #f8f9fa;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .main-navbar {
@@ -52,6 +53,13 @@ const logout = () => {
   max-width: 1200px;
   margin: 0 auto;
   padding: 15px 20px;
+}
+
+.app-name {
+  font-weight: bold;
+  color: #333;
+  font-size: 1.5rem;
+  font-family: 'Arial', sans-serif;
 }
 
 .navbar-brand {
@@ -78,7 +86,9 @@ const logout = () => {
   font-size: 0.9rem;
   padding: 8px 12px;
   border-radius: 4px;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
   position: relative;
 }
 
