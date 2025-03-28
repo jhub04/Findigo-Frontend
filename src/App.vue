@@ -1,52 +1,147 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
+import { useTokenStore } from '@/stores/token.ts'
+import { useRouter } from 'vue-router'
+
+const tokenStore = useTokenStore()
+const router = useRouter()
+
+const logout = () => {
+  tokenStore.logout()
+  router.push('/login')
+}
 </script>
 
 <template>
-  <header>
+  <div>
+    <header class="navbar-container">
+      <nav v-if="tokenStore.loggedInUser" class="main-navbar">
+        <div class="navbar-brand">
+          <router-link to="/home" class="app-name">Findigo</router-link>
+        </div>
 
-    <div class="wrapper">
+        <div class="navbar-menu">
+          <router-link to="/map" class="nav-link">Map</router-link>
+          <router-link to="/listing" class="nav-link">New Listing</router-link>
+          <router-link to="/notifications" class="nav-link">
+            Notifications
+            <span class="notification-badge">0</span>
+          </router-link>
+          <router-link to="/messages" class="nav-link">Messages</router-link>
 
-      <nav>
-        <RouterLink to="/">Findigo</RouterLink>
-        <input type="text" placeholder="Search..">
-        <RouterLink to="/map">Map</RouterLink>
-        <RouterLink to="/listing">New Listing</RouterLink>
-        <RouterLink to="/notifications">Notifications</RouterLink>
-        <RouterLink to="messages">Messages</RouterLink>
+          <button @click="logout" class="logout-button">Log out</button>
+        </div>
       </nav>
-    </div>
-  </header>
-
-  <RouterView />
+    </header>
+    <main>
+      <router-view />
+    </main>
+  </div>
 </template>
 
 <style scoped>
+.navbar-container {
+  width: 100%;
+  background-color: #f8f9fa;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 
-nav {
+.main-navbar {
   display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  gap: 1.5rem;
+  justify-content: space-between;
   align-items: center;
-  background-color: #5B95E6;
-  padding: 25px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 15px 20px;
 }
 
-a {
-  text-decoration: none;
-  color: inherit;
-  font-weight: 500;
-}
-
-a.router-link-active {
+.app-name {
   font-weight: bold;
+  color: #333;
+  font-size: 1.5rem;
+  font-family: 'Arial', sans-serif;
+  text-decoration: none;
 }
 
-input[type=text] {
+.navbar-brand {
+  display: flex;
+  align-items: center;
+}
+
+.welcome-message {
+  font-weight: bold;
+  color: #333;
+  margin-right: 20px;
+  font-size: 1rem;
+}
+
+.navbar-menu {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #555;
+  font-size: 0.9rem;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+  position: relative;
+}
+
+.nav-link:hover {
+  background-color: #e9ecef;
+  color: #333;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: #dc3545;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 0.7rem;
+}
+
+.logout-button {
+  background-color: #dc3545;
+  color: white;
   border: none;
-  border-radius: 5px;
-
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
 }
 
+.logout-button:hover {
+  background-color: #c82333;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .main-navbar {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .navbar-brand {
+    margin-bottom: 15px;
+  }
+
+  .navbar-menu {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .nav-link {
+    margin: 0 5px;
+  }
+}
 </style>
