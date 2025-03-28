@@ -14,21 +14,55 @@ apiClient.interceptors.request.use((config) => {
   }
   return config;
 }, (error) => {
+  console.error('Request error:', error);
+  // Optional: Sentry.captureException(error);
   return Promise.reject(error);
 });
 
-// Axios Interceptors for global error handling
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const tokenStore = useTokenStore();
+    if (error.response) {
+      const status = error.response.status;
 
-    if (error.response?.status === 401 || error.response?.status === 403) {
-      console.log('Unauthorized or forbidden, logging out');
-      tokenStore.logout();
-      window.location.href = '/login'
+      // Håndter autorisasjonsfeil (401, 403)
+      if (status === 401 || status === 403) {
+        console.error(`Authorization error (${status}). Logging out user.`);
+        const tokenStore = useTokenStore();
+        tokenStore.logout();
+        window.location.href = '/login';
+      }
+      // Håndter serverfeil (500+): Implementer retry med eksponentiell backoff
+      else if (status >= 500) {
+        const config = error.config;
+        config.__retryCount = config.__retryCount || 0;
+        if (config.__retryCount < 3) {
+          config.__retryCount++;
+          const delay = Math.pow(2, config.__retryCount) * 1000;
+          console.warn(`Server error (${status}). Retrying in ${delay}ms...`);
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          return apiClient(config);
+        }
+      }
+      // Andre klientfeil
+      else {
+        console.error(
+          `Client error (${status}):`,
+          error.response.data?.message || error.response.statusText
+        );
+      }
     }
-    return Promise.reject(error)
+    // Ingen respons mottatt: Nettverksfeil
+    else if (error.request) {
+      console.error('Network error or no response received:', error.request);
+    }
+    // Feil i oppsettet av forespørselen
+    else {
+      console.error('Error setting up request:', error.message);
+    }
+    // Optional: Send feilen til en ekstern loggtjeneste (f.eks. Sentry)
+    // Sentry.captureException(error);
+    return Promise.reject(error);
   }
 );
 
