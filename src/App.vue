@@ -4,11 +4,6 @@ import { useRouter } from 'vue-router'
 
 const tokenStore = useTokenStore()
 const router = useRouter()
-
-const logout = () => {
-  tokenStore.logout()
-  router.push('/login')
-}
 </script>
 
 <template>
@@ -27,8 +22,7 @@ const logout = () => {
             <span class="notification-badge">0</span>
           </router-link>
           <router-link to="/messages" class="nav-link">Messages</router-link>
-
-          <button @click="logout" class="logout-button">Log out</button>
+          <router-link to="/profile" class="nav-link" id="profile">My Profile</router-link>
         </div>
       </nav>
     </header>
@@ -108,20 +102,6 @@ const logout = () => {
   font-size: 0.7rem;
 }
 
-.logout-button {
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  padding: 8px 15px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: background-color 0.3s ease;
-}
-
-.logout-button:hover {
-  background-color: #c82333;
-}
 
 /* Responsive Design */
 @media (max-width: 768px) {
