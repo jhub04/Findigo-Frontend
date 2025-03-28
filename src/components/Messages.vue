@@ -1,7 +1,6 @@
 <script setup lang="ts">
-
 </script>
 
 <template>
-  <Register></Register>
+    <p>This is the MessagesView component</p>
 </template>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import NewListing from '@/components/NewListing.vue';
 </script>
 
 <template>
-    <p>This is the NewListingView component</p>
+    <NewListing></NewListing>
 </template>
