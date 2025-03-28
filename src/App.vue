@@ -1,52 +1,36 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
+
+import { useTokenStore } from '@/stores/token.ts'
+import { useRouter } from 'vue-router'
+
+const tokenStore = useTokenStore();
+const router = useRouter();
+
+const logout = () => {
+  tokenStore.logout();
+  router.push("/login");
+};
+
 </script>
 
 <template>
-  <header>
-
-    <div class="wrapper">
-
-      <nav>
-        <RouterLink to="/">Findigo</RouterLink>
-        <input type="text" placeholder="Search..">
-        <RouterLink to="/map">Map</RouterLink>
-        <RouterLink to="/listing">New Listing</RouterLink>
-        <RouterLink to="/notifications">Notifications</RouterLink>
-        <RouterLink to="messages">Messages</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
+  <div>
+    <nav v-if="tokenStore.loggedInUser">
+      <span>Welcome, {{ tokenStore.loggedInUser }}!</span>
+      <router-link to="/home">Home</router-link>
+      <router-link to="/map">Map</router-link>
+      <router-link to="/listing">New Listing</router-link>
+      <router-link to="/notifications">Notifications</router-link>
+      <router-link to="/messages">Messages</router-link>
+      <button @click="logout">Log out</button>
+    </nav>
+    <router-view />
+  </div>
 </template>
 
 <style scoped>
-
 nav {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  gap: 1.5rem;
-  align-items: center;
-  background-color: #5B95E6;
-  padding: 25px;
+  text-align: center;
+  margin-bottom: 20px;
 }
-
-a {
-  text-decoration: none;
-  color: inherit;
-  font-weight: 500;
-}
-
-a.router-link-active {
-  font-weight: bold;
-}
-
-input[type=text] {
-  border: none;
-  border-radius: 5px;
-
-}
-
 </style>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import Notifications from '@/components/Notifications.vue';
 </script>
 
 <template>
-    <p>This is the NotificationsView component</p>
+    <Notifications></Notifications>
 </template>

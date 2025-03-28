@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import Map from '@/components/Map.vue';
 </script>
 
 <template>
-    <p>This is the MapView component</p>
+    <Map></Map>
 </template>

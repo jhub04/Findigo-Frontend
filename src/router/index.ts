@@ -14,7 +14,7 @@ const routes = [
   { path: '/register', component: RegisterView, name: 'Register' },
   { path: '/map', component: MapView, name: 'Map' },
   { path: '/listing', component: NewListingView, name: 'Listing' },
-  { path: '/notification', component: NotificationsView, name: 'Notifications' },
+  { path: '/notifications', component: NotificationsView, name: 'Notifications' },
   { path: '/messages', component: MessagesView, name: 'Messages' },
   { path: '/', redirect: '/home' }
 ];
