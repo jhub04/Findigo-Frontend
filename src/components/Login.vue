@@ -21,22 +21,122 @@ const handleLoginClick = async () => {
 </script>
 
 <template>
-  <div>
-    <div>
+  <div class="login-container">
+    <div class="login-card">
       <h2>Login</h2>
       <form @submit.prevent="handleLoginClick">
-        <label>Username:</label>
-        <input v-model="username" type="text" required />
+        <div class="form-group">
+          <label for="username">Username:</label>
+          <input 
+            id="username"
+            v-model="username" 
+            type="text" 
+            required 
+            placeholder="Enter your username"
+          />
+        </div>
 
-        <label>Password:</label>
-        <input v-model="password" type="password" required />
+        <div class="form-group">
+          <label for="password">Password:</label>
+          <input 
+            id="password"
+            v-model="password" 
+            type="password" 
+            required 
+            placeholder="Enter your password"
+          />
+        </div>
 
-        <button type="submit">Login</button>
+        <button type="submit" class="submit-btn">Login</button>
       </form>
 
-      <p v-if="loginStatus" class="error">{{ loginStatus }}</p>
+      <p v-if="loginStatus" class="error-message">{{ loginStatus }}</p>
 
-      <p>Don't have an account? <router-link to="/register">Register here</router-link></p>
+      <p class="register-link">
+        Don't have an account? 
+        <router-link to="/register">Register here</router-link>
+      </p>
     </div>
   </div>
 </template>
+
+<style scoped>
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f4f4f4;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.login-card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  width: 100%;
+  max-width: 400px;
+}
+
+h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  color: #555;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+  background-color: #0056b3;
+}
+
+.error-message {
+  color: red;
+  text-align: center;
+  margin-top: 15px;
+}
+
+.register-link {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 0.9em;
+}
+
+.register-link a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.register-link a:hover {
+  text-decoration: underline;
+}
+</style>
