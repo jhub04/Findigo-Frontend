@@ -16,11 +16,10 @@ const logout = () => {
     <header class="navbar-container">
       <nav v-if="tokenStore.loggedInUser" class="main-navbar">
         <div class="navbar-brand">
-          <span class="app-name">Findigo</span>
+          <router-link to="/home" class="app-name">Findigo</router-link>
         </div>
 
         <div class="navbar-menu">
-          <router-link to="/home" class="nav-link">Home</router-link>
           <router-link to="/map" class="nav-link">Map</router-link>
           <router-link to="/listing" class="nav-link">New Listing</router-link>
           <router-link to="/notifications" class="nav-link">
@@ -60,6 +59,7 @@ const logout = () => {
   color: #333;
   font-size: 1.5rem;
   font-family: 'Arial', sans-serif;
+  text-decoration: none;
 }
 
 .navbar-brand {
