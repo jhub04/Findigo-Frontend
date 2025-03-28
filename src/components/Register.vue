@@ -27,31 +27,140 @@ const register = async () => {
 </script>
 
 <template>
-  <div>
-    <h2>Register</h2>
-    <form @submit.prevent="register">
-      <label>Username:</label>
-      <input v-model="username" type="text" required />
+  <div class="register-container">
+    <div class="register-card">
+      <h2>Register</h2>
+      <form @submit.prevent="register">
+        <div class="form-group">
+          <label for="username">Username:</label>
+          <input 
+            id="username"
+            v-model="username" 
+            type="text" 
+            required 
+            placeholder="Choose a username"
+          />
+        </div>
 
-      <label>Password:</label>
-      <input v-model="password" type="password" required />
+        <div class="form-group">
+          <label for="password">Password:</label>
+          <input 
+            id="password"
+            v-model="password" 
+            type="password" 
+            required 
+            placeholder="Create a strong password"
+          />
+        </div>
 
-      <button type="submit">Register</button>
-    </form>
+        <button type="submit" class="submit-btn">Register</button>
+      </form>
 
-    <p v-if="successMessage" class="success">{{ successMessage }}</p>
-    <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+      <p 
+        v-if="successMessage" 
+        class="success-message"
+      >
+        {{ successMessage }}
+      </p>
 
-    <p>Already have an account? <router-link to="/login">Login here</router-link></p>
+      <p 
+        v-if="errorMessage" 
+        class="error-message"
+      >
+        {{ errorMessage }}
+      </p>
+
+      <p class="login-link">
+        Already have an account? 
+        <router-link to="/login">Login here</router-link>
+      </p>
+    </div>
   </div>
 </template>
 
 <style scoped>
-.success {
-  color: green;
+.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f4f4f4;
+  padding: 20px;
+  box-sizing: border-box;
 }
-.error {
+
+.register-card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  width: 100%;
+  max-width: 400px;
+}
+
+h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  color: #555;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+  background-color: #218838;
+}
+
+.success-message {
+  color: green;
+  text-align: center;
+  margin-top: 15px;
+}
+
+.error-message {
   color: red;
+  text-align: center;
+  margin-top: 15px;
+}
+
+.login-link {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 0.9em;
+}
+
+.login-link a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.login-link a:hover {
+  text-decoration: underline;
 }
 </style>
-
