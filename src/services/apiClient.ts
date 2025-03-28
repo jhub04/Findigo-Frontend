@@ -2,7 +2,7 @@ import axios from 'axios'
 import { useTokenStore } from '@/stores/token.ts'
 
 const apiClient = axios.create({
-  baseURL: 'http://localhost:8080/api',
+  baseURL: 'https://localhost:8443/api',
   headers: { 'Content-Type': 'application/json' },
 });
 
