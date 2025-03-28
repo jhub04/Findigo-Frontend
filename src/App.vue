@@ -27,8 +27,7 @@ const logout = () => {
             <span class="notification-badge">0</span>
           </router-link>
           <router-link to="/messages" class="nav-link">Messages</router-link>
-
-          <button @click="logout" class="logout-button">Log out</button>
+          <router-link to="/profile">My Profile</router-link>
         </div>
       </nav>
     </header>

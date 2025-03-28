@@ -6,12 +6,14 @@ import NotificationsView from '@/views/NotificationsView.vue'
 import MessagesView from '@/views/MessagesView.vue'
 import LoginView from '@/views/LoginView.vue'
 import RegisterView from '@/views/RegisterView.vue'
+import ProfileView from '@/views/ProfileView.vue'
 import { useTokenStore } from '@/stores/token'
 
 const routes = [
   { path: '/home', component: HomeView, name: 'Home' },
   { path: '/login', component: LoginView, name: 'Login' },
   { path: '/register', component: RegisterView, name: 'Register' },
+  { path: '/profile', component: ProfileView, name: 'Profile'}, 
   { path: '/map', component: MapView, name: 'Map' },
   { path: '/listing', component: NewListingView, name: 'Listing' },
   { path: '/notifications', component: NotificationsView, name: 'Notifications' },
