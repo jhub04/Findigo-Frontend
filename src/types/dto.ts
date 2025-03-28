@@ -23,7 +23,7 @@ export interface ListingResponse {
   imageUrls: string[];
   category: CategoryResponse;
   user: UserResponse;
-  attributes: ListingAttributes;
+  attributes: ListingAttributeResponse;
 }
 
 export interface ListingAttributeRequest {
@@ -48,7 +48,7 @@ export interface AttributeDef {
   type: 'string' | 'number' | 'boolean';
 }
 
-export interface ListingAttributes {
+export interface ListingAttributeResponse {
   name: string;
   value: string;
 }
