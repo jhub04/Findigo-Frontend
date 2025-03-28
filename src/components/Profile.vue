@@ -1,41 +1,52 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { useTokenStore } from '@/stores/token.ts'
-import { useRouter } from 'vue-router'
+import { useCurrentUser } from '@/utils/useCurrentUser.ts';
+import { useRouter } from 'vue-router';
+import { useTokenStore } from '@/stores/token.ts';
 
-const tokenStore = useTokenStore()
-const router = useRouter()
-
-//TODO: fetch from database
-const username = ref("Dummy");
-const email = ref("dummy@gmail.com");
+const { user, isLoading, error } = useCurrentUser();
+const tokenStore = useTokenStore();
+const router = useRouter();
 
 const logout = () => {
-  tokenStore.logout()
-  router.push('/login')
-}
-
+  tokenStore.logout();
+  router.push('/login');
+};
 </script>
+
 
 <template>
     <header class="userdetails">
-        <h3>{{ username }}</h3>
-        <p> {{ email }}</p>
-        <button class="logout-button" @click="logout">Log out</button>
-    </header>
-    <main>
-        <div class="grid-container">
-            <div class="mylistings">
-                <h6>My Listings</h6>
-                <p>View all your posted listings</p>
-            </div>
-            <div class="myfavorites">
-                <h6>Favorites</h6>
-                <p>View all your favorite listings</p>
-            </div>
+      <div v-if="isLoading">Loading...</div>
+      <div v-else>
+        <div v-if="user">
+          <h3>{{ user.username }}</h3>
+          <!-- Implement when userDto is complete-->
+          <p>User email</p> 
+          <button class="logout-button" @click="logout">Log out</button>
         </div>
+        <div v-else-if="error">
+          <p>Error loading user data.</p>
+        </div>
+        <div v-else>
+          <p>Unauthorized</p>
+        </div>
+      </div>
+    </header>
+  
+    <main>
+      <div class="grid-container">
+        <div class="mylistings">
+          <h6>My Listings</h6>
+          <p>View all your posted listings</p>
+        </div>
+        <div class="myfavorites">
+          <h6>Favorites</h6>
+          <p>View all your favorite listings</p>
+        </div>
+      </div>
     </main>
-</template>
+  </template>
+  
 
 <style scoped>
 .userdetails {

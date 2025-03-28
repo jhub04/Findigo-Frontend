@@ -1,28 +1,11 @@
-<script lang="ts" setup>
+<script setup lang="ts">
+import { useCurrentUser } from '@/utils/useCurrentUser.ts';
+import { useRouter } from 'vue-router';
+import { useTokenStore } from '@/stores/token.ts';
 
-import { useTokenStore } from '@/stores/token.ts'
-import { onMounted, ref } from 'vue';
-import userApi from '@/services/userApi.ts'
-import type { User } from '@/types/dto.ts'
-
+const { user, isLoading, error } = useCurrentUser();
 const tokenStore = useTokenStore();
-const user = ref<User | null>(null);
-const isLoading = ref<boolean>(true);
-const error = ref<boolean>(false);
-
-onMounted(async () => {
-  if (tokenStore.jwtToken) {
-    try {
-      const userInfo = await userApi.getCurrentUser();
-      if (userInfo) {
-        user.value = userInfo;
-      }
-    } catch (e) {
-      error.value = true;
-    }
-  }
-  isLoading.value = false;
-});
+const router = useRouter();
 
 </script>
 
