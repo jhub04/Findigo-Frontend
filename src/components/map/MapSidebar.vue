@@ -1,6 +1,5 @@
 <template>
   <div class="sidebar">
-    <h2>Søk</h2>
     <div class="filters">
       <button
         v-for="cat in categories"
@@ -12,20 +11,16 @@
       </button>
     </div>
 
-    <input
-      v-model="searchQuery"
-      type="text"
-      placeholder="Søk..."
-      class="search-input"
-    />
+    <SearchBox />
+
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import SearchBox from '@/components/map/SearchBox.vue'
 
 const categories = ['Søk Adresser', 'Filtrer Kategorier',]
-const searchQuery = ref('')
 const selectedCategory = ref('Alle')
 
 
@@ -38,40 +33,26 @@ const selectCategory = (cat: string) => {
 <style scoped>
 .sidebar {
   position: absolute;
-  top: 1rem;
-  left: 1rem;
+  top: 0.62rem;
+  left: 1.02rem;
   z-index: 1000;
   background: white;
   border-radius: 0 10px 10px 10px;
   padding: 1rem;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  width: 260px;
-  height: 120px;
+  width: 390px;
+  height: 130px;
   font-family: sans-serif;
-}
+  border: 2.5px solid #ccc; /* ← Dette gir en lett grå kant */
 
-h2 {
-  font-size: 1.2rem;
-  margin-bottom: 0.7rem;
-  margin-top: 0.4rem;
 }
-
-.search-input {
-  width: 95%;
-  padding: 0.5rem 0.6rem;
-  margin-right: auto;
-  margin-left: auto;
-  margin-bottom: 1rem;
-  display: block;
-  border-radius: 5px;
-}
-
 
 .filters {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
   margin-bottom: 0.6rem;
+  padding: 8px 0px 10px 0px; /* top right bottom left */
 }
 
 .filters button {
@@ -80,7 +61,7 @@ h2 {
   border-radius: 4px;
   background-color: #f0f0f0;
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: 1.039rem;
 }
 
 .filters button.active {
