@@ -11,10 +11,10 @@ export const getAllCategories = async (): Promise<CategoryResponse[]> => {
   }
 };
 
-//api/categories/{categoryId}
+//api/{categoryID}/listings
 export const getListingsByCategory = async (categoryId: number): Promise<ListingResponse[]> => {
     try {
-      const response = await apiClient.get<ListingResponse[]>(`/categories/${categoryId}`);
+      const response = await apiClient.get<ListingResponse[]>(`categories/${categoryId}/listings`);
       return response.data || [];
     } catch (error) {
       console.error(`Failed to fetch listings for category ${categoryId}:`, error);
