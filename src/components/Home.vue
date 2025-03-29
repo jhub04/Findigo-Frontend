@@ -42,6 +42,7 @@ onMounted(async () => {
             </button>
           </div>
         </div>
+        <div v-else>No categories exist</div>
 
         <div v-if="listingsLoading">Loading listings...</div>
         <div v-else-if="listingsError">Error: {{ listingsError }}</div>
@@ -72,5 +73,31 @@ ul {
 }
 li {
   margin-bottom: 0.75rem;
+}
+
+.category-buttons {
+  margin-top: 2rem;
+}
+
+.category-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 1rem;
+}
+
+.category-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+}
+
+.category-button:hover {
+  background-color: #0056b3;
 }
 </style>
