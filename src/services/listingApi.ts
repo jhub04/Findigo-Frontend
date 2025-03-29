@@ -11,6 +11,16 @@ export const addListing = async(data: ListingRequest): Promise<ListingResponse> 
   return response.data;
 }
 
+export const getAllListings = async(): Promise<ListingResponse[]> => {
+  try {
+    const response = await apiClient.get<ListingResponse[]>('/listings');
+    return response.data || [];
+  } catch (error) {
+    console.log(`Failed to fetch all listings: ${error}`);
+    return [];
+  }
+}
+
 export const getUserListings = async(): Promise<ListingResponse[]> => {
   const tokenStore = useTokenStore();
   const username = tokenStore.loggedInUser;
