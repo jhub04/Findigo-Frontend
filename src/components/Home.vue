@@ -50,7 +50,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div>
+  <div class="homepage-container">
     <div v-if="isLoading">Loading user...</div>
 
     <div v-else>
@@ -130,6 +130,13 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+.homepage-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
 h2 {
   margin-top: 1rem;
 }
@@ -169,5 +176,13 @@ li {
 
 .category-button.selected {
   background-color: #0056b3;
+}
+
+.button-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 1rem;
 }
 </style>
