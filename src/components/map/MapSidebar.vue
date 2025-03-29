@@ -1,32 +1,41 @@
 <template>
   <div class="sidebar">
+    <SearchBox />
     <div class="filters">
+      <!-- Øverste knapp -->
+    </div>
+    <div class="filters">
+      <!-- Hus og Bil under -->
       <button
-        v-for="cat in categories"
+        v-for="cat in ['House', 'Car']"
         :key="cat"
         :class="{ active: selectedCategory === cat }"
         @click="selectCategory(cat)"
       >
         {{ cat }}
       </button>
+      <!-- Eventuelt en knapp for 'Alle' -->
+      <button
+        :class="{ active: selectedCategory === 'All' }"
+        @click="selectCategory('All')"
+      >
+        All
+      </button>
     </div>
-
-    <SearchBox />
-
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, defineEmits } from 'vue'
 import SearchBox from '@/components/map/SearchBox.vue'
 
-const categories = ['Søk Adresser', 'Filtrer Kategorier',]
-const selectedCategory = ref('Alle')
-
+// Kun tillegg: event for å sende valgt kategori oppover
+const emit = defineEmits(['updateCategory'])
+const selectedCategory = ref('All')
 
 const selectCategory = (cat: string) => {
   selectedCategory.value = cat
-  // Du kan bruke emit her senere for å trigge nytt API-kall
+  emit('updateCategory', cat)
 }
 </script>
 
@@ -40,28 +49,36 @@ const selectCategory = (cat: string) => {
   border-radius: 0 10px 10px 10px;
   padding: 1rem;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  width: 390px;
-  height: 130px;
+  width: 300px;
+  height: 220px;
   font-family: sans-serif;
-  border: 2.5px solid #ccc; /* ← Dette gir en lett grå kant */
-
+  border: 2.5px solid #ccc;
 }
 
 .filters {
   display: flex;
+  flex-direction: column;
   flex-wrap: wrap;
   gap: 0.5rem;
   margin-bottom: 0.6rem;
-  padding: 8px 0px 10px 0px; /* top right bottom left */
+  padding-bottom: 10px;
 }
 
 .filters button {
-  padding: 0.4rem 0.6rem;
+  display: inline-block;
+  padding: 10px 22px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 2px;
   border: none;
   border-radius: 4px;
-  background-color: #f0f0f0;
-  cursor: pointer;
-  font-size: 1.039rem;
+  background-color: #007bff;
+  color: #fff;
+}
+
+.filters button:hover {
+  background-color: #0056b3;
 }
 
 .filters button.active {
@@ -69,3 +86,4 @@ const selectCategory = (cat: string) => {
   color: white;
 }
 </style>
+y
