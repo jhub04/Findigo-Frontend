@@ -4,6 +4,7 @@
       v-for="listing in allListings"
       :key="listing.id"
       :position="{ lat: listing.latitude, lng: listing.longitude }"
+      @click="goToListing(listing.id)"
     />
   </GMapMap>
 </template>
@@ -12,6 +13,12 @@
 import { ref, onMounted } from 'vue'
 import { getAllListings } from '@/services/listingApi.ts'
 import type { ListingResponse } from '@/types/dto.ts'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+const goToListing = (id: number) => {
+  router.push({ name: 'ListingDetails', params: { id } })
+}
 
 const { center, zoom } = defineProps<{
   center: { lat: number; lng: number }
