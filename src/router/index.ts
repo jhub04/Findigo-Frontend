@@ -8,12 +8,14 @@ import LoginView from '@/views/LoginView.vue'
 import RegisterView from '@/views/RegisterView.vue'
 import ProfileView from '@/views/ProfileView.vue'
 import { useTokenStore } from '@/stores/token'
+import MyListingsView from '@/views/MyListingsView.vue'
 
 const routes = [
   { path: '/home', component: HomeView, name: 'Home' },
   { path: '/login', component: LoginView, name: 'Login' },
   { path: '/register', component: RegisterView, name: 'Register' },
-  { path: '/profile', component: ProfileView, name: 'Profile'}, 
+  { path: '/profile', component: ProfileView, name: 'Profile'},
+  { path: '/profile/listings', component: MyListingsView, name: 'MyListings'}, 
   { path: '/map', component: MapView, name: 'Map' },
   { path: '/listing', component: NewListingView, name: 'Listing' },
   { path: '/notifications', component: NotificationsView, name: 'Notifications' },

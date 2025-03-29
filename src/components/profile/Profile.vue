@@ -35,7 +35,7 @@ const logout = () => {
   
     <main>
       <div class="grid-container">
-        <div class="mylistings">
+        <div class="mylistings" @click="router.push('/profile/listings')">
           <h6>My Listings</h6>
           <p>View all your posted listings</p>
         </div>
@@ -44,6 +44,7 @@ const logout = () => {
           <p>View all your favorite listings</p>
         </div>
       </div>
+      <router-view />
     </main>
   </template>
   
