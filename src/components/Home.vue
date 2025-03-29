@@ -1,29 +1,46 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { useCurrentUser } from '@/utils/useCurrentUser.ts';
-import { getUserListings } from '@/services/listingApi.ts'; // juster path hvis den er annerledes
-import { getAllCategories } from '@/services/categoryApi';
-import type { CategoryResponse, ListingResponse } from '@/types/dto.ts';
+import { ref, onMounted } from 'vue'
+import { useCurrentUser } from '@/utils/useCurrentUser.ts'
+import { getUserListings } from '@/services/listingApi.ts' // juster path hvis den er annerledes
+import { getAllCategories, getListingsByCategory } from '@/services/categoryApi'
+import type { CategoryResponse, ListingResponse } from '@/types/dto.ts'
 
-const { user, isLoading, error } = useCurrentUser();
+const { user, isLoading, error } = useCurrentUser()
 
-const listings = ref<ListingResponse[]>([]);
-const categories = ref<CategoryResponse[]>([]);
-const listingsLoading = ref(true);
-const listingsError = ref<string | null>(null);
+const listings = ref<ListingResponse[]>([])
+const categories = ref<CategoryResponse[]>([])
+const selectedCategory = ref<number | null>(null)
+const categoryListings = ref<ListingResponse[] | null>(null)
+const listingsLoading = ref(true)
+const listingsError = ref<string | null>(null)
+
+const handleCategoryClick = async (categoryId: number) => {
+  selectedCategory.value = categoryId
+  listingsLoading.value = true
+  listingsError.value = null
+
+  try {
+    categoryListings.value = await getListingsByCategory(categoryId)
+  } catch (err: any) {
+    listingsError.value = err.message || 'Failed to load listings by category'
+    categoryListings.value = null
+  } finally {
+    listingsLoading.value = false
+  }
+}
 
 onMounted(async () => {
   try {
-    listings.value = await getUserListings();
-    console.log(listings.value);
-    categories.value = await getAllCategories();
-    console.log(categories.value);
+    listings.value = await getUserListings()
+    console.log(listings.value)
+    categories.value = await getAllCategories()
+    console.log(categories.value)
   } catch (err: any) {
-    listingsError.value = err.message || 'Failed to load listings';
+    listingsError.value = err.message || 'Failed to load listings'
   } finally {
-    listingsLoading.value = false;
+    listingsLoading.value = false
   }
-});
+})
 </script>
 
 <template>
@@ -35,24 +52,34 @@ onMounted(async () => {
         <h2>Welcome, {{ user.username }}</h2>
 
         <div v-if="categories.length > 0" class="category-buttons">
-          <h3>Select Category</h3>
-          <div class="category-grid">
-            <button v-for="category in categories" :key="category.id" class="category-button">
+          <h3>Categories</h3>
+          <div class="button-grid">
+            <button
+              v-for="category in categories"
+              :key="category.id"
+              class="category-button"
+              @click="handleCategoryClick(category.id)"
+              :class="{ selected: selectedCategory === category.id }"
+            >
               {{ category.name }}
             </button>
           </div>
         </div>
-        <div v-else>No categories exist</div>
 
-        <div v-if="listingsLoading">Loading listings...</div>
-        <div v-else-if="listingsError">Error: {{ listingsError }}</div>
-        <div v-else-if="listings.length === 0">You have no listings yet.</div>
-        <ul v-else>
-          <li v-for="listing in listings" :key="listing.id">
-            <strong>{{ listing.briefDescription }}</strong><br />
-            {{ listing.fullDescription }}
-          </li>
-        </ul>
+        <div v-if="selectedCategory && categoryListings !== null">
+          <h3>Listings in Selected Category</h3>
+
+          <div v-if="listingsLoading">Loading category listings...</div>
+          <div v-else-if="listingsError">Error: {{ listingsError }}</div>
+          <div v-else-if="categoryListings.length === 0">No listings found in this category.</div>
+          <ul v-else>
+            <li v-for="listing in categoryListings" :key="listing.id">
+              <strong>{{ listing.briefDescription }}</strong
+              ><br />
+              {{ listing.fullDescription }}
+            </li>
+          </ul>
+        </div>
       </div>
 
       <div v-else>
@@ -98,6 +125,10 @@ li {
 }
 
 .category-button:hover {
+  background-color: #0056b3;
+}
+
+.category-button.selected {
   background-color: #0056b3;
 }
 </style>
