@@ -7,7 +7,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import MapWrapper from '@/components/map/MapWrapper.vue'
+import MapWrapper from '@/components/map/Map.vue'
 import MapSidebar from '@/components/map/MapSidebar.vue'
 
 // Sett et senter for kartet, for eksempel Oslo
