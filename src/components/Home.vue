@@ -4,6 +4,7 @@ import { useCurrentUser } from '@/utils/useCurrentUser.ts'
 import { getAllListings } from '@/services/listingApi.ts' // juster path hvis den er annerledes
 import { getAllCategories, getListingsByCategory } from '@/services/categoryApi'
 import type { CategoryResponse, ListingResponse } from '@/types/dto.ts'
+import noImage from '@/assets/no-image.jpg'
 
 const { user, isLoading, error } = useCurrentUser()
 
@@ -13,6 +14,11 @@ const selectedCategory = ref<number | null>(null)
 const categoryListings = ref<ListingResponse[] | null>(null)
 const listingsLoading = ref(true)
 const listingsError = ref<string | null>(null)
+
+const handleImageError = (event: Event) => {
+  const target = event.target as HTMLImageElement;
+  target.src = noImage;
+};
 
 const handleCategoryClick = async (categoryId: number) => {
   selectedCategory.value = categoryId
@@ -91,15 +97,27 @@ onMounted(async () => {
           >
             No listings found.
           </div>
-          <ul v-else>
-            <li
+          <div class="listing-grid">
+            <div
               v-for="listing in selectedCategory ? categoryListings : listings"
               :key="listing.id"
+              class="listing-card"
             >
-              <strong>{{ listing.briefDescription }}</strong><br />
-              {{ listing.fullDescription }}
-            </li>
-          </ul>
+              <div class="image-wrapper">
+                <img
+                  :src="listing.imageUrls[0] || noImage"
+                  @error="handleImageError"
+                  alt="Listing image"
+                  class="listing-image"
+                />
+              </div>
+              <div class="listing-info">
+                <h5>{{ listing.briefDescription }}</h5>
+              </div>
+            </div>
+          </div>
+
+          <p v-if="listings.length === 0">You have no listings yet.</p>
         </div>
       </div>
 
@@ -110,7 +128,6 @@ onMounted(async () => {
     </div>
   </div>
 </template>
-
 
 <style scoped>
 h2 {

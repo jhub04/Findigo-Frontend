@@ -9,6 +9,11 @@ const { user, isLoading, error } = useCurrentUser()
 const listings = ref<ListingResponse[]>([])
 const loading = ref(true)
 
+const handleImageError = (event: Event) => {
+  const target = event.target as HTMLImageElement;
+  target.src = noImage;
+};
+
 onMounted(async () => {
   try {
     listings.value = await getUserListings()
@@ -46,7 +51,7 @@ onMounted(async () => {
       <div class="listing-grid">
         <div v-for="listing in listings" :key="listing.id" class="listing-card">
           <div class="image-wrapper">
-            <img :src="listing.imageUrls[0] || noImage" alt="Listing image" class="listing-image" />
+            <img :src="listing.imageUrls[0] || noImage"  @error="handleImageError" alt="Listing image" class="listing-image" />
             <!-- Add price overlay-->
           </div>
           <div class="listing-info">
