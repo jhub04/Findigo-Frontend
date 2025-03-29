@@ -1,7 +1,8 @@
 <template>
   <GMapMap :center="center" :zoom="zoom" class="google-map" ref="mapRef">
+    <!-- Bruker filteredListings i stedet for allListings -->
     <GMapMarker
-      v-for="listing in allListings"
+      v-for="listing in filteredListings"
       :key="listing.id"
       :position="{ lat: listing.latitude, lng: listing.longitude }"
       @click="onMarkerClick(listing)"
@@ -10,28 +11,79 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { getAllListings } from '@/services/listingApi'
+import { getListingsByCategory } from '@/services/categoryApi'
 import type { ListingResponse } from '@/types/dto'
-
 import noImage from '@/assets/no-image.jpg'
 
-const { center, zoom } = defineProps<{
+const props = defineProps<{
   center: { lat: number; lng: number }
   zoom: number
+  selectedCategory?: string // 'Alle', 'House', 'Car'
 }>()
 
 const mapRef = ref<any>(null)
 const infoWindow = ref<any>(null)
 const allListings = ref<ListingResponse[]>([])
 const selectedListing = ref<ListingResponse | null>(null)
-
 const router = useRouter()
+const categoryNameToId = {
+  House: 1,
+  Car: 2
+}
+
+watch(() => props.selectedCategory, async (newCategory) => {
+  allListings.value = []
+  selectedListing.value = null
+
+  if (!newCategory || newCategory === 'Alle') {
+    allListings.value = await getAllListings()
+  } else {
+    const categoryId = categoryNameToId[newCategory]
+    if (categoryId) {
+      allListings.value = await getListingsByCategory(categoryId)
+    } else {
+      console.error(`Unknown category: ${newCategory}`)
+    }
+  }
+
+  logListings(allListings.value)
+})
+
 
 onMounted(async () => {
   allListings.value = await getAllListings()
+  logListings(allListings.value)
 })
+
+function logListings(listings: ListingResponse[]) {
+  console.log('📍 Listings loaded:')
+  listings.forEach(l => {
+    console.log(`[ID ${l.id}] ${l.briefDescription} → lat: ${l.latitude}, lng: ${l.longitude}`)
+  })
+}
+
+
+
+
+// Kun nødvendig endring: filtrerer listings basert på listing.category.name
+const filteredListings = computed(() => {
+  console.log('All listings:', allListings.value.map(l => l.category.name))
+  console.log('Selected category:', props.selectedCategory)
+
+  if (!props.selectedCategory || props.selectedCategory === 'Alle') {
+    return allListings.value
+  }
+
+  return allListings.value.filter(
+    listing => listing.category.name === props.selectedCategory
+  )
+})
+
+
+
 
 function onMarkerClick(listing: ListingResponse) {
   selectedListing.value = listing
@@ -95,10 +147,8 @@ function onMarkerClick(listing: ListingResponse) {
     `
     button.onmouseenter = () => button.style.backgroundColor = '#0056b3'
     button.onmouseleave = () => button.style.backgroundColor = '#007bff'
-
     content.appendChild(button)
 
-    // Opprett og vis InfoWindow
     infoWindow.value = new window.google.maps.InfoWindow({
       content,
       maxWidth: 400
@@ -119,6 +169,7 @@ function goToListing(id: number) {
   router.push(`/listing/${id}`)
 }
 </script>
+
 
 <style>
 .google-map {

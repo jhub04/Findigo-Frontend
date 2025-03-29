@@ -1,7 +1,7 @@
 <template>
   <div class="map-page">
-    <MapSidebar />
-    <MapWrapper :center="center" :zoom="zoom" />
+    <MapSidebar @updateCategory="updateCategory" />
+    <MapWrapper :center="center" :zoom="zoom" :selectedCategory="selectedCategory" />
   </div>
 </template>
 
@@ -13,6 +13,14 @@ import MapSidebar from '@/components/map/MapSidebar.vue'
 // Sett et senter for kartet, for eksempel Oslo
 const center = ref({ lat: 61.3, lng: 9.5 })
 const zoom = ref(5.8)
+
+// Legger til filtervariabelen med standard 'Alle'
+const selectedCategory = ref('Alle')
+
+// Oppdaterer filteret når MapSidebar emitter et event
+const updateCategory = (cat: string) => {
+  selectedCategory.value = cat
+}
 </script>
 
 <style scoped>

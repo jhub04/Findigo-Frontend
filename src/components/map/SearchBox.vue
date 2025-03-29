@@ -22,9 +22,10 @@ watch(searchQuery, (newValue) => {
 
 <style scoped>
 .search-input {
-  width: 95%;
+  width: 93%;
   padding: 0.6rem;
-  margin: 0 auto 1rem;
+  margin: 10px 0px 10px 0px;
+  font-size: 1rem;
   display: block;
   border-radius: 5px;
 }
