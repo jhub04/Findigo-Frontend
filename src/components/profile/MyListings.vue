@@ -3,6 +3,7 @@ import { useCurrentUser } from '@/utils/useCurrentUser.ts'
 import { onMounted, ref } from 'vue'
 import { getUserListings } from '@/services/listingApi.ts'
 import type { ListingResponse } from '@/types/dto.ts'
+import noImage from '@/assets/no-image.jpg'
 
 const { user, isLoading, error } = useCurrentUser()
 const listings = ref<ListingResponse[]>([])
@@ -41,19 +42,31 @@ onMounted(async () => {
       <h4>My Listings</h4>
       <div v-if="loading">Loading listings...</div>
       <div v-else-if="error">Error: {{ error }}</div>
-      <ul v-else-if="listings.length">
-        <li v-for="listing in listings" :key="listing.id">
-          <strong>{{ listing.briefDescription }}</strong
-          ><br />
-          {{ listing.fullDescription }}
-        </li>
-      </ul>
-      <p v-else>You have no listings yet.</p>
+      
+      <div class="listing-grid">
+        <div v-for="listing in listings" :key="listing.id" class="listing-card">
+          <div class="image-wrapper">
+            <img :src="listing.imageUrls[0] || noImage" alt="Listing image" class="listing-image" />
+            <!-- Add price overlay-->
+          </div>
+          <div class="listing-info">
+            <h5>{{ listing.briefDescription }}</h5>
+          </div>
+        </div>
+      </div>
+
+      <p v-if="listings.length === 0">You have no listings yet.</p>
     </div>
   </main>
 </template>
 
 <style scoped>
+main {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  text-align: center;
+}
 .mylistings-container {
   margin-top: 20px;
 }
