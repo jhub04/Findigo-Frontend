@@ -35,7 +35,7 @@ const logout = () => {
   
     <main>
       <div class="grid-container">
-        <div class="mylistings">
+        <div class="mylistings" @click="router.push('/profile/listings')">
           <h6>My Listings</h6>
           <p>View all your posted listings</p>
         </div>
@@ -44,27 +44,12 @@ const logout = () => {
           <p>View all your favorite listings</p>
         </div>
       </div>
+      <router-view />
     </main>
   </template>
   
 
 <style scoped>
-.userdetails {
-  padding: 30px 20px;
-  text-align: center;
-}
-
-.userdetails h3 {
-  font-size: 1.8rem;
-  font-weight: bold;
-  margin-bottom: 8px;
-  color: #333;
-}
-
-.userdetails p {
-  font-size: 1rem;
-  color: #666;
-}
 
 .logout-button {
   margin-top: 15px;

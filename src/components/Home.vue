@@ -4,6 +4,7 @@ import { useCurrentUser } from '@/utils/useCurrentUser.ts'
 import { getAllListings } from '@/services/listingApi.ts' // juster path hvis den er annerledes
 import { getAllCategories, getListingsByCategory } from '@/services/categoryApi'
 import type { CategoryResponse, ListingResponse } from '@/types/dto.ts'
+import noImage from '@/assets/no-image.jpg'
 
 const { user, isLoading, error } = useCurrentUser()
 
@@ -13,6 +14,11 @@ const selectedCategory = ref<number | null>(null)
 const categoryListings = ref<ListingResponse[] | null>(null)
 const listingsLoading = ref(true)
 const listingsError = ref<string | null>(null)
+
+const handleImageError = (event: Event) => {
+  const target = event.target as HTMLImageElement;
+  target.src = noImage;
+};
 
 const handleCategoryClick = async (categoryId: number) => {
   selectedCategory.value = categoryId
@@ -44,7 +50,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div>
+  <div class="homepage-container">
     <div v-if="isLoading">Loading user...</div>
 
     <div v-else>
@@ -91,15 +97,27 @@ onMounted(async () => {
           >
             No listings found.
           </div>
-          <ul v-else>
-            <li
+          <div class="listing-grid">
+            <div
               v-for="listing in selectedCategory ? categoryListings : listings"
               :key="listing.id"
+              class="listing-card"
             >
-              <strong>{{ listing.briefDescription }}</strong><br />
-              {{ listing.fullDescription }}
-            </li>
-          </ul>
+              <div class="image-wrapper">
+                <img
+                  :src="listing.imageUrls[0] || noImage"
+                  @error="handleImageError"
+                  alt="Listing image"
+                  class="listing-image"
+                />
+              </div>
+              <div class="listing-info">
+                <h5>{{ listing.briefDescription }}</h5>
+              </div>
+            </div>
+          </div>
+
+          <p v-if="listings.length === 0">You have no listings yet.</p>
         </div>
       </div>
 
@@ -111,8 +129,14 @@ onMounted(async () => {
   </div>
 </template>
 
-
 <style scoped>
+.homepage-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
 h2 {
   margin-top: 1rem;
 }
@@ -152,5 +176,13 @@ li {
 
 .category-button.selected {
   background-color: #0056b3;
+}
+
+.button-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 1rem;
 }
 </style>
