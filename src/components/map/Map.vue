@@ -21,7 +21,7 @@ import noImage from '@/assets/no-image.jpg'
 const props = defineProps<{
   center: { lat: number; lng: number }
   zoom: number
-  selectedCategory?: string // 'Alle', 'House', 'Car'
+  selectedCategory?: string // 'All', 'House', 'Car'
 }>()
 
 const mapRef = ref<any>(null)
@@ -38,7 +38,7 @@ watch(() => props.selectedCategory, async (newCategory) => {
   allListings.value = []
   selectedListing.value = null
 
-  if (!newCategory || newCategory === 'Alle') {
+  if (!newCategory || newCategory === 'All') {
     allListings.value = await getAllListings()
   } else {
     const categoryId = categoryNameToId[newCategory]
@@ -73,7 +73,7 @@ const filteredListings = computed(() => {
   console.log('All listings:', allListings.value.map(l => l.category.name))
   console.log('Selected category:', props.selectedCategory)
 
-  if (!props.selectedCategory || props.selectedCategory === 'Alle') {
+  if (!props.selectedCategory || props.selectedCategory === 'All') {
     return allListings.value
   }
 

@@ -16,10 +16,10 @@
       </button>
       <!-- Eventuelt en knapp for 'Alle' -->
       <button
-        :class="{ active: selectedCategory === 'Alle' }"
-        @click="selectCategory('Alle')"
+        :class="{ active: selectedCategory === 'All' }"
+        @click="selectCategory('All')"
       >
-        Alle
+        All
       </button>
     </div>
   </div>
@@ -31,7 +31,7 @@ import SearchBox from '@/components/map/SearchBox.vue'
 
 // Kun tillegg: event for å sende valgt kategori oppover
 const emit = defineEmits(['updateCategory'])
-const selectedCategory = ref('Alle')
+const selectedCategory = ref('All')
 
 const selectCategory = (cat: string) => {
   selectedCategory.value = cat
