@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useCurrentUser } from '@/utils/useCurrentUser.ts'
-import { getUserListings } from '@/services/listingApi.ts' // juster path hvis den er annerledes
+import { getAllListings } from '@/services/listingApi.ts' // juster path hvis den er annerledes
 import { getAllCategories, getListingsByCategory } from '@/services/categoryApi'
 import type { CategoryResponse, ListingResponse } from '@/types/dto.ts'
 
@@ -31,7 +31,7 @@ const handleCategoryClick = async (categoryId: number) => {
 
 onMounted(async () => {
   try {
-    listings.value = await getUserListings()
+    listings.value = await getAllListings()
     console.log(listings.value)
     categories.value = await getAllCategories()
     console.log(categories.value)
@@ -51,6 +51,7 @@ onMounted(async () => {
       <div v-if="user">
         <h2>Welcome, {{ user.username }}</h2>
 
+        <!-- Category Buttons -->
         <div v-if="categories.length > 0" class="category-buttons">
           <h3>Categories</h3>
           <div class="button-grid">
@@ -63,19 +64,39 @@ onMounted(async () => {
             >
               {{ category.name }}
             </button>
+            <!-- Optional "All Categories" button -->
+            <button
+              v-if="selectedCategory !== null"
+              class="category-button"
+              @click="selectedCategory = null"
+            >
+              Show All
+            </button>
           </div>
         </div>
 
-        <div v-if="selectedCategory && categoryListings !== null">
-          <h3>Listings in Selected Category</h3>
+        <!-- Listings Section -->
+        <div>
+          <h3>
+            {{ selectedCategory ? 'Listings in Selected Category' : 'All Listings' }}
+          </h3>
 
-          <div v-if="listingsLoading">Loading category listings...</div>
+          <div v-if="listingsLoading">Loading listings...</div>
           <div v-else-if="listingsError">Error: {{ listingsError }}</div>
-          <div v-else-if="categoryListings.length === 0">No listings found in this category.</div>
+          <div
+            v-else-if="
+              (selectedCategory && categoryListings?.length === 0) ||
+              (!selectedCategory && listings.length === 0)
+            "
+          >
+            No listings found.
+          </div>
           <ul v-else>
-            <li v-for="listing in categoryListings" :key="listing.id">
-              <strong>{{ listing.briefDescription }}</strong
-              ><br />
+            <li
+              v-for="listing in selectedCategory ? categoryListings : listings"
+              :key="listing.id"
+            >
+              <strong>{{ listing.briefDescription }}</strong><br />
               {{ listing.fullDescription }}
             </li>
           </ul>
@@ -89,6 +110,7 @@ onMounted(async () => {
     </div>
   </div>
 </template>
+
 
 <style scoped>
 h2 {
