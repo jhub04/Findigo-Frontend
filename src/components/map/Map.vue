@@ -1,28 +1,17 @@
 <template>
-  <GMapMap :center="center" :zoom="zoom" class="google-map">
+  <GMapMap :center="center" :zoom="zoom" class="google-map" ref="mapRef">
     <GMapMarker
       v-for="listing in allListings"
       :key="listing.id"
       :position="{ lat: listing.latitude, lng: listing.longitude }"
       @click="onMarkerClick(listing)"
+      ref="markers"
     />
-
-    <GMapInfoWindow
-      v-if="selectedListing"
-      :options="{ maxWidth: 300 }"
-      :position="{ lat: selectedListing.latitude, lng: selectedListing.longitude }"
-      @closeclick="onInfoWindowClose"
-    >
-      <div class="info-window">
-        <h3>{{ selectedListing.briefDescription }}</h3>
-        <button @click="goToListing(selectedListing.id)">Go to listing</button>
-      </div>
-    </GMapInfoWindow>
   </GMapMap>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getAllListings } from '@/services/listingApi'
 import type { ListingResponse } from '@/types/dto'
@@ -34,23 +23,49 @@ const { center, zoom } = defineProps<{
 
 const allListings = ref<ListingResponse[]>([])
 const selectedListing = ref<ListingResponse | null>(null)
+const mapRef = ref(null)
+const infoWindow = ref(null)
 const router = useRouter()
 
 function onMarkerClick(listing: ListingResponse) {
-  // First close any existing window to reset state
-  if (selectedListing.value) {
-    selectedListing.value = null
-    // Use nextTick or setTimeout to ensure DOM updates before reopening
-    setTimeout(() => {
-      selectedListing.value = listing
-    }, 10)
-  } else {
-    selectedListing.value = listing
-  }
-}
+  selectedListing.value = listing
 
-function onInfoWindowClose() {
-  selectedListing.value = null
+  // If the map and google are available
+  if (mapRef.value && window.google) {
+    // Create infoWindow content
+    const content = document.createElement('div')
+    content.className = 'info-window'
+
+    const title = document.createElement('h3')
+    title.textContent = listing.briefDescription
+    content.appendChild(title)
+
+    const button = document.createElement('button')
+    button.textContent = 'Go to listing'
+    button.onclick = () => goToListing(listing.id)
+    content.appendChild(button)
+
+    // Close existing infoWindow if it exists
+    if (infoWindow.value) {
+      infoWindow.value.close()
+    }
+
+    // Create a new infoWindow instance every time
+    infoWindow.value = new window.google.maps.InfoWindow({
+      content: content,
+      maxWidth: 300
+    })
+
+    // Get the Google Maps instance and open the infoWindow
+    const map = mapRef.value.$mapObject
+    infoWindow.value.setPosition({ lat: listing.latitude, lng: listing.longitude })
+    infoWindow.value.open(map)
+
+    // Add close event listener
+    infoWindow.value.addListener('closeclick', () => {
+      selectedListing.value = null
+    })
+  }
 }
 
 function goToListing(id: number) {
