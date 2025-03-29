@@ -9,7 +9,7 @@
 
     <GMapInfoWindow
       v-if="selectedListing"
-      :key="infoWindowKey"
+      :options="{ maxWidth: 300 }"
       :position="{ lat: selectedListing.latitude, lng: selectedListing.longitude }"
       @closeclick="onInfoWindowClose"
     >
@@ -22,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { getAllListings } from '@/services/listingApi'
 import type { ListingResponse } from '@/types/dto'
@@ -34,18 +34,22 @@ const { center, zoom } = defineProps<{
 
 const allListings = ref<ListingResponse[]>([])
 const selectedListing = ref<ListingResponse | null>(null)
-const infoWindowKey = ref<number>(0)
-
 const router = useRouter()
 
 function onMarkerClick(listing: ListingResponse) {
-  selectedListing.value = listing
-  // Oppdater nøkkel for å tvinge ny re-mount
-  infoWindowKey.value = Date.now()
+  // First close any existing window to reset state
+  if (selectedListing.value) {
+    selectedListing.value = null
+    // Use nextTick or setTimeout to ensure DOM updates before reopening
+    setTimeout(() => {
+      selectedListing.value = listing
+    }, 10)
+  } else {
+    selectedListing.value = listing
+  }
 }
 
 function onInfoWindowClose() {
-  // Lukk infovinduet
   selectedListing.value = null
 }
 
