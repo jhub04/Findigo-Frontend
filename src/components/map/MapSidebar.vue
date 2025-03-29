@@ -1,5 +1,6 @@
 <template>
   <div class="sidebar">
+    <SearchBox />
     <div class="filters">
       <button
         v-for="cat in categories"
@@ -10,8 +11,6 @@
         {{ cat }}
       </button>
     </div>
-
-    <SearchBox />
 
   </div>
 </template>
