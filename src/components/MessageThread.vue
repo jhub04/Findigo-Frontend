@@ -2,30 +2,30 @@
 import { fetchMessageThread } from '@/services/messageApi';
 import { useCurrentUser } from '@/utils/useCurrentUser';
 import type { MessageResponse } from '@/types/dto';
-import { ref, onMounted } from 'vue';
+import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
 const otherUserId = Number(route.params.userId);
 
-const { user } = useCurrentUser();
+const { user, isLoading: userLoading, error: userError } = useCurrentUser();
 const messages = ref<MessageResponse[]>([]);
 const loading = ref(false);
 const error = ref('');
 
-onMounted(async () => {
-  if (!user.value) return;
+watch(user, async (newUser) => {
+  if (!newUser) return;
 
   loading.value = true;
   try {
-    messages.value = await fetchMessageThread(user.value.id, otherUserId);
+    messages.value = await fetchMessageThread(newUser.id, otherUserId);
   } catch (e) {
     error.value = 'Failed to fetch conversation.';
     console.error(e);
   } finally {
     loading.value = false;
   }
-});
+}, { immediate: true });
 
 const formatDate = (iso: string) => new Date(iso).toLocaleString();
 </script>
@@ -34,7 +34,8 @@ const formatDate = (iso: string) => new Date(iso).toLocaleString();
   <div class="thread-container">
     <h1>Conversation</h1>
 
-    <p v-if="loading">Loading conversation...</p>
+    <p v-if="userLoading || loading">Loading conversation...</p>
+    <p v-if="userError" class="error">Failed to load user data.</p>
     <p v-if="error" class="error">{{ error }}</p>
 
     <ul v-if="!loading && messages.length">
@@ -52,6 +53,12 @@ const formatDate = (iso: string) => new Date(iso).toLocaleString();
 </template>
 
 <style scoped>
+ul {
+  list-style: none;
+  padding: 0; 
+  margin: 0;
+}
+
 .thread-container {
   max-width: 600px;
   margin: 0 auto;
