@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useTokenStore } from '@/stores/token.ts'
 import { useRouter } from 'vue-router'
-import NavigationSearch from '@/components/NavigationSearch.vue'
+import NavigationSearch from '@/components/search/NavigationSearch.vue'
 
 const tokenStore = useTokenStore()
 const router = useRouter()
@@ -66,6 +66,7 @@ const router = useRouter()
 .navbar-brand {
   display: flex;
   align-items: center;
+  padding: 0 20px;
 }
 
 .welcome-message {
