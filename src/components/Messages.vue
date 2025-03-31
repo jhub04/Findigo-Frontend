@@ -1,49 +1,57 @@
 <script setup lang="ts">
-import { fetchAllUserMessages } from '@/services/messageApi';
-import { useCurrentUser } from '@/utils/useCurrentUser.ts';
-import type { MessageResponse } from '@/types/dto';
-import { ref, watch } from 'vue';
-import { useRouter } from 'vue-router';
+import { fetchAllUserMessages } from '@/services/messageApi'
+import { useCurrentUser } from '@/utils/useCurrentUser.ts'
+import type { MessageResponse } from '@/types/dto'
+import { ref, watch, computed } from 'vue'
+import { useRouter } from 'vue-router'
 
-const { user, isLoading: userLoading, error: userError } = useCurrentUser();
-const messages = ref<MessageResponse[]>([]);
-const messagesLoading = ref(false);
-const messagesError = ref('');
+const { user, isLoading: userLoading, error: userError } = useCurrentUser()
+const messages = ref<MessageResponse[]>([])
+const messagesLoading = ref(false)
+const messagesError = ref('')
 
-watch(user, async (newUser) => {
-  if (!newUser) return;
+// TODO: Issues with read/unread state. Backend works as expected
 
-  messagesLoading.value = true;
-  try {
-    messages.value = await fetchAllUserMessages(newUser.id);
-  } catch (e) {
-    messagesError.value = 'Failed to fetch messages.';
-    console.error(e);
-  } finally {
-    messagesLoading.value = false;
-  }
-}, { immediate: true });
+watch(
+  user,
+  async (newUser) => {
+    if (!newUser) return
 
-const formatDate = (dateStr: string) => new Date(dateStr).toLocaleString();
+    messagesLoading.value = true
+    try {
+      messages.value = await fetchAllUserMessages(newUser.id)
+    } catch (e) {
+      messagesError.value = 'Failed to fetch messages.'
+      console.error(e)
+    } finally {
+      messagesLoading.value = false
+    }
+  },
+  { immediate: true },
+)
+
+const formatDate = (dateStr: string) => new Date(dateStr).toLocaleString()
+
+const sortedMessages = computed(() =>
+  messages.value
+    .slice()
+    .sort((a, b) => new Date(b.sentAt).getTime() - new Date(a.sentAt).getTime()),
+)
 
 const getOtherUsername = (message: MessageResponse): string => {
-  return message.fromUserId === user.value!.id
-    ? message.toUsername
-    : message.fromUsername;
-};
+  return message.fromUserId === user.value!.id ? message.toUsername : message.fromUsername
+}
 
 const getOtherUserId = (message: MessageResponse): number => {
-  return message.fromUserId === user.value!.id
-    ? message.toUserId
-    : message.fromUserId;
-};
+  return message.fromUserId === user.value!.id ? message.toUserId : message.fromUserId
+}
 
-const router = useRouter();
+const router = useRouter()
 
 const openMessageThread = (message: MessageResponse) => {
-  const otherUserId = getOtherUserId(message);
-  router.push({ name: 'MessageThread', params: { userId: otherUserId } });
-};
+  const otherUserId = getOtherUserId(message)
+  router.push({ name: 'MessageThread', params: { userId: otherUserId } })
+}
 </script>
 
 <template>
@@ -54,12 +62,12 @@ const openMessageThread = (message: MessageResponse) => {
     <p v-if="userError" class="error-message">Failed to load user data.</p>
     <p v-if="messagesError" class="error-message">{{ messagesError }}</p>
 
-    <div v-if="!messagesLoading && messages.length">
+    <div v-if="!messagesLoading && sortedMessages.length">
       <div
-        v-for="message in messages"
+        v-for="message in sortedMessages"
         :key="message.messageId"
         class="message-preview"
-        :class="{ 'unread-message': !message.isRead && message.toUserId === user!.id }"
+        :class="{ 'unread-message': (!message.isRead && message.toUserId === user!.id) }"
         @click="openMessageThread(message)"
       >
         <div class="message-header">
@@ -71,6 +79,10 @@ const openMessageThread = (message: MessageResponse) => {
         <div class="message-body">
           {{ message.messageText }}
         </div>
+
+        <!-- Explicit debug logging to verify clearly -->
+        <!-- Remove after issue is resolved-->
+        <pre>{{ !message.isRead && message.toUserId === user!.id }}</pre>
       </div>
     </div>
 
@@ -98,7 +110,9 @@ h1 {
   padding: 15px;
   margin-bottom: 15px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .message-preview:hover {
@@ -133,7 +147,10 @@ h1 {
 }
 
 /* Remove default styles for links */
-a, a:hover, a:focus, a:active {
+a,
+a:hover,
+a:focus,
+a:active {
   text-decoration: none;
   color: inherit;
   outline: none;
