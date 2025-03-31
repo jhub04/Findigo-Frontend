@@ -9,90 +9,65 @@ const messages = ref<MessageResponse[]>([]);
 const loading = ref(false);
 const error = ref('');
 
-
 onMounted(async () => {
   if (!user.value) return;
 
   loading.value = true;
   try {
     messages.value = await fetchAllUserMessages(user.value.id);
-  } catch (err) {
-    error.value = 'Error fetching messages.';
-    console.error(err);
+  } catch (e) {
+    error.value = 'Failed to fetch messages';
+    console.error(e);
   } finally {
     loading.value = false;
   }
 });
 
-const formatDate = (dateStr: string) => new Date(dateStr).toLocaleString();
+const formatDate = (iso: string) => new Date(iso).toLocaleString();
 
+const getOtherUsername = (message: MessageResponse): string => {
+  return message.fromUserId === user.value!.id
+    ? message.toUsername
+    : message.fromUsername;
+};
 </script>
 
 <template>
-    <div class="inbox-container">
-      <h1>Your Messages</h1>
-  
-      <p v-if="loading">Loading messages...</p>
-      <p v-if="error" class="error-message">{{ error }}</p>
-  
-      <ul v-if="!loading && messages.length">
-        <li v-for="message in messages" :key="message.messageId" class="message-card">
-          <div class="message-header">
-            <span class="participants">
-              From: {{ message.fromUsername }} → To: {{ message.toUsername }}
-            </span>
-            <span class="timestamp">{{ formatDate(message.sentAt) }}</span>
-          </div>
-          <div class="message-body">
-            {{ message.messageText }}
-          </div>
-        </li>
-      </ul>
-  
-      <p v-if="!loading && messages.length === 0">You have no messages.</p>
-    </div>
-  </template>
+  <div class="inbox-container">
+    <h1>Your Inbox</h1>
+
+    <p v-if="loading">Loading...</p>
+    <p v-if="error" class="error">{{ error }}</p>
+
+    <ul v-if="!loading && messages.length">
+      <li v-for="msg in messages" :key="msg.messageId">
+        <div class="message-preview">
+          <strong>{{ getOtherUsername(msg) }}</strong><br>
+          <span>{{ msg.messageText }}</span><br>
+          <small>{{ formatDate(msg.sentAt) }}</small>
+        </div>
+      </li>
+    </ul>
+
+    <p v-if="!loading && messages.length === 0">No messages found.</p>
+  </div>
+</template>
 
 <style scoped>
 .inbox-container {
-  max-width: 600px;
-  margin: 0 auto;
   padding: 20px;
-  font-family: Arial, sans-serif;
+  font-family: sans-serif;
 }
 
-h1 {
-  margin-bottom: 20px;
-  color: #333;
-}
-
-.message-card {
+.message-preview {
   border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 15px;
-  margin-bottom: 15px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.message-header {
-  display: flex;
-  justify-content: space-between;
-  font-size: 14px;
-  margin-bottom: 8px;
-  color: #555;
-}
-
-.message-body {
-  color: #444;
-  font-size: 16px;
-}
-
-.timestamp {
-  font-size: 13px;
-  color: #888;
-}
-
-.error-message {
+.error {
   color: red;
 }
 </style>
