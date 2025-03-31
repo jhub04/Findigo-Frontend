@@ -21,6 +21,16 @@ export const getAllListings = async(): Promise<ListingResponse[]> => {
   }
 }
 
+export const getListingById = async (id: number): Promise<ListingResponse | null> => {
+  try {
+    const response = await apiClient.get<ListingResponse>(`/listings/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Failed to fetch listing: ${error} `);
+    return null;
+  }
+}
+
 export const getUserListings = async(): Promise<ListingResponse[]> => {
   const tokenStore = useTokenStore();
   const username = tokenStore.loggedInUser;
@@ -36,7 +46,7 @@ export const getUserListings = async(): Promise<ListingResponse[]> => {
     });
     return response.data || [];
   } catch (error) {
-      console.error(`Failed to fetch listings: ${error} `);
-      return [];
+    console.error(`Failed to fetch listings: ${error} `);
+    return [];
   }
 };
