@@ -13,7 +13,7 @@ export const fetchMessageThread = async (userId1: number, userId2: number): Prom
     return response.data
 }
 
-// Fetches all the users messages to display in message inbox 
+// Fetches all the users messages to display in message inbox. Sorted by most recent to least recent 
 export const fetchAllUserMessages = async (userId: number): Promise<MessageResponse[]> => {
     const response = await apiClient.get<MessageResponse[]>(`/messages/${userId}`)
     return response.data
