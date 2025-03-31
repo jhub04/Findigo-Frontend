@@ -26,8 +26,11 @@
         <p class="description">{{ listing.fullDescription }}</p>
 
         <div class="attributes">
-          // implementer
+          <div v-for="(attribute, index) in listing.attributes" :key="index">
+            {{ attribute.name }}: {{ attribute.value }}
+          </div>
         </div>
+
 
         <div class="info">
           <p><strong>Bruker:</strong> {{ listing.user.username }}</p>
