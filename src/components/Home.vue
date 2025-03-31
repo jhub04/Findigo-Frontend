@@ -4,6 +4,7 @@ import { useCurrentUser } from '@/utils/useCurrentUser.ts'
 import { getAllListings } from '@/services/listingApi.ts' // juster path hvis den er annerledes
 import { getAllCategories, getListingsByCategory } from '@/services/categoryApi'
 import type { CategoryResponse, ListingResponse } from '@/types/dto.ts'
+import { navigateToListing } from '@/utils/navigationUtil.ts'
 
 const { user, isLoading, error } = useCurrentUser()
 
@@ -95,9 +96,12 @@ onMounted(async () => {
             <li
               v-for="listing in selectedCategory ? categoryListings : listings"
               :key="listing.id"
+              @click="navigateToListing(listing)"
+              style="cursor: pointer"
             >
               <strong>{{ listing.briefDescription }}</strong><br />
-              {{ listing.fullDescription }}
+              {{ listing.fullDescription }} <br /> <br />
+              Eier: {{listing.user.username}}
             </li>
           </ul>
         </div>
