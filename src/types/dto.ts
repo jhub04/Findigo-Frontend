@@ -61,7 +61,9 @@ export interface MessageRequest {
 
 export interface MessageResponse {
   fromUserId: number;
+  fromUsername: string;
   toUserId: number;
+  toUserName: string,
   messageText: string;
   messageId: number;
   isRead: boolean;
