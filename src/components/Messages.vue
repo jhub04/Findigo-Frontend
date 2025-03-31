@@ -1,34 +1,38 @@
 <script setup lang="ts">
-import { fetchAllUserMessages } from '@/services/messageApi';
-import { useCurrentUser } from '@/utils/useCurrentUser.ts';
-import type { MessageResponse } from '@/types/dto';
-import { ref, onMounted } from 'vue';
+import { fetchAllUserMessages } from '@/services/messageApi'
+import { useCurrentUser } from '@/utils/useCurrentUser.ts'
+import type { MessageResponse } from '@/types/dto'
+import { ref, onMounted } from 'vue'
 
-const { user } = useCurrentUser();
-const messages = ref<MessageResponse[]>([]);
-const loading = ref(false);
-const error = ref('');
+const { user } = useCurrentUser()
+const messages = ref<MessageResponse[]>([])
+const loading = ref(false)
+const error = ref('')
 
 onMounted(async () => {
-  if (!user.value) return;
+  if (!user.value) return
 
-  loading.value = true;
+  loading.value = true
   try {
-    messages.value = await fetchAllUserMessages(user.value.id);
+    messages.value = await fetchAllUserMessages(user.value.id)
   } catch (e) {
-    error.value = 'Failed to fetch messages';
-    console.error(e);
+    error.value = 'Failed to fetch messages'
+    console.error(e)
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-});
+})
 
-const formatDate = (iso: string) => new Date(iso).toLocaleString();
+const formatDate = (iso: string) => new Date(iso).toLocaleString()
 
 const getOtherUsername = (message: MessageResponse): string => {
+  return message.fromUserId === user.value!.id ? message.toUsername : message.fromUsername
+}
+
+const getOtherUserId = (message: MessageResponse): number => {
   return message.fromUserId === user.value!.id
-    ? message.toUsername
-    : message.fromUsername;
+    ? message.toUserId
+    : message.fromUserId;
 };
 </script>
 
@@ -41,11 +45,13 @@ const getOtherUsername = (message: MessageResponse): string => {
 
     <ul v-if="!loading && messages.length">
       <li v-for="msg in messages" :key="msg.messageId">
-        <div class="message-preview">
-          <strong>{{ getOtherUsername(msg) }}</strong><br>
-          <span>{{ msg.messageText }}</span><br>
-          <small>{{ formatDate(msg.sentAt) }}</small>
-        </div>
+        <router-link :to="{ name: 'MessageThread', params: { userId: getOtherUserId(msg) } }">
+          <div class="message-preview">
+            <strong>{{ getOtherUsername(msg) }}</strong>
+            <p>{{ msg.messageText }}</p>
+            <small>{{ formatDate(msg.sentAt) }}</small>
+          </div>
+        </router-link>
       </li>
     </ul>
 
