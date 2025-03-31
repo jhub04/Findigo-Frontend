@@ -67,5 +67,5 @@ export interface MessageResponse {
   messageText: string;
   messageId: number;
   isRead: boolean;
-  sentAt: Date;
+  sentAt: string;
 }
