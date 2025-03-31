@@ -11,11 +11,11 @@ import MapWrapper from '@/components/map/Map.vue'
 import MapSidebar from '@/components/map/MapSidebar.vue'
 
 // Sett et senter for kartet, for eksempel Oslo
-const center = ref({ lat: 61.3, lng: 9.5 })
-const zoom = ref(5.8)
+const center = ref({ lat: 63.5, lng: 11 })
+const zoom = ref(5.2)
 
-// Legger til filtervariabelen med standard 'Alle'
-const selectedCategory = ref('Alle')
+
+const selectedCategory = ref('All')
 
 // Oppdaterer filteret når MapSidebar emitter et event
 const updateCategory = (cat: string) => {

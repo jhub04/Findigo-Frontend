@@ -14,7 +14,6 @@
       >
         {{ cat }}
       </button>
-      <!-- Eventuelt en knapp for 'Alle' -->
       <button
         :class="{ active: selectedCategory === 'All' }"
         @click="selectCategory('All')"
