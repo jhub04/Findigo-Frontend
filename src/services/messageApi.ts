@@ -7,8 +7,14 @@ export const sendMessage = async (message: MessageRequest): Promise<MessageRespo
     return response.data;
 }
 
-// Fetch all messages between userId1 and userId2
-export const fetchMessages = async (userId1: number, userId2: number): Promise<MessageResponse[]> => {
+// Fetch all messages between userId1 and userId2 for a message thread
+export const fetchMessageThread = async (userId1: number, userId2: number): Promise<MessageResponse[]> => {
     const response = await apiClient.get<MessageResponse[]>(`/messages/${userId1}/${userId2}`)
+    return response.data
+}
+
+// Fetches all the users messages to display in message inbox 
+export const fetchAllUserMessages = async (userId: number): Promise<MessageResponse[]> => {
+    const response = await apiClient.get<MessageResponse[]>(`/messages/${userId}`)
     return response.data
 }
