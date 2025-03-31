@@ -5,6 +5,7 @@ import { getAllListings } from '@/services/listingApi.ts' // juster path hvis de
 import { getAllCategories, getListingsByCategory } from '@/services/categoryApi'
 import type { CategoryResponse, ListingResponse } from '@/types/dto.ts'
 import noImage from '@/assets/no-image.jpg'
+import { navigateToListing } from '@/utils/navigationUtil.ts'
 
 const { user, isLoading, error } = useCurrentUser()
 
@@ -102,6 +103,8 @@ onMounted(async () => {
               v-for="listing in selectedCategory ? categoryListings : listings"
               :key="listing.id"
               class="listing-card"
+              @click="navigateToListing(listing)"
+              style="cursor: pointer"
             >
               <div class="image-wrapper">
                 <img
@@ -112,7 +115,8 @@ onMounted(async () => {
                 />
               </div>
               <div class="listing-info">
-                <h5>{{ listing.briefDescription }}</h5>
+                <strong>{{ listing.briefDescription }}</strong><br /><br />
+                Eier: {{listing.user.username}}
               </div>
             </div>
           </div>
