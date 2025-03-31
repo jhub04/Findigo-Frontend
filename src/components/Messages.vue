@@ -1,62 +1,80 @@
 <script setup lang="ts">
-import { fetchAllUserMessages } from '@/services/messageApi'
-import { useCurrentUser } from '@/utils/useCurrentUser.ts'
-import type { MessageResponse } from '@/types/dto'
-import { ref, watch } from 'vue'
+import { fetchAllUserMessages } from '@/services/messageApi';
+import { useCurrentUser } from '@/utils/useCurrentUser.ts';
+import type { MessageResponse } from '@/types/dto';
+import { ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
 
-const { user, isLoading: userLoading, error: userError } = useCurrentUser()
-const messages = ref<MessageResponse[]>([])
-const messagesLoading = ref(false)
-const messagesError = ref('')
+const { user, isLoading: userLoading, error: userError } = useCurrentUser();
+const messages = ref<MessageResponse[]>([]);
+const messagesLoading = ref(false);
+const messagesError = ref('');
 
 watch(user, async (newUser) => {
-  if (!newUser) return
+  if (!newUser) return;
 
-  messagesLoading.value = true
+  messagesLoading.value = true;
   try {
-    messages.value = await fetchAllUserMessages(newUser.id)
+    messages.value = await fetchAllUserMessages(newUser.id);
   } catch (e) {
-    messagesError.value = 'Failed to fetch messages.'
-    console.error(e)
+    messagesError.value = 'Failed to fetch messages.';
+    console.error(e);
   } finally {
-    messagesLoading.value = false
+    messagesLoading.value = false;
   }
-}, { immediate: true })
+}, { immediate: true });
 
-const formatDate = (iso: string) => new Date(iso).toLocaleString()
+const formatDate = (dateStr: string) => new Date(dateStr).toLocaleString();
 
 const getOtherUsername = (message: MessageResponse): string => {
-  return message.fromUserId === user.value!.id ? message.toUsername : message.fromUsername
-}
+  return message.fromUserId === user.value!.id
+    ? message.toUsername
+    : message.fromUsername;
+};
 
 const getOtherUserId = (message: MessageResponse): number => {
   return message.fromUserId === user.value!.id
     ? message.toUserId
     : message.fromUserId;
 };
+
+const router = useRouter();
+
+const openMessageThread = (message: MessageResponse) => {
+  const otherUserId = getOtherUserId(message);
+  router.push({ name: 'MessageThread', params: { userId: otherUserId } });
+};
 </script>
 
 <template>
   <div class="inbox-container">
-    <h1>Your Inbox</h1>
+    <h1>Your Messages</h1>
 
-    <p v-if="userLoading || messagesLoading">Loading...</p>
-    <p v-if="userError" class="error">Failed to load user data.</p>
-    <p v-if="messagesError" class="error">{{ messagesError }}</p>
+    <p v-if="userLoading || messagesLoading">Loading messages...</p>
+    <p v-if="userError" class="error-message">Failed to load user data.</p>
+    <p v-if="messagesError" class="error-message">{{ messagesError }}</p>
 
-    <ul v-if="!messagesLoading && messages.length">
-      <li v-for="msg in messages" :key="msg.messageId">
-        <router-link :to="{ name: 'MessageThread', params: { userId: getOtherUserId(msg) } }">
-          <div class="message-preview">
-            <strong>{{ getOtherUsername(msg) }}</strong>
-            <p>{{ msg.messageText }}</p>
-            <small>{{ formatDate(msg.sentAt) }}</small>
-          </div>
-        </router-link>
-      </li>
-    </ul>
+    <div v-if="!messagesLoading && messages.length">
+      <div
+        v-for="message in messages"
+        :key="message.messageId"
+        class="message-preview"
+        :class="{ 'unread-message': !message.isRead && message.toUserId === user!.id }"
+        @click="openMessageThread(message)"
+      >
+        <div class="message-header">
+          <span class="participants">
+            {{ getOtherUsername(message) }}
+          </span>
+          <span class="timestamp">{{ formatDate(message.sentAt) }}</span>
+        </div>
+        <div class="message-body">
+          {{ message.messageText }}
+        </div>
+      </div>
+    </div>
 
-    <p v-if="!messagesLoading && messages.length === 0">No messages found.</p>
+    <p v-if="!messagesLoading && messages.length === 0">You have no messages.</p>
   </div>
 </template>
 
@@ -73,12 +91,6 @@ h1 {
   color: #333;
 }
 
-ul {
-  list-style: none;
-  padding: 0; 
-  margin: 0;
-}
-
 .message-preview {
   cursor: pointer;
   border: 1px solid #ddd;
@@ -92,6 +104,10 @@ ul {
 .message-preview:hover {
   transform: translateY(-3px);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.unread-message {
+  background-color: #e3f2fd;
 }
 
 .message-header {
@@ -117,7 +133,7 @@ ul {
 }
 
 /* Remove default styles for links */
-a, a:hover, a:focus, a:active { 
+a, a:hover, a:focus, a:active {
   text-decoration: none;
   color: inherit;
   outline: none;
