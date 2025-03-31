@@ -77,7 +77,12 @@ watch([searchQuery, selectedCategory], async () => {
     <div v-else-if="error" class="error">{{ error }}</div>
     <div v-else-if="listings.length === 0" class="no-results">No results</div>
     <div v-else>
-      <div class="listing" v-for="listing in listings" :key="listing.id" @click="navigateToListing(listing)">
+      <div class="listing"
+           v-for="listing in listings"
+           :key="listing.id"
+           @click="navigateToListing(listing)"
+           style="cursor: pointer"
+      >
           <p>{{ listing.briefDescription }}</p><br />
       </div>
     </div>
