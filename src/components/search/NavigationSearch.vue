@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { nextTick, onMounted, ref, watch } from 'vue'
+import type { CategoryResponse, ListingResponse } from '@/types/dto.ts'
+import { getAllCategories } from '@/services/categoryApi.ts'
+const listingsLoading = ref(true)
+const listingsError = ref<string | null>(null)
 
 const categoryWidthRef = ref<HTMLElement | null>(null)
 const selectRef = ref<HTMLElement | null>(null)
@@ -10,13 +14,9 @@ const router = useRouter()
 // Søketekst
 const searchQuery = ref('')
 
-// Valgt kategori
-const selectedCategory = ref('All')
+const categories = ref<CategoryResponse[]>([])
+const selectedCategory = ref<number | 'all'>('all')
 
-// Liste over tilgjengelige kategorier
-const categories = ['All', 'House', 'Car', 'Electronics', 'AAAAAAAAAAAAAAAAAAAAA']
-
-// Oppdater bredden basert på valgt kategori
 function updateSelectWidth() {
   if (categoryWidthRef.value && selectRef.value) {
     const width = categoryWidthRef.value.offsetWidth + 40 // padding-buffer
@@ -24,14 +24,24 @@ function updateSelectWidth() {
   }
 }
 
-onMounted(() => nextTick(updateSelectWidth))
+onMounted(async () => {
+  try {
+    const fetched = await getAllCategories()
+    categories.value = fetched
+  } catch (err) {
+    console.error('Failed to load categories', err)
+  } finally {
+    await nextTick(updateSelectWidth)
+  }
+})
+
 watch(selectedCategory, () => nextTick(updateSelectWidth))
 
 // Ved søk: naviger med søkestreng og kategori
 function performSearch() {
   if (searchQuery.value.trim()) {
     router.push({
-      name: 'search',
+      name: 'SearchResultsView',
       query: {
         q: searchQuery.value.trim(),
         category: selectedCategory.value
@@ -42,8 +52,13 @@ function performSearch() {
 </script>
 
 <template>
-  <!-- Usynlig måleelement for dynamisk bredde -->
-  <span ref="categoryWidthRef" class="invisible-text">{{ selectedCategory }}</span>
+  <span ref="categoryWidthRef" class="invisible-text">
+    {{
+      selectedCategory === 'all'
+        ? 'All'
+        : categories.find(cat => cat.id === selectedCategory)?.name || ''
+    }}
+  </span>
 
   <form class="search-form" @submit.prevent="performSearch">
     <!-- Kategorivelger -->
@@ -52,7 +67,14 @@ function performSearch() {
       v-model="selectedCategory"
       class="search-category"
     >
-      <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
+      <option :value="'all'">All</option>
+      <option
+        v-for="cat in categories"
+        :key="cat.id"
+        :value="cat.id"
+      >
+        {{ cat.name }}
+      </option>
     </select>
 
     <!-- Søkefelt -->
