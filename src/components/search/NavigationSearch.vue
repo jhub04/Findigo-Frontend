@@ -3,15 +3,13 @@ import { useRouter } from 'vue-router'
 import { nextTick, onMounted, ref, watch } from 'vue'
 import type { CategoryResponse, ListingResponse } from '@/types/dto.ts'
 import { getAllCategories } from '@/services/categoryApi.ts'
-const listingsLoading = ref(true)
-const listingsError = ref<string | null>(null)
+
 
 const categoryWidthRef = ref<HTMLElement | null>(null)
 const selectRef = ref<HTMLElement | null>(null)
 
 const router = useRouter()
 
-// Søketekst
 const searchQuery = ref('')
 
 const categories = ref<CategoryResponse[]>([])
@@ -52,6 +50,7 @@ function performSearch() {
 </script>
 
 <template>
+  <div class = "nav-search">
   <span ref="categoryWidthRef" class="invisible-text">
     {{
       selectedCategory === 'all'
@@ -91,6 +90,7 @@ function performSearch() {
       <i class="fa fa-search"></i>
     </button>
   </form>
+  </div>
 </template>
 
 <style scoped>
@@ -128,6 +128,10 @@ function performSearch() {
   border: none;
   background: #f1f1f1;
   outline: none;
+}
+
+.nav-search {
+  width: 100%;
 }
 
 /* Søkeknapp */
