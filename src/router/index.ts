@@ -9,6 +9,7 @@ import RegisterView from '@/views/RegisterView.vue'
 import ProfileView from '@/views/ProfileView.vue'
 import { useTokenStore } from '@/stores/token'
 import MyListingsView from '@/views/MyListingsView.vue'
+import MessageThreadView from '@/views/MessageThreadView.vue'
 
 const routes = [
   { path: '/home', component: HomeView, name: 'Home' },
@@ -20,6 +21,7 @@ const routes = [
   { path: '/listing', component: NewListingView, name: 'Listing' },
   { path: '/notifications', component: NotificationsView, name: 'Notifications' },
   { path: '/messages', component: MessagesView, name: 'Messages' },
+  { path: '/messages/:userId', component: MessageThreadView, name: 'MessageThread'},
   { path: '/', redirect: '/home' }
 ];
 
