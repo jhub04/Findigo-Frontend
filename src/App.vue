@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useTokenStore } from '@/stores/token.ts'
 import { useRouter } from 'vue-router'
+import NavigationSearch from '@/components/NavigationSearch.vue'
 
 const tokenStore = useTokenStore()
 const router = useRouter()
@@ -13,6 +14,8 @@ const router = useRouter()
         <div class="navbar-brand">
           <router-link to="/home" class="app-name">Findigo</router-link>
         </div>
+
+        <NavigationSearch class="nav-search" />
 
         <div class="navbar-menu">
           <router-link to="/map" class="nav-link">Map</router-link>
@@ -46,6 +49,10 @@ const router = useRouter()
   max-width: 1200px;
   margin: 0 auto;
   padding: 15px 20px;
+}
+
+.nav-search {
+  margin: 0 20px;
 }
 
 .app-name {
