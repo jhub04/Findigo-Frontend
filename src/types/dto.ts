@@ -63,7 +63,7 @@ export interface MessageResponse {
   fromUserId: number;
   fromUsername: string;
   toUserId: number;
-  toUserName: string,
+  toUsername: string;
   messageText: string;
   messageId: number;
   isRead: boolean;
