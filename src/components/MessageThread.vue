@@ -1,43 +1,91 @@
 <script setup lang="ts">
-import { fetchMessageThread } from '@/services/messageApi';
-import { useCurrentUser } from '@/utils/useCurrentUser';
-import type { MessageResponse } from '@/types/dto';
-import { ref, watch, computed } from 'vue';
-import { useRoute } from 'vue-router';
+import { fetchMessageThread } from '@/services/messageApi'
+import { useCurrentUser } from '@/utils/useCurrentUser'
+import type { MessageResponse, MessageRequest } from '@/types/dto'
+import { ref, watch, computed } from 'vue'
+import { useRoute } from 'vue-router'
+import { sendMessage } from '@/services/messageApi'
 
-const route = useRoute();
-const otherUserId = Number(route.params.userId);
+const route = useRoute()
+const otherUserId = Number(route.params.userId)
 
-const { user, isLoading: userLoading, error: userError } = useCurrentUser();
-const messages = ref<MessageResponse[]>([]);
-const loading = ref(false);
-const error = ref('');
+const { user, isLoading: userLoading, error: userError } = useCurrentUser()
+const messages = ref<MessageResponse[]>([])
+const loading = ref(false)
+const error = ref('')
+
+const newMessageText = ref('')
+const sending = ref(false)
+
+const sendMessageToUser = async () => {
+  if (!user.value || !newMessageText.value.trim()) {
+    console.warn('User not loaded or message is empty', user.value)
+    return
+  }
+
+  sending.value = true
+
+  console.log("Sending message as user:", user.value.id);
+  console.log("To user ID:", otherUserId);
+
+
+  const messageRequest: MessageRequest = {
+    fromUserId: user.value.id,
+    toUserId: otherUserId,
+    messageText: newMessageText.value.trim(),
+  }
+
+  try {
+    await sendMessage(messageRequest)
+    newMessageText.value = ''
+    // Refresh messages
+    messages.value = await fetchMessageThread(user.value.id, otherUserId)
+  } catch (e) {
+    console.log('Failed to send message', e)
+  } finally {
+    sending.value = true
+  }
+}
 
 // Fetch messages when user is available
-watch(user, async (newUser) => {
-  if (!newUser) return;
+watch(
+  user,
+  async (newUser) => {
+    if (!newUser) return
 
-  loading.value = true;
-  try {
-    messages.value = await fetchMessageThread(newUser.id, otherUserId);
-  } catch (e) {
-    error.value = 'Failed to fetch conversation.';
-    console.error(e);
-  } finally {
-    loading.value = false;
-  }
-}, { immediate: true });
+    loading.value = true
+    try {
+      messages.value = await fetchMessageThread(newUser.id, otherUserId)
+    } catch (e) {
+      error.value = 'Failed to fetch conversation.'
+      console.error(e)
+    } finally {
+      loading.value = false
+    }
+  },
+  { immediate: true },
+)
 
-const formatDate = (iso: string) => new Date(iso).toLocaleString();
+const formatDate = (iso: string) => new Date(iso).toLocaleString()
 
 // Computed reversed messages for correct chronological order
-const sortedMessages = computed(() => [...messages.value].sort((a, b) => new Date(a.sentAt).getTime() - new Date(b.sentAt).getTime()));
+const sortedMessages = computed(() =>
+  [...messages.value].sort((a, b) => new Date(a.sentAt).getTime() - new Date(b.sentAt).getTime()),
+)
+
+const canSend = computed(() =>
+  !!user.value && newMessageText.value.trim().length > 0 && !sending.value
+);
 
 // Retrieve other user's username from messages
 const otherUsername = computed(() => {
-  const otherUserMessage = messages.value.find(msg => msg.fromUserId !== user.value!.id);
-  return otherUserMessage ? (otherUserMessage.fromUserId === otherUserId ? otherUserMessage.fromUsername : otherUserMessage.toUsername) : 'Other user';
-});
+  const otherUserMessage = messages.value.find((msg) => msg.fromUserId !== user.value!.id)
+  return otherUserMessage
+    ? otherUserMessage.fromUserId === otherUserId
+      ? otherUserMessage.fromUsername
+      : otherUserMessage.toUsername
+    : 'Other user'
+})
 </script>
 
 <template>
@@ -62,6 +110,18 @@ const otherUsername = computed(() => {
         <p>{{ msg.messageText }}</p>
       </li>
     </ul>
+
+    <div class="message-input">
+      <textarea
+        v-model="newMessageText"
+        :disabled="sending"
+        placeholder="Write a message..."
+        rows="3"
+      ></textarea>
+      <button @click="sendMessageToUser" :disabled="!canSend">
+        {{ sending ? 'Sending...' : 'Send' }}
+      </button>
+    </div>
 
     <p v-if="!loading && !sortedMessages.length">No messages in this conversation.</p>
   </div>
@@ -108,5 +168,42 @@ ul {
 
 .error {
   color: red;
+}
+
+.message-input {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.message-input textarea {
+  resize: none;
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-family: Arial, sans-serif;
+}
+
+.message-input button {
+  align-self: flex-end;
+  padding: 8px 16px;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.message-input button:hover {
+  background-color: #1565c0;
+}
+
+.message-input button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 </style>
