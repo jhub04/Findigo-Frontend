@@ -35,7 +35,6 @@ onMounted(async () => {
 
 watch(selectedCategory, () => nextTick(updateSelectWidth))
 
-// Ved søk: naviger med søkestreng og kategori
 function performSearch() {
   if (searchQuery.value.trim()) {
     router.push({
@@ -60,7 +59,6 @@ function performSearch() {
   </span>
 
   <form class="search-form" @submit.prevent="performSearch">
-    <!-- Kategorivelger -->
     <select
       ref="selectRef"
       v-model="selectedCategory"
@@ -76,7 +74,6 @@ function performSearch() {
       </option>
     </select>
 
-    <!-- Søkefelt -->
     <input
       v-model="searchQuery"
       type="text"
@@ -85,7 +82,6 @@ function performSearch() {
       autocomplete="off"
     />
 
-    <!-- Søkeknapp -->
     <button type="submit">
       <i class="fa fa-search"></i>
     </button>
@@ -104,7 +100,6 @@ function performSearch() {
   background: #f1f1f1;
 }
 
-/* Kategori-dropdown */
 .search-category {
   border: none;
   padding: 10px 10px 10px 20px;
@@ -120,7 +115,6 @@ function performSearch() {
   text-overflow: ellipsis;
 }
 
-/* Søke-input */
 .search-form input[type="text"] {
   flex: 1;
   padding: 10px;
@@ -134,7 +128,6 @@ function performSearch() {
   width: 100%;
 }
 
-/* Søkeknapp */
 .search-form button {
   padding: 0 20px;
   background: #2196f3;
@@ -153,7 +146,6 @@ function performSearch() {
   background: #0b7dda;
 }
 
-/* Usynlig måleelement */
 .invisible-text {
   position: absolute;
   visibility: hidden;

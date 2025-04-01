@@ -1,11 +1,9 @@
 <template>
   <div class="sidebar">
-    <SearchBox />
+    <SearchBox @search="onSearch" />
     <div class="filters">
-      <!-- Øverste knapp -->
     </div>
     <div class="filters">
-      <!-- Hus og Bil under -->
       <button
         :class="{ active: selectedCategory === 'All' }"
         @click="selectCategory('All')"
@@ -29,8 +27,11 @@
 import { ref, defineEmits } from 'vue'
 import SearchBox from '@/components/map/MapSearchBar.vue'
 
-// Kun tillegg: event for å sende valgt kategori oppover
-const emit = defineEmits(['updateCategory'])
+const emit = defineEmits(['updateCategory', 'search'])
+const onSearch = (query: string) => {
+  emit('search', query)
+}
+
 const selectedCategory = ref('All')
 
 const selectCategory = (cat: string) => {

@@ -1,25 +1,34 @@
 <template>
   <div class="map-page">
-    <MapSidebar @updateCategory="updateCategory" />
-    <MapWrapper :center="center" :zoom="zoom" :selectedCategory="selectedCategory" />
+    <MapSidebar
+      @updateCategory="updateCategory"
+      @search="updateSearch"
+    />
+    <Map
+      :center="center"
+      :zoom="zoom"
+      :selectedCategory="selectedCategory"
+      :searchQuery="searchQuery"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import MapWrapper from '@/components/map/Map.vue'
+import Map from '@/components/map/Map.vue'
 import MapSidebar from '@/components/map/MapSidebar.vue'
 
-// Sett et senter for kartet, for eksempel Oslo
 const center = ref({ lat: 63.5, lng: 11 })
 const zoom = ref(5.2)
-
-
 const selectedCategory = ref('All')
+const searchQuery = ref('')
 
-// Oppdaterer filteret når MapSidebar emitter et event
 const updateCategory = (cat: string) => {
   selectedCategory.value = cat
+}
+
+const updateSearch = (query: string) => {
+  searchQuery.value = query
 }
 </script>
 
