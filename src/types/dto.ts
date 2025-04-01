@@ -54,7 +54,7 @@ export interface ListingAttributeResponse {
 }
 
 export interface MessageRequest {
-  fromUserid: number;
+  fromUserId: number;
   toUserId: number;
   messageText: string;
 }
