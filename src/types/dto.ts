@@ -20,7 +20,6 @@ export interface ListingResponse {
   fullDescription: string;
   longitude: number;
   latitude: number;
-  imageUrls: string[];
   category: CategoryResponse;
   user: UserResponse;
   attributes: ListingAttributeResponse[];
