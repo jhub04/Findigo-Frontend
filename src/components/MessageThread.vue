@@ -43,7 +43,7 @@ const sendMessageToUser = async () => {
   } catch (e) {
     console.log('Failed to send message', e)
   } finally {
-    sending.value = true
+    sending.value = false;
   }
 }
 
