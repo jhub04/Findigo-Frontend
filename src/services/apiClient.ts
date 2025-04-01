@@ -2,8 +2,7 @@ import axios from 'axios'
 import { useTokenStore } from '@/stores/token.ts'
 
 const apiClient = axios.create({
-  baseURL: 'https://localhost:8443/api',
-  headers: { 'Content-Type': 'application/json' },
+  baseURL: 'https://localhost:8443/api'
 });
 
 apiClient.interceptors.request.use((config) => {
