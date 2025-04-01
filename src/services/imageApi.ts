@@ -5,11 +5,7 @@ export const uploadImageToListing = async (listingId: number, file: File): Promi
   const formData = new FormData()
   formData.append('file', file)
 
-  await apiClient.post(`/images/upload/${listingId}`, formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  })
+  await apiClient.post(`/images/upload/${listingId}`, formData)
 };
 
 // Get all image URLs for a listing
