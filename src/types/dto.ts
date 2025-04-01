@@ -52,3 +52,20 @@ export interface ListingAttributeResponse {
   name: string;
   value: string;
 }
+
+export interface MessageRequest {
+  fromUserid: number;
+  toUserId: number;
+  messageText: string;
+}
+
+export interface MessageResponse {
+  fromUserId: number;
+  fromUsername: string;
+  toUserId: number;
+  toUsername: string;
+  messageText: string;
+  messageId: number;
+  read: boolean;
+  sentAt: string;
+}
