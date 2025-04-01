@@ -1,3 +1,50 @@
+<template>
+  <div class="nav-search">
+    <!-- Hidden element used to calculate dynamic width for the dropdown -->
+    <span ref="categoryWidthRef" class="invisible-text">
+      {{
+        selectedCategory === 'all'
+          ? 'All'
+          : categories.find(cat => cat.id === selectedCategory)?.name || ''
+      }}
+    </span>
+
+    <!-- Main search form -->
+    <form class="search-form" @submit.prevent="performSearch">
+
+      <!-- Dropdown category selector -->
+      <select
+        ref="selectRef"
+        v-model="selectedCategory"
+        class="search-category"
+      >
+        <option :value="'all'">All</option>
+        <option
+          v-for="cat in categories"
+          :key="cat.id"
+          :value="cat.id"
+        >
+          {{ cat.name }}
+        </option>
+      </select>
+
+      <!-- Text input for query -->
+      <input
+        v-model="searchQuery"
+        type="text"
+        placeholder="Search..."
+        name="findigo-search"
+        autocomplete="off"
+      />
+
+      <!-- Button triggers performSearch() on click -->
+      <button type="submit">
+        <i class="fa fa-search"></i>
+      </button>
+    </form>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { nextTick, onMounted, ref, watch } from 'vue'
@@ -58,53 +105,6 @@ function performSearch() {
   }
 }
 </script>
-
-<template>
-  <div class="nav-search">
-    <!-- Hidden element used to calculate dynamic width for the dropdown -->
-    <span ref="categoryWidthRef" class="invisible-text">
-      {{
-        selectedCategory === 'all'
-          ? 'All'
-          : categories.find(cat => cat.id === selectedCategory)?.name || ''
-      }}
-    </span>
-
-    <!-- Main search form -->
-    <form class="search-form" @submit.prevent="performSearch">
-
-      <!-- Dropdown category selector -->
-      <select
-        ref="selectRef"
-        v-model="selectedCategory"
-        class="search-category"
-      >
-        <option :value="'all'">All</option>
-        <option
-          v-for="cat in categories"
-          :key="cat.id"
-          :value="cat.id"
-        >
-          {{ cat.name }}
-        </option>
-      </select>
-
-      <!-- Text input for query -->
-      <input
-        v-model="searchQuery"
-        type="text"
-        placeholder="Search..."
-        name="findigo-search"
-        autocomplete="off"
-      />
-
-      <!-- Button triggers performSearch() on click -->
-      <button type="submit">
-        <i class="fa fa-search"></i>
-      </button>
-    </form>
-  </div>
-</template>
 
 <style scoped>
 .search-form {

@@ -153,7 +153,9 @@ function onMarkerClick(lat: number, lng: number) {
 
     const img = document.createElement('img')
     img.src = (listing.imageUrls && listing.imageUrls[0]) || noImage
-    img.onerror = () => { img.src = noImage }
+    img.onerror = () => {
+      img.src = noImage
+    }
     img.alt = 'Listing image'
     img.style.cssText = `
       width: 100%;
@@ -207,11 +209,9 @@ function onMarkerClick(lat: number, lng: number) {
     content.appendChild(buttonContainer)
 
     if (infoWindow.value) infoWindow.value.close()
+    infoWindow.value = new google.maps.InfoWindow({ content })
 
-    infoWindow.value = new window.google.maps.InfoWindow({
-      content,
-      maxWidth: 400
-    })
+
 
     const mapObject = mapRef.value.$mapObject
     mapObject.panTo({ lat, lng })
@@ -221,10 +221,6 @@ function onMarkerClick(lat: number, lng: number) {
     setTimeout(() => {
       const header = document.querySelector('.gm-style-iw-chr')
       if (header) {
-        header.style.height = '20px'
-        header.style.display = 'flex'
-        header.style.alignItems = 'center'
-        header.style.justifyContent = 'space-between'
 
         const titleEl = document.createElement('span')
         titleEl.textContent = group[index].briefDescription || 'No title'

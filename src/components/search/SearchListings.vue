@@ -44,10 +44,15 @@ const searchQuery = computed(() => {
  * Extracts the selected category (?category=...) from the route.
  * Defaults to 'all' if not present.
  */
-const selectedCategory = computed(() => {
+const selectedCategory = computed<"all" | number>(() => {
   const c = route.query.category
-  return Array.isArray(c) ? c[0] : c || 'all'
+  if (Array.isArray(c)) return "all"
+  if (c === undefined || c === null || c === "all") return "all"
+
+  const num = Number(c)
+  return isNaN(num) ? "all" : num
 })
+
 
 /**
  * Filters a list of listings based on a case-insensitive search in briefDescription.
