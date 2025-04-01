@@ -1,27 +1,81 @@
+<template>
+  <div class="nav-search">
+    <!-- Hidden element used to calculate dynamic width for the dropdown -->
+    <span ref="categoryWidthRef" class="invisible-text">
+      {{
+        selectedCategory === 'all'
+          ? 'All'
+          : categories.find(cat => cat.id === selectedCategory)?.name || ''
+      }}
+    </span>
+
+    <!-- Main search form -->
+    <form class="search-form" @submit.prevent="performSearch">
+
+      <!-- Dropdown category selector -->
+      <select
+        ref="selectRef"
+        v-model="selectedCategory"
+        class="search-category"
+      >
+        <option :value="'all'">All</option>
+        <option
+          v-for="cat in categories"
+          :key="cat.id"
+          :value="cat.id"
+        >
+          {{ cat.name }}
+        </option>
+      </select>
+
+      <!-- Text input for query -->
+      <input
+        v-model="searchQuery"
+        type="text"
+        placeholder="Search..."
+        name="findigo-search"
+        autocomplete="off"
+      />
+
+      <!-- Button triggers performSearch() on click -->
+      <button type="submit">
+        <i class="fa fa-search"></i>
+      </button>
+    </form>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { nextTick, onMounted, ref, watch } from 'vue'
-import type { CategoryResponse, ListingResponse } from '@/types/dto.ts'
 import { getAllCategories } from '@/services/categoryApi.ts'
+import type { CategoryResponse } from '@/types/dto.ts'
 
-
+// Used to calculate the width of the category <select> to avoid layout shift
 const categoryWidthRef = ref<HTMLElement | null>(null)
 const selectRef = ref<HTMLElement | null>(null)
 
+// Programmatic navigation
 const router = useRouter()
 
+// Search input state
 const searchQuery = ref('')
 
+// All fetched categories shown in dropdown
 const categories = ref<CategoryResponse[]>([])
+
+// ID of selected category; 'all' means no filter
 const selectedCategory = ref<number | 'all'>('all')
 
+// Dynamically resize the select to match label width (for better UI alignment)
 function updateSelectWidth() {
   if (categoryWidthRef.value && selectRef.value) {
-    const width = categoryWidthRef.value.offsetWidth + 40 // padding-buffer
+    const width = categoryWidthRef.value.offsetWidth + 40 // + buffer for padding
     selectRef.value.style.width = `${width}px`
   }
 }
 
+// Fetch category list on mount and resize select accordingly
 onMounted(async () => {
   try {
     const fetched = await getAllCategories()
@@ -29,12 +83,16 @@ onMounted(async () => {
   } catch (err) {
     console.error('Failed to load categories', err)
   } finally {
+    // Resize dropdown to fit content text
     await nextTick(updateSelectWidth)
   }
 })
 
+// Recalculate select width whenever a new category is selected
 watch(selectedCategory, () => nextTick(updateSelectWidth))
 
+// Called when user submits the form (Enter or button)
+// Navigates to SearchResultsView, passing query and category as URL params
 function performSearch() {
   if (searchQuery.value.trim()) {
     router.push({
@@ -47,47 +105,6 @@ function performSearch() {
   }
 }
 </script>
-
-<template>
-  <div class = "nav-search">
-  <span ref="categoryWidthRef" class="invisible-text">
-    {{
-      selectedCategory === 'all'
-        ? 'All'
-        : categories.find(cat => cat.id === selectedCategory)?.name || ''
-    }}
-  </span>
-
-  <form class="search-form" @submit.prevent="performSearch">
-    <select
-      ref="selectRef"
-      v-model="selectedCategory"
-      class="search-category"
-    >
-      <option :value="'all'">All</option>
-      <option
-        v-for="cat in categories"
-        :key="cat.id"
-        :value="cat.id"
-      >
-        {{ cat.name }}
-      </option>
-    </select>
-
-    <input
-      v-model="searchQuery"
-      type="text"
-      placeholder="Search..."
-      name="findigo-search"
-      autocomplete="off"
-    />
-
-    <button type="submit">
-      <i class="fa fa-search"></i>
-    </button>
-  </form>
-  </div>
-</template>
 
 <style scoped>
 .search-form {

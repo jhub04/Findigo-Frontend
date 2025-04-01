@@ -10,50 +10,59 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * Displays a Google Map with interactive markers for listings.
+ * Markers are filtered by category and query. Clicking a marker opens an info window.
+ */
+
 import { ref, onMounted, computed, watch } from 'vue'
 import { getAllListings } from '@/services/listingApi'
-import { getListingsByCategory } from '@/services/categoryApi'
-import type { ListingResponse } from '@/types/dto'
+import { getAllCategories, getListingsByCategory } from '@/services/categoryApi'
+import type { CategoryResponse, ListingResponse } from '@/types/dto'
 import noImage from '@/assets/no-image.jpg'
-import {navigateToListing} from '@/utils/navigationUtil.ts'
+import { navigateToListing } from '@/utils/navigationUtil.ts'
 
+/**
+ * Props passed from the MapView component.
+ */
 const props = defineProps<{
   center: { lat: number; lng: number }
   zoom: number
-  selectedCategory?: string
+  selectedCategory?: number | 'All'
   searchQuery?: string
 }>()
 
+// Map reference and InfoWindow state
 const mapRef = ref<any>(null)
 const infoWindow = ref<any>(null)
+
+// Listings and category state
 const allListings = ref<ListingResponse[]>([])
 const selectedListing = ref<ListingResponse | null>(null)
-const categoryNameToId = {
-  House: 1,
-  Car: 2
-}
+const categories = ref<CategoryResponse[]>([])
 
+/**
+ * Filtered listings based on selected category and search query.
+ */
 const filteredListings = computed(() => {
   let listings = allListings.value
 
   if (props.selectedCategory && props.selectedCategory !== 'All') {
-    listings = listings.filter(
-      l => l.category.name === props.selectedCategory
-    )
+    const categoryId = Number(props.selectedCategory)
+    listings = listings.filter(l => l.category?.id === categoryId)
   }
 
   if (props.searchQuery && props.searchQuery.trim() !== '') {
     const query = props.searchQuery.toLowerCase()
-    listings = listings.filter(
-      l => l.briefDescription?.toLowerCase().includes(query)
-    )
+    listings = listings.filter(l => l.briefDescription?.toLowerCase().includes(query))
   }
 
   return listings
 })
 
-
-
+/**
+ * Group listings by lat/lng to avoid overlapping markers.
+ */
 const listingsByPosition = computed(() => {
   const map = new Map<string, ListingResponse[]>()
   filteredListings.value.forEach(listing => {
@@ -64,36 +73,43 @@ const listingsByPosition = computed(() => {
   return map
 })
 
+/**
+ * One unique marker per coordinate group.
+ */
 const uniqueListings = computed(() => {
   return Array.from(listingsByPosition.value.values()).map(group => group[0])
 })
 
-
+/**
+ * Watch selectedCategory and refetch listings when it changes.
+ */
 watch(() => props.selectedCategory, async (newCategory) => {
   allListings.value = []
   selectedListing.value = null
 
   if (!newCategory || newCategory === 'All') {
     allListings.value = await getAllListings()
-    console.log('All listings:', allListings.value)
   } else {
-    const categoryId = categoryNameToId[newCategory]
+    const categoryId = Number(newCategory)
     if (categoryId) {
       allListings.value = await getListingsByCategory(categoryId)
     } else {
       console.error(`Unknown category: ${newCategory}`)
     }
   }
-
-  logListings(allListings.value)
 })
 
-
+/**
+ * Load categories and listings when the map component is mounted.
+ */
 onMounted(async () => {
+  categories.value = await getAllCategories()
   allListings.value = await getAllListings()
-  logListings(allListings.value)
 })
 
+/**
+ * Debug helper to log listings.
+ */
 function logListings(listings: ListingResponse[]) {
   console.log('📍 Listings loaded:')
   listings.forEach(l => {
@@ -101,6 +117,10 @@ function logListings(listings: ListingResponse[]) {
   })
 }
 
+/**
+ * Handle marker click and show a styled info window with listing preview.
+ * Supports cycling through overlapping listings using 'Next'.
+ */
 function onMarkerClick(lat: number, lng: number) {
   const key = `${lat},${lng}`
   const group = listingsByPosition.value.get(key)
@@ -112,30 +132,31 @@ function onMarkerClick(lat: number, lng: number) {
     const listing = group[index]
     const content = document.createElement('div')
     content.style.cssText = `
-    width: 200px;
-    font-family: sans-serif;
-    background-color: #fff;
-    padding: 0px 8px 8px 8px; /* ← Top-padding satt til 0 */
-    border-radius: 6px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    margin: 0;
-  `
+      width: 200px;
+      font-family: sans-serif;
+      background-color: #fff;
+      padding: 0px 8px 8px 8px;
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    `
+
     const title = document.createElement('h3')
     title.textContent = listing.briefDescription || 'No title'
     title.style.cssText = `
-    font-size: 1.1rem;
-    margin: 0;
-    padding: 0;
-    font-weight: 600;
-    line-height: 1.2;
-`
-
+      font-size: 1.1rem;
+      margin: 0;
+      padding: 0;
+      font-weight: 600;
+      line-height: 1.2;
+    `
     content.appendChild(title)
 
     const img = document.createElement('img')
     img.src = (listing.imageUrls && listing.imageUrls[0]) || noImage
+    img.onerror = () => {
+      img.src = noImage
+    }
     img.alt = 'Listing image'
-    img.onerror = () => { img.src = noImage }
     img.style.cssText = `
       width: 100%;
       height: auto;
@@ -146,24 +167,28 @@ function onMarkerClick(lat: number, lng: number) {
     content.appendChild(img)
 
     const buttonContainer = document.createElement('div')
-    const nextBtn = document.createElement('button')
-    nextBtn.textContent = 'Next'
-    nextBtn.style.cssText = `
-      display: inline-block;
+    buttonContainer.style.cssText = `
+      display: flex;
+      justify-content: space-between;
       margin-top: 8px;
-      padding: 6px 10px;
-      font-size: 0.9rem;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
     `
-    nextBtn.onclick = () => {
-      index = (index + 1) % group.length
-      updateInfoWindow()
-    }
+
     if (group.length > 1) {
+      const nextBtn = document.createElement('button')
+      nextBtn.textContent = 'Next'
+      nextBtn.style.cssText = `
+        padding: 6px 10px;
+        font-size: 0.9rem;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      `
+      nextBtn.onclick = () => {
+        index = (index + 1) % group.length
+        updateInfoWindow()
+      }
       buttonContainer.appendChild(nextBtn)
     }
 
@@ -171,9 +196,6 @@ function onMarkerClick(lat: number, lng: number) {
     goToBtn.textContent = 'Go to listing'
     goToBtn.onclick = () => navigateToListing(listing)
     goToBtn.style.cssText = `
-      display: inline-block;
-      margin-top: 8px;
-      margin-left: 0px;
       padding: 6px 10px;
       font-size: 0.9rem;
       background-color: #28a745;
@@ -183,66 +205,44 @@ function onMarkerClick(lat: number, lng: number) {
       cursor: pointer;
     `
     buttonContainer.appendChild(goToBtn)
-    buttonContainer.style.cssText = `
-      display: flex;
-      justify-content: space-between;
-      margin-top: 8px;
-    `
 
     content.appendChild(buttonContainer)
 
     if (infoWindow.value) infoWindow.value.close()
+    infoWindow.value = new google.maps.InfoWindow({ content })
 
-    infoWindow.value = new window.google.maps.InfoWindow({
-      content,
-      maxWidth: 400
-    })
+
 
     const mapObject = mapRef.value.$mapObject
     mapObject.panTo({ lat, lng })
     infoWindow.value.setPosition({ lat, lng })
     infoWindow.value.open(mapObject)
 
-    infoWindow.value.open(mapObject)
-
     setTimeout(() => {
       const header = document.querySelector('.gm-style-iw-chr')
       if (header) {
-        header.style.height = '20px'
-        header.style.display = 'flex'
-        header.style.alignItems = 'center'
-        header.style.justifyContent = 'space-between'
 
         const titleEl = document.createElement('span')
         titleEl.textContent = group[index].briefDescription || 'No title'
         titleEl.style.cssText = `
-      font-size: 1rem;
-      font-weight: 600;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    `
+          font-size: 1rem;
+          font-weight: 600;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        `
+
         const closeBtn = document.querySelector('.gm-ui-hover-effect')
         if (closeBtn && !header.querySelector('span')) {
           header.insertBefore(titleEl, closeBtn)
         }
       }
     }, 0)
-
-
-
   }
 
-
   updateInfoWindow()
-
-
 }
-
-
-
 </script>
-
 
 <style>
 .google-map {

@@ -1,51 +1,88 @@
 <template>
   <div class="sidebar">
+    <!-- Container that holds both the search box and category buttons -->
+    <div class="searchAndCategories">
+      <!-- Emits 'search' when user types or submits a search query -->
+      <SearchBox @search="onSearch" />
 
-    <div class = searchAndCategories>
-    <SearchBox @search="onSearch" />
-    <div class="filters">
-      <button
-        :class="{ active: selectedCategory === 'All' }"
-        @click="selectCategory('All')"
-      >
-        All
-      </button>
-      <button
-        v-for="cat in categories"
-        :key="cat"
-        :class="{ active: selectedCategory === cat }"
-        @click="selectCategory(cat)"
-      >
-        {{ cat.name }}
-      </button>
+      <!-- Category filter buttons -->
+      <div class="filters">
+        <!-- 'All' is default and resets category filtering -->
+        <button
+          :class="{ active: selectedCategory === 'All' }"
+          @click="selectCategory('All')"
+        >
+          All
+        </button>
+
+        <!-- Dynamically render category buttons fetched from API -->
+        <button
+          v-for="cat in categories"
+          :key="cat"
+          :class="{ active: selectedCategory === cat.id }"
+          @click="selectCategory(cat.id)"
+        >
+          {{ cat.name }}
+        </button>
+      </div>
     </div>
-  </div>
   </div>
 </template>
 
-
 <script setup lang="ts">
+/**
+ * Sidebar component for filtering listings.
+ * Provides a search box and category buttons.
+ * Emits selected search query and category to parent view.
+ */
+
 import { ref, defineEmits, onMounted } from 'vue'
-import { getAllCategories}  from '@/services/categoryApi.ts'
+import { getAllCategories } from '@/services/categoryApi.ts'
 import SearchBox from '@/components/map/MapSearchBar.vue'
 
+/**
+ * Emits events to parent component:
+ * - 'updateCategory': when a new category is selected
+ * - 'search': when a query is entered into the search box
+ */
 const emit = defineEmits(['updateCategory', 'search'])
+
+/**
+ * Emits search query to parent when triggered by SearchBox.
+ * @param query The search input from the user
+ */
 const onSearch = (query: string) => {
   emit('search', query)
 }
 
-const selectedCategory = ref('All')
+/**
+ * Holds the currently selected category.
+ * Used for active button highlighting and emitting state to parent.
+ */
+const selectedCategory = ref<number | 'All'>('All')
 
-const selectCategory = (cat: string) => {
+/**
+ * Called when a category button is clicked.
+ * Updates local selectedCategory and emits to parent.
+ * @param cat The category ID or 'All'
+ */
+const selectCategory = (cat: number | 'All') => {
   selectedCategory.value = cat
   emit('updateCategory', cat)
 }
 
-const categories = ref<string[]>([])
+/**
+ * Reactive list of categories fetched from API.
+ * Used to dynamically render category filter buttons.
+ */
+const categories = ref<any[]>([])
+
+/**
+ * Fetch all categories on component mount.
+ */
 onMounted(async () => {
   categories.value = await getAllCategories()
 })
-
 </script>
 
 <style scoped>
@@ -101,4 +138,3 @@ onMounted(async () => {
   color: white;
 }
 </style>
-y
