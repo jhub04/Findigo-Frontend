@@ -66,6 +66,6 @@ export interface MessageResponse {
   toUsername: string;
   messageText: string;
   messageId: number;
-  isRead: boolean;
+  read: boolean;
   sentAt: string;
 }

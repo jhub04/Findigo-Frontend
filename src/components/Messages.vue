@@ -10,8 +10,6 @@ const messages = ref<MessageResponse[]>([])
 const messagesLoading = ref(false)
 const messagesError = ref('')
 
-// TODO: Issues with read/unread state. Backend works as expected
-
 watch(
   user,
   async (newUser) => {
@@ -32,11 +30,6 @@ watch(
 
 const formatDate = (dateStr: string) => new Date(dateStr).toLocaleString()
 
-const sortedMessages = computed(() =>
-  messages.value
-    .slice()
-    .sort((a, b) => new Date(b.sentAt).getTime() - new Date(a.sentAt).getTime()),
-)
 
 const getOtherUsername = (message: MessageResponse): string => {
   return message.fromUserId === user.value!.id ? message.toUsername : message.fromUsername
@@ -62,12 +55,12 @@ const openMessageThread = (message: MessageResponse) => {
     <p v-if="userError" class="error-message">Failed to load user data.</p>
     <p v-if="messagesError" class="error-message">{{ messagesError }}</p>
 
-    <div v-if="!messagesLoading && sortedMessages.length">
+    <div v-if="!messagesLoading && messages.length">
       <div
-        v-for="message in sortedMessages"
+        v-for="message in messages"
         :key="message.messageId"
         class="message-preview"
-        :class="{ 'unread-message': (!message.isRead && message.toUserId === user!.id) }"
+        :class="{ 'unread-message': (!message.read && message.toUserId === user!.id) }"
         @click="openMessageThread(message)"
       >
         <div class="message-header">
@@ -79,10 +72,6 @@ const openMessageThread = (message: MessageResponse) => {
         <div class="message-body">
           {{ message.messageText }}
         </div>
-
-        <!-- Explicit debug logging to verify clearly -->
-        <!-- Remove after issue is resolved-->
-        <pre>{{ !message.isRead && message.toUserId === user!.id }}</pre>
       </div>
     </div>
 
@@ -146,7 +135,7 @@ h1 {
   color: red;
 }
 
-/* Remove default styles for links */
+
 a,
 a:hover,
 a:focus,
