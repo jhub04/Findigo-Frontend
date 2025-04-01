@@ -38,7 +38,7 @@ export const getUserListings = async(): Promise<ListingResponse[]> => {
   }
 
   try {
-    const response = await apiClient.get<ListingResponse[]>(`/listings/${username}`, {
+    const response = await apiClient.get<ListingResponse[]>(`/listings/username/${username}`, {
       headers: { Authorization: `Bearer ${jwtToken}` }
     });
     return response.data || [];
