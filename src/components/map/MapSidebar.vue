@@ -13,8 +13,8 @@
       <button
         v-for="cat in categories"
         :key="cat"
-        :class="{ active: selectedCategory === cat }"
-        @click="selectCategory(cat)"
+        :class="{ active: selectedCategory === cat.id }"
+        @click="selectCategory(cat.id)"
       >
         {{ cat.name }}
       </button>
@@ -34,14 +34,15 @@ const onSearch = (query: string) => {
   emit('search', query)
 }
 
-const selectedCategory = ref('All')
+const selectedCategory = ref<number | 'All'>('All')
 
-const selectCategory = (cat: string) => {
+const selectCategory = (cat: number) => {
   selectedCategory.value = cat
   emit('updateCategory', cat)
 }
 
 const categories = ref<string[]>([])
+
 onMounted(async () => {
   categories.value = await getAllCategories()
 })

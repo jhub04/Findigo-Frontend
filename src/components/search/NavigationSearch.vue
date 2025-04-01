@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { nextTick, onMounted, ref, watch } from 'vue'
-import type { CategoryResponse, ListingResponse } from '@/types/dto.ts'
 import { getAllCategories } from '@/services/categoryApi.ts'
-
 
 const categoryWidthRef = ref<HTMLElement | null>(null)
 const selectRef = ref<HTMLElement | null>(null)
@@ -17,7 +15,7 @@ const selectedCategory = ref<number | 'all'>('all')
 
 function updateSelectWidth() {
   if (categoryWidthRef.value && selectRef.value) {
-    const width = categoryWidthRef.value.offsetWidth + 40 // padding-buffer
+    const width = categoryWidthRef.value.offsetWidth + 40
     selectRef.value.style.width = `${width}px`
   }
 }
@@ -34,7 +32,6 @@ onMounted(async () => {
 })
 
 watch(selectedCategory, () => nextTick(updateSelectWidth))
-
 function performSearch() {
   if (searchQuery.value.trim()) {
     router.push({

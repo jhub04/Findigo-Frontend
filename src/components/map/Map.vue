@@ -12,15 +12,15 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue'
 import { getAllListings } from '@/services/listingApi'
-import { getListingsByCategory } from '@/services/categoryApi'
-import type { ListingResponse } from '@/types/dto'
+import { getAllCategories, getListingsByCategory } from '@/services/categoryApi'
+import type { CategoryResponse, ListingResponse } from '@/types/dto'
 import noImage from '@/assets/no-image.jpg'
 import {navigateToListing} from '@/utils/navigationUtil.ts'
 
 const props = defineProps<{
   center: { lat: number; lng: number }
   zoom: number
-  selectedCategory?: string
+  selectedCategory?: number | 'All'
   searchQuery?: string
 }>()
 
@@ -28,18 +28,15 @@ const mapRef = ref<any>(null)
 const infoWindow = ref<any>(null)
 const allListings = ref<ListingResponse[]>([])
 const selectedListing = ref<ListingResponse | null>(null)
-const categoryNameToId = {
-  House: 1,
-  Car: 2
-}
+const categories = ref<CategoryResponse[]>([])
 
 const filteredListings = computed(() => {
   let listings = allListings.value
 
   if (props.selectedCategory && props.selectedCategory !== 'All') {
-    listings = listings.filter(
-      l => l.category.name === props.selectedCategory
-    )
+    const categoryId = Number(props.selectedCategory)
+    listings = listings.filter(l => l.category.id === categoryId)
+
   }
 
   if (props.searchQuery && props.searchQuery.trim() !== '') {
@@ -77,21 +74,21 @@ watch(() => props.selectedCategory, async (newCategory) => {
     allListings.value = await getAllListings()
     console.log('All listings:', allListings.value)
   } else {
-    const categoryId = categoryNameToId[newCategory]
+    const categoryId = Number(newCategory)
     if (categoryId) {
       allListings.value = await getListingsByCategory(categoryId)
+      logListings(allListings.value)
     } else {
       console.error(`Unknown category: ${newCategory}`)
     }
   }
 
-  logListings(allListings.value)
 })
 
 
 onMounted(async () => {
+  categories.value = await getAllCategories()
   allListings.value = await getAllListings()
-  logListings(allListings.value)
 })
 
 function logListings(listings: ListingResponse[]) {

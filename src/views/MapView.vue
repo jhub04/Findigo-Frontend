@@ -23,7 +23,7 @@ const zoom = ref(5.2)
 const selectedCategory = ref('All')
 const searchQuery = ref('')
 
-const updateCategory = (cat: string) => {
+const updateCategory = (cat: number | 'All') => {
   selectedCategory.value = cat
 }
 

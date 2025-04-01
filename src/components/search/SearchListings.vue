@@ -21,7 +21,7 @@ const selectedCategory = computed(() => {
 function filterListingsByQuery(listings: ListingResponse[], query: string): ListingResponse[] {
   const lowerQuery = query.toLowerCase()
   return listings.filter(listing =>
-    listing.briefDescription.toLowerCase().startsWith(lowerQuery)
+    listing.briefDescription.toLowerCase().includes(lowerQuery)
   )
 }
 
