@@ -6,7 +6,6 @@
       :position="{ lat: listing.latitude, lng: listing.longitude }"
       @click="onMarkerClick(listing.latitude, listing.longitude)"
     />
-
   </GMapMap>
 </template>
 
@@ -34,16 +33,25 @@ const categoryNameToId = {
   Car: 2
 }
 
-// Kun nødvendig endring: filtrerer listings basert på listing.category.name
 const filteredListings = computed(() => {
-  console.log('All listings:', allListings.value.map(l => l.category.name))
-  if (!props.selectedCategory || props.selectedCategory === 'All') {
-    return allListings.value
+  let listings = allListings.value
+
+  if (props.selectedCategory && props.selectedCategory !== 'All') {
+    listings = listings.filter(
+      l => l.category.name === props.selectedCategory
+    )
   }
-  return allListings.value.filter(
-    listing => listing.category.name === props.selectedCategory
-  )
+
+  if (props.searchQuery && props.searchQuery.trim() !== '') {
+    const query = props.searchQuery.toLowerCase()
+    listings = listings.filter(
+      l => l.briefDescription?.toLowerCase().includes(query)
+    )
+  }
+
+  return listings
 })
+
 
 
 const listingsByPosition = computed(() => {
@@ -60,12 +68,6 @@ const uniqueListings = computed(() => {
   return Array.from(listingsByPosition.value.values()).map(group => group[0])
 })
 
-watch(uniqueListings, () => {
-  console.log('🧭 Unique marker positions:')
-  uniqueListings.value.forEach(l => {
-    console.log(`${l.id}: ${l.latitude}, ${l.longitude}, ${l.briefDescription}`)
-  })
-})
 
 watch(() => props.selectedCategory, async (newCategory) => {
   allListings.value = []
@@ -143,6 +145,7 @@ function onMarkerClick(lat: number, lng: number) {
     `
     content.appendChild(img)
 
+    const buttonContainer = document.createElement('div')
     const nextBtn = document.createElement('button')
     nextBtn.textContent = 'Next'
     nextBtn.style.cssText = `
@@ -161,7 +164,7 @@ function onMarkerClick(lat: number, lng: number) {
       updateInfoWindow()
     }
     if (group.length > 1) {
-      content.appendChild(nextBtn)
+      buttonContainer.appendChild(nextBtn)
     }
 
     const goToBtn = document.createElement('button')
@@ -179,7 +182,14 @@ function onMarkerClick(lat: number, lng: number) {
       border-radius: 4px;
       cursor: pointer;
     `
-    content.appendChild(goToBtn)
+    buttonContainer.appendChild(goToBtn)
+    buttonContainer.style.cssText = `
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+    `
+
+    content.appendChild(buttonContainer)
 
     if (infoWindow.value) infoWindow.value.close()
 

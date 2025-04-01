@@ -33,13 +33,11 @@ onMounted(async () => {
   try {
     loading.value = true
     if (searchQuery.value) {
-      // Foreløpig: bare søk på tittel hvis kategori er 'all'
       if (selectedCategory.value === 'all') {
         listings.value = await getAllListings()
         listings.value = filterListingsByQuery(listings.value, searchQuery.value)
         console.log(listings.value)
       } else {
-        // Hent annonser for valgt kategori
         listings.value = await getListingsByCategory(selectedCategory.value)
         listings.value = filterListingsByQuery(listings.value, searchQuery.value)
       }
