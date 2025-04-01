@@ -111,7 +111,7 @@ function onMarkerClick(listing: ListingResponse) {
     imageWrapper.style.cssText = `margin-bottom: 8px;`
 
     const img = document.createElement('img')
-    img.src = (listing.imageUrls && listing.imageUrls[0]) || noImage
+    img.src = noImage // TODO: Fetch image
     img.alt = 'Listing image'
     img.onerror = () => { img.src = noImage }
     img.style.cssText = `

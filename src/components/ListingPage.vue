@@ -6,16 +6,10 @@
     <div v-else-if="listing" class="listing-container">
       <div class="image-section">
         <div class="main-image">
-          <img :src="listing.imageUrls[0]" alt="Hovedbilde" />
+          <img :src="noImage" alt="Hovedbilde" />
         </div>
         <div class="thumbnail-row">
-          <img
-            v-for="(url, index) in listing.imageUrls"
-            :key="index"
-            :src="url"
-            alt="Bilde"
-            class="thumbnail"
-          />
+          <p>Fetch images here</p>
         </div>
       </div>
 
@@ -42,6 +36,7 @@
 </template>
 
 <script setup lang="ts">
+import noImage from '@/assets/no-image.jpg'
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import type { ListingResponse } from '@/types/dto'
