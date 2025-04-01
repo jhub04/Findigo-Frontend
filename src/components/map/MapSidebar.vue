@@ -1,8 +1,8 @@
 <template>
   <div class="sidebar">
+
+    <div class = searchAndCategories>
     <SearchBox @search="onSearch" />
-    <div class="filters">
-    </div>
     <div class="filters">
       <button
         :class="{ active: selectedCategory === 'All' }"
@@ -11,20 +11,22 @@
         All
       </button>
       <button
-        v-for="cat in ['Car', 'House']"
+        v-for="cat in categories"
         :key="cat"
         :class="{ active: selectedCategory === cat }"
         @click="selectCategory(cat)"
       >
-        {{ cat }}
+        {{ cat.name }}
       </button>
-
     </div>
+  </div>
   </div>
 </template>
 
+
 <script setup lang="ts">
-import { ref, defineEmits } from 'vue'
+import { ref, defineEmits, onMounted } from 'vue'
+import { getAllCategories}  from '@/services/categoryApi.ts'
 import SearchBox from '@/components/map/MapSearchBar.vue'
 
 const emit = defineEmits(['updateCategory', 'search'])
@@ -38,6 +40,12 @@ const selectCategory = (cat: string) => {
   selectedCategory.value = cat
   emit('updateCategory', cat)
 }
+
+const categories = ref<string[]>([])
+onMounted(async () => {
+  categories.value = await getAllCategories()
+})
+
 </script>
 
 <style scoped>
@@ -50,10 +58,16 @@ const selectCategory = (cat: string) => {
   border-radius: 0 10px 10px 10px;
   padding: 1rem;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  width: 300px;
-  height: 220px;
+  width: auto;
+  height: auto;
   font-family: sans-serif;
   border: 2.5px solid #ccc;
+}
+
+.searchAndCategories {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .filters {
