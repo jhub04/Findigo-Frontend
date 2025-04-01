@@ -23,7 +23,7 @@ export interface ListingResponse {
   imageUrls: string[];
   category: CategoryResponse;
   user: UserResponse;
-  attributes: ListingAttributeResponse;
+  attributes: ListingAttributeResponse[];
 }
 
 export interface ListingAttributeRequest {

@@ -7,27 +7,27 @@
     <div class="filters">
       <!-- Hus og Bil under -->
       <button
-        v-for="cat in ['House', 'Car']"
+        :class="{ active: selectedCategory === 'All' }"
+        @click="selectCategory('All')"
+      >
+        All
+      </button>
+      <button
+        v-for="cat in ['Car', 'House']"
         :key="cat"
         :class="{ active: selectedCategory === cat }"
         @click="selectCategory(cat)"
       >
         {{ cat }}
       </button>
-      <!-- Eventuelt en knapp for 'Alle' -->
-      <button
-        :class="{ active: selectedCategory === 'All' }"
-        @click="selectCategory('All')"
-      >
-        All
-      </button>
+
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, defineEmits } from 'vue'
-import SearchBox from '@/components/map/SearchBox.vue'
+import SearchBox from '@/components/map/MapSearchBar.vue'
 
 // Kun tillegg: event for å sende valgt kategori oppover
 const emit = defineEmits(['updateCategory'])

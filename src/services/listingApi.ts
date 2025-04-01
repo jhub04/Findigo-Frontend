@@ -1,13 +1,10 @@
 import type { ListingRequest } from '@/types/dto.ts'
 import type { ListingResponse } from '@/types/dto.ts'
-import { useTokenStore } from '@/stores/token.ts'
 import apiClient from '@/services/apiClient.ts'
+import { useTokenStore } from '@/stores/token.ts'
 
 export const addListing = async(data: ListingRequest): Promise<ListingResponse> => {
-  const tokenStore = useTokenStore();
-  const username = tokenStore.loggedInUser;
-
-  const response = await apiClient.post<ListingResponse>(`/listings/${username}`, data);
+  const response = await apiClient.post<ListingResponse>(`/listings`, data);
   return response.data;
 }
 
@@ -18,6 +15,16 @@ export const getAllListings = async(): Promise<ListingResponse[]> => {
   } catch (error) {
     console.log(`Failed to fetch all listings: ${error}`);
     return [];
+  }
+}
+
+export const getListingById = async (id: number): Promise<ListingResponse | null> => {
+  try {
+    const response = await apiClient.get<ListingResponse>(`/listings/id/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Failed to fetch listing: ${error} `);
+    return null;
   }
 }
 
@@ -36,7 +43,7 @@ export const getUserListings = async(): Promise<ListingResponse[]> => {
     });
     return response.data || [];
   } catch (error) {
-      console.error(`Failed to fetch listings: ${error} `);
-      return [];
+    console.error(`Failed to fetch listings: ${error} `);
+    return [];
   }
 };

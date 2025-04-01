@@ -1,4 +1,6 @@
 import apiClient from '@/services/apiClient.ts'
+import type { ListingResponse } from '@/types/dto.ts'
+import { useTokenStore } from '@/stores/token.ts'
 
 export const getCurrentUser = async () => {
   try {
@@ -9,7 +11,7 @@ export const getCurrentUser = async () => {
     console.error(`Failed to fetch current user: ${error})`)
     return null
   }
-}
+};
 
 const userApi = {
   getCurrentUser,
