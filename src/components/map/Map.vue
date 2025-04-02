@@ -17,10 +17,9 @@
 
 import { ref, onMounted, computed, watch } from 'vue'
 import { getAllListings } from '@/services/listingApi'
-import { getAllCategories, getListingsByCategory } from '@/services/categoryApi'
+import { getAllCategories } from '@/services/categoryApi'
 import type { CategoryResponse, ListingResponse } from '@/types/dto'
 import { getListingsByCategory } from '@/services/listingApi'
-import type { ListingResponse } from '@/types/dto'
 import noImage from '@/assets/no-image.jpg'
 import { navigateToListing } from '@/utils/navigationUtil.ts'
 

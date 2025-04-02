@@ -11,7 +11,6 @@
 </template>
 
 <script setup lang="ts">
-import FilterCategories from '@/components/search/FilterCategories.vue'
 
 const props = defineProps<{
   selectedCategory: number | 'all'
