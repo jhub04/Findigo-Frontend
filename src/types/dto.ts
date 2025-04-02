@@ -19,9 +19,13 @@ export interface ListingResponse {
   fullDescription: string;
   longitude: number;
   latitude: number;
+  price: number;
+  address: string;
+  postalCode: string;
   category: CategoryResponse;
   user: UserResponse;
   attributes: ListingAttributeResponse[];
+
 }
 
 export interface ListingAttributeRequest {
