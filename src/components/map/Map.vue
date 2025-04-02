@@ -152,10 +152,7 @@ function onMarkerClick(lat: number, lng: number) {
     content.appendChild(title)
 
     const img = document.createElement('img')
-    img.src = (listing.imageUrls && listing.imageUrls[0]) || noImage
-    img.onerror = () => {
-      img.src = noImage
-    }
+    img.src = noImage // TODO: Fetch image
     img.alt = 'Listing image'
     img.style.cssText = `
       width: 100%;

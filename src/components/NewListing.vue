@@ -1,25 +1,32 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { addListing } from '@/services/listingApi.ts'
-import type { CategoryResponse, ListingAttributeRequest, ListingRequest } from '@/types/dto.ts'
+import type { CategoryResponse, ListingAttributeRequest, ListingRequest, ListingResponse } from '@/types/dto.ts'
 import { getCoordinatesFromPostcode } from '@/utils/geoUtils'
 import { getAllCategories } from '@/services/categoryApi.ts'
+import { uploadImageToListing, getImagesFromListing } from '@/services/imageApi'
 
 const briefDescription = ref('')
 const fullDescription = ref('')
 const postNumber = ref('')
-const imageUrls = ref<string[]>([''])
 const selectedCategoryId = ref<number | null>(null)
 const attributeInputs = ref<Record<number, string>>({})
+const listingResponse = ref<ListingResponse | null>(null)
+const uploadedImageUrls = ref<string[]>([])
 
 const categories = ref<CategoryResponse[]>([])
 onMounted(async () => {
   categories.value = await getAllCategories()
-  console.log('Kategorier med attributter:', categories.value)
+})
+
+watch(listingResponse, async (val) => {
+  if (val !== null) {
+    uploadedImageUrls.value = await getImagesFromListing(val.id)
+  }
 })
 
 const selectedCategory = computed(() =>
-  categories.value.find(cat => cat.id === selectedCategoryId.value) ?? null
+  categories.value.find((cat) => cat.id === selectedCategoryId.value) ?? null
 )
 
 const loading = ref(false)
@@ -30,7 +37,7 @@ const submit = async () => {
   errorMessage.value = null
   successMessage.value = null
   if (!selectedCategory.value || !postNumber.value) {
-    errorMessage.value = 'Kategori og postnummer er påkrevd'
+    errorMessage.value = 'Category and postal code are required.'
     return
   }
 
@@ -38,9 +45,9 @@ const submit = async () => {
   try {
     const { latitude, longitude } = await getCoordinatesFromPostcode(postNumber.value)
 
-    const attributes: ListingAttributeRequest[] = selectedCategory.value.attributes.map(attr => ({
+    const attributes: ListingAttributeRequest[] = selectedCategory.value.attributes.map((attr) => ({
       attributeId: attr.id,
-      value: attributeInputs.value[attr.id] || ''
+      value: attributeInputs.value[attr.id] || '',
     }))
 
     const payload: ListingRequest = {
@@ -50,75 +57,81 @@ const submit = async () => {
       latitude,
       categoryId: selectedCategory.value.id,
       attributes,
-      imageUrls: imageUrls.value.filter(url => url.trim() !== '')
     }
 
-    console.log(payload)
-    await addListing(payload)
+    const createdListing = await addListing(payload)
 
-    successMessage.value = "Success! You can now see your listing in your account"
-    resetForm();
-    // Reset eller naviger videre
+    console.log(createdListing)
+    successMessage.value = 'Listing created! Upload images below.'
+    listingResponse.value = createdListing
   } catch (e) {
-    errorMessage.value = 'Noe gikk galt under innsending.'
+    errorMessage.value = 'Something went wrong while submitting.'
     console.error(e)
   } finally {
     loading.value = false
   }
 }
 
-const resetForm = () => {
-  briefDescription.value = ''
-  fullDescription.value = ''
-  postNumber.value = ''
-  selectedCategoryId.value = null
-  attributeInputs.value = {}
-  imageUrls.value = ['']
-}
+const handleImageUpload = async (event: Event) => {
+  const files = (event.target as HTMLInputElement).files
+  if (!files || !listingResponse.value) return
 
+  for (const file of Array.from(files)) {
+    try {
+      await uploadImageToListing(listingResponse.value.id, file)
+    } catch (e) {
+      errorMessage.value = `Error uploading ${file.name}`
+      console.error(e)
+    }
+  }
+  uploadedImageUrls.value = await getImagesFromListing(listingResponse.value.id)
+}
 </script>
 
 <template>
-  <form @submit.prevent="submit" class="space-y-4 max-w-xl mx-auto">
-    <h2 class="text-xl font-semibold">Opprett annonse</h2>
+  <form @submit.prevent="submit" class="form-container">
+    <h2>Create a Listing</h2>
 
-    <input v-model="briefDescription" placeholder="Tittel på annonsen" required />
-    <textarea v-model="fullDescription" placeholder="Beskrivelse" required rows="5" />
+    <input v-model="briefDescription" placeholder="Listing title" required />
+    <textarea v-model="fullDescription" placeholder="Description" required rows="5" />
 
-    <input v-model="postNumber" placeholder="Postnummer" required />
+    <input v-model="postNumber" placeholder="Postal code" required />
 
     <select v-model="selectedCategoryId" required>
-      <option disabled value="">Velg kategori</option>
+      <option disabled value="">Select category</option>
       <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
     </select>
 
-    <!-- Attributt vises når kategori er valgt -->
     <div v-if="selectedCategory">
-      <div v-for="attr in selectedCategory.attributes" :key="attr.id" class="mb-2">
+      <div v-for="attr in selectedCategory.attributes" :key="attr.id">
         <label :for="'attr-' + attr.id">{{ attr.name }}</label>
         <input
           :id="'attr-' + attr.id"
           v-model="attributeInputs[attr.id]"
           :type="attr.type === 'number' ? 'number' : 'string'"
-          class="w-full"
           required
         />
       </div>
     </div>
 
+    <div v-if="listingResponse">
+      <label for="image-upload">Upload Images</label>
+      <input type="file" @change="handleImageUpload" accept="image/*" multiple />
 
-    <div>
-      <label>Bilder</label>
-      <div v-for="(url, index) in imageUrls" :key="index">
-        <input v-model="imageUrls[index]" placeholder="Lim inn bilde-URL" />
+      <div v-if="uploadedImageUrls.length">
+        <h4>Uploaded Images:</h4>
+        <ul>
+          <li v-for="(url, index) in uploadedImageUrls" :key="index">
+            <img :src="url" alt="Image" class="uploaded-image" />
+          </li>
+        </ul>
       </div>
-      <button type="button" @click="imageUrls.push('')">Legg til bilde</button>
     </div>
 
-    <div v-if="errorMessage" class="text-red-500">{{ errorMessage }}</div>
+    <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
 
     <button type="submit" :disabled="loading">
-      {{ loading ? 'Sender...' : 'Publiser annonse' }}
+      {{ loading ? 'Submitting...' : 'Submit Listing' }}
     </button>
     <div v-if="successMessage" class="success-message">
       {{ successMessage }}
@@ -127,20 +140,30 @@ const resetForm = () => {
 </template>
 
 <style scoped>
+.form-container {
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
 input,
 textarea,
 select {
   width: 100%;
   padding: 0.5rem;
-  border: 1px solid #ddd;
+  border: 1px solid #ccc;
   border-radius: 4px;
 }
+
 button {
   background-color: #2563eb;
   color: white;
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 4px;
+  cursor: pointer;
 }
 
 .success-message {
@@ -150,7 +173,14 @@ button {
   color: #166534;
   border: 1px solid #4ade80;
   text-align: center;
-  margin-top: 1rem;
 }
 
+.error-message {
+  color: red;
+}
+
+.uploaded-image {
+  max-width: 150px;
+  margin-top: 0.5rem;
+}
 </style>

@@ -51,7 +51,7 @@ onMounted(async () => {
       <div class="listing-grid">
         <div v-for="listing in listings" :key="listing.id" class="listing-card">
           <div class="image-wrapper">
-            <img :src="listing.imageUrls[0] || noImage"  @error="handleImageError" alt="Listing image" class="listing-image" />
+            <img :src="noImage"  @error="handleImageError" alt="Listing image" class="listing-image" />
             <!-- Add price overlay-->
           </div>
           <div class="listing-info">
