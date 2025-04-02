@@ -91,7 +91,7 @@ const handleImageUpload = async (event: Event) => {
   }
 
   listingImagePreviews.value = []
-  for (let i = 0; i < listingResponse.value.numberOfImages; i++) {
+  for (let i = 0; i < numImages; i++) {
     const blob = await getImageByIndex(listingResponse.value.id, i)
     listingImagePreviews.value.push(URL.createObjectURL(blob))
   }
