@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useCurrentUser } from '@/utils/useCurrentUser.ts'
-import { getAllListings } from '@/services/listingApi.ts' // juster path hvis den er annerledes
+import { getAllListings } from '@/services/listingApi.ts'
 import { getAllCategories, getListingsByCategory } from '@/services/categoryApi'
+import { getImageByIndex } from '@/services/imageApi'
 import type { CategoryResponse, ListingResponse } from '@/types/dto.ts'
 import noImage from '@/assets/no-image.jpg'
 import { navigateToListing } from '@/utils/navigationUtil.ts'
@@ -10,6 +11,7 @@ import { navigateToListing } from '@/utils/navigationUtil.ts'
 const { user, isLoading, error } = useCurrentUser()
 
 const listings = ref<ListingResponse[]>([])
+const listingImageMap = ref<Record<number, string>>({}) // listingId => image URL
 const categories = ref<CategoryResponse[]>([])
 const selectedCategory = ref<number | null>(null)
 const categoryListings = ref<ListingResponse[] | null>(null)
@@ -17,9 +19,26 @@ const listingsLoading = ref(true)
 const listingsError = ref<string | null>(null)
 
 const handleImageError = (event: Event) => {
-  const target = event.target as HTMLImageElement;
-  target.src = noImage;
-};
+  const target = event.target as HTMLImageElement
+  target.src = noImage
+}
+
+const fetchFirstImageForListings = async (targetListings: ListingResponse[]) => {
+  for (const listing of targetListings) {
+    if (listing.numberOfImages > 0) {
+      try {
+        const blob = await getImageByIndex(listing.id, 0)
+        listingImageMap.value[listing.id] = URL.createObjectURL(blob)
+        console.log(listingImageMap.value[74])
+      } catch (err) {
+        console.warn(`Failed to load image for listing ${listing.id}`, err)
+        listingImageMap.value[listing.id] = noImage
+      }
+    } else {
+      listingImageMap.value[listing.id] = noImage
+    }
+  }
+}
 
 const handleCategoryClick = async (categoryId: number) => {
   selectedCategory.value = categoryId
@@ -27,7 +46,9 @@ const handleCategoryClick = async (categoryId: number) => {
   listingsError.value = null
 
   try {
-    categoryListings.value = await getListingsByCategory(categoryId)
+    const result = await getListingsByCategory(categoryId)
+    categoryListings.value = result
+    await fetchFirstImageForListings(result)
   } catch (err: any) {
     listingsError.value = err.message || 'Failed to load listings by category'
     categoryListings.value = null
@@ -39,9 +60,8 @@ const handleCategoryClick = async (categoryId: number) => {
 onMounted(async () => {
   try {
     listings.value = await getAllListings()
-    console.log(listings.value)
     categories.value = await getAllCategories()
-    console.log(categories.value)
+    await fetchFirstImageForListings(listings.value)
   } catch (err: any) {
     listingsError.value = err.message || 'Failed to load listings'
   } finally {
@@ -108,15 +128,16 @@ onMounted(async () => {
             >
               <div class="image-wrapper">
                 <img
-                  :src="noImage"
+                  :src="listingImageMap[listing.id] || noImage"
                   @error="handleImageError"
                   alt="Listing image"
                   class="listing-image"
                 />
               </div>
               <div class="listing-info">
-                <strong>{{ listing.briefDescription }}</strong><br /><br />
-                Eier: {{listing.user.username}}
+                <strong>{{ listing.briefDescription }}</strong
+                ><br /><br />
+                Eier: {{ listing.user.username }}
               </div>
             </div>
           </div>
