@@ -5,11 +5,12 @@ export const uploadImageToListing = async (listingId: number, file: File): Promi
   const formData = new FormData()
   formData.append('file', file)
 
-  return (await apiClient.post(`/images/upload/${listingId}`, formData)).data;
+  const response = await apiClient.post(`/images/upload/${listingId}`, formData);
+  return response.data;
 };
 
-// Get all image URLs for a listing
-export const getImagesFromListing = async (listingId: number, imageIndex:number) => {
+// Gets image from listingId with given imageIndex 
+export const getImageByIndex = async (listingId: number, imageIndex:number) => {
   const response = await apiClient.get(`/images/download/${listingId}/${imageIndex}`, {
     responseType:"blob",
   });

@@ -9,7 +9,7 @@ import type {
 } from '@/types/dto.ts'
 import { getCoordinatesFromPostcode } from '@/utils/geoUtils'
 import { getAllCategories } from '@/services/categoryApi.ts'
-import { uploadImageToListing, getImagesFromListing } from '@/services/imageApi'
+import { uploadImageToListing, getImageByIndex } from '@/services/imageApi'
 
 // Form input states
 const briefDescription = ref('')
@@ -92,7 +92,7 @@ const handleImageUpload = async (event: Event) => {
   uploadedImageUrls.value = []
   for (var i = 0; i < numImages; i++) {
     uploadedImageUrls.value.push(
-      URL.createObjectURL(await getImagesFromListing(listingResponse.value.id, i)),
+      URL.createObjectURL(await getImageByIndex(listingResponse.value.id, i)),
     )
   }
 }

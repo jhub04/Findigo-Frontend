@@ -45,7 +45,7 @@ import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import type { ListingResponse } from '@/types/dto'
 import { getListingById } from '@/services/listingApi'
-import { getImagesFromListing } from '@/services/imageApi'
+import { getImageByIndex } from '@/services/imageApi'
 
 const images = ref<string[]>([])
 
@@ -62,12 +62,6 @@ onMounted(async () => {
     if (!res) throw new Error('Ikke funnet')
     listing.value = res
     console.log(listing.value.id)
-
-    const imagesRes = await getImagesFromListing(listing.value.id)
-    if (!imagesRes) {
-      console.log("Failed to fetch images for listing " + listing.value.id)
-    }
-    images.value = imagesRes
   } catch (error: any) {
     error.value = true
   } finally {
