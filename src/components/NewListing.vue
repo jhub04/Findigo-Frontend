@@ -1,32 +1,35 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import { addListing } from '@/services/listingApi.ts'
-import type { CategoryResponse, ListingAttributeRequest, ListingRequest, ListingResponse } from '@/types/dto.ts'
+import type {
+  CategoryResponse,
+  ListingAttributeRequest,
+  ListingRequest,
+  ListingResponse,
+} from '@/types/dto.ts'
 import { getCoordinatesFromPostcode } from '@/utils/geoUtils'
 import { getAllCategories } from '@/services/categoryApi.ts'
-import { uploadImageToListing, getImagesFromListing } from '@/services/imageApi'
+import { uploadImageToListing, getImageByIndex } from '@/services/imageApi'
 
+// Form input states
 const briefDescription = ref('')
 const fullDescription = ref('')
 const postNumber = ref('')
+const address = ref('')
+const price = ref<number | null>(null)
+
 const selectedCategoryId = ref<number | null>(null)
 const attributeInputs = ref<Record<number, string>>({})
 const listingResponse = ref<ListingResponse | null>(null)
-const uploadedImageUrls = ref<string[]>([])
+const listingImagePreviews = ref<string[]>([])
 
 const categories = ref<CategoryResponse[]>([])
 onMounted(async () => {
   categories.value = await getAllCategories()
 })
 
-watch(listingResponse, async (val) => {
-  if (val !== null) {
-    uploadedImageUrls.value = await getImagesFromListing(val.id)
-  }
-})
-
-const selectedCategory = computed(() =>
-  categories.value.find((cat) => cat.id === selectedCategoryId.value) ?? null
+const selectedCategory = computed(
+  () => categories.value.find((cat) => cat.id === selectedCategoryId.value) ?? null,
 )
 
 const loading = ref(false)
@@ -36,8 +39,9 @@ const successMessage = ref<string | null>(null)
 const submit = async () => {
   errorMessage.value = null
   successMessage.value = null
-  if (!selectedCategory.value || !postNumber.value) {
-    errorMessage.value = 'Category and postal code are required.'
+
+  if (!selectedCategory.value || !postNumber.value || !address.value || !price.value) {
+    errorMessage.value = 'All fields including address and price are required.'
     return
   }
 
@@ -55,13 +59,14 @@ const submit = async () => {
       fullDescription: fullDescription.value,
       longitude,
       latitude,
+      price: price.value,
+      address: address.value,
+      postalCode: postNumber.value,
       categoryId: selectedCategory.value.id,
       attributes,
     }
 
     const createdListing = await addListing(payload)
-
-    console.log(createdListing)
     successMessage.value = 'Listing created! Upload images below.'
     listingResponse.value = createdListing
   } catch (e) {
@@ -75,16 +80,21 @@ const submit = async () => {
 const handleImageUpload = async (event: Event) => {
   const files = (event.target as HTMLInputElement).files
   if (!files || !listingResponse.value) return
-
+  var numImages = 0
   for (const file of Array.from(files)) {
     try {
-      await uploadImageToListing(listingResponse.value.id, file)
+      numImages = await uploadImageToListing(listingResponse.value.id, file)
     } catch (e) {
       errorMessage.value = `Error uploading ${file.name}`
       console.error(e)
     }
   }
-  uploadedImageUrls.value = await getImagesFromListing(listingResponse.value.id)
+
+  listingImagePreviews.value = []
+  for (let i = 0; i < listingResponse.value.numberOfImages; i++) {
+    const blob = await getImageByIndex(listingResponse.value.id, i)
+    listingImagePreviews.value.push(URL.createObjectURL(blob))
+  }
 }
 </script>
 
@@ -94,8 +104,9 @@ const handleImageUpload = async (event: Event) => {
 
     <input v-model="briefDescription" placeholder="Listing title" required />
     <textarea v-model="fullDescription" placeholder="Description" required rows="5" />
-
+    <input v-model="address" placeholder="Street address" required />
     <input v-model="postNumber" placeholder="Postal code" required />
+    <input v-model.number="price" type="number" placeholder="Price" required />
 
     <select v-model="selectedCategoryId" required>
       <option disabled value="">Select category</option>
@@ -118,13 +129,17 @@ const handleImageUpload = async (event: Event) => {
       <label for="image-upload">Upload Images</label>
       <input type="file" @change="handleImageUpload" accept="image/*" multiple />
 
-      <div v-if="uploadedImageUrls.length">
+      <div v-if="listingImagePreviews.length">
         <h4>Uploaded Images:</h4>
-        <ul>
-          <li v-for="(url, index) in uploadedImageUrls" :key="index">
-            <img :src="url" alt="Image" class="uploaded-image" />
-          </li>
-        </ul>
+        <div class="image-grid">
+          <img
+            v-for="(url, index) in listingImagePreviews"
+            :key="index"
+            :src="url"
+            alt="Uploaded image"
+            class="uploaded-image"
+          />
+        </div>
       </div>
     </div>
 
@@ -140,6 +155,22 @@ const handleImageUpload = async (event: Event) => {
 </template>
 
 <style scoped>
+.image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.uploaded-image {
+  width: 100%;
+  max-height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
 .form-container {
   max-width: 600px;
   margin: 0 auto;

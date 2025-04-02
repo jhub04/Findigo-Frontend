@@ -9,6 +9,9 @@ export interface ListingRequest {
   fullDescription: string;
   longitude: number;
   latitude: number;
+  price: number;
+  address: string;
+  postalCode: string;
   categoryId: number;
   attributes: ListingAttributeRequest[];
 }
@@ -22,6 +25,7 @@ export interface ListingResponse {
   price: number;
   address: string;
   postalCode: string;
+  numberOfImages: number;
   category: CategoryResponse;
   user: UserResponse;
   attributes: ListingAttributeResponse[];
