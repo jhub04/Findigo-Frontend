@@ -23,12 +23,6 @@ onMounted(async () => {
   categories.value = await getAllCategories()
 })
 
-watch(listingResponse, async (val) => {
-  if (val !== null) {
-    uploadedImageUrls.value = await getImagesFromListing(val.id)
-  }
-})
-
 const selectedCategory = computed(() =>
   categories.value.find((cat) => cat.id === selectedCategoryId.value) ?? null
 )
@@ -81,16 +75,19 @@ const submit = async () => {
 const handleImageUpload = async (event: Event) => {
   const files = (event.target as HTMLInputElement).files
   if (!files || !listingResponse.value) return
-
+  var numImages = 0;
   for (const file of Array.from(files)) {
     try {
-      await uploadImageToListing(listingResponse.value.id, file)
+      numImages = await uploadImageToListing(listingResponse.value.id, file)
     } catch (e) {
       errorMessage.value = `Error uploading ${file.name}`
       console.error(e)
     }
   }
-  uploadedImageUrls.value = [URL.createObjectURL(await getImagesFromListing(listingResponse.value.id))];
+  uploadedImageUrls.value = [];
+  for (var i = 0; i < numImages; i++) {
+    uploadedImageUrls.value.push(URL.createObjectURL(await getImagesFromListing(listingResponse.value.id, i)))
+  }
 }
 </script>
 
