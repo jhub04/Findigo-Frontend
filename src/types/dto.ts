@@ -27,9 +27,8 @@ export interface ListingResponse {
   postalCode: string;
   numberOfImages: number;
   category: CategoryResponse;
-  user: UserResponse;
+  user: UserLiteResponse;
   attributes: ListingAttributeResponse[];
-
 }
 
 export interface ListingAttributeRequest {
@@ -40,6 +39,7 @@ export interface ListingAttributeRequest {
 export interface UserResponse {
   id: number;
   username: string;
+  listings: ListingResponse[]
 }
 
 export interface CategoryResponse {
@@ -74,4 +74,10 @@ export interface MessageResponse {
   messageId: number;
   read: boolean;
   sentAt: string;
+}
+
+export interface AttributeResponse {
+  id: number;
+  name: string;
+  type: string;
 }
