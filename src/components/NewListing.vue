@@ -21,7 +21,7 @@ const price = ref<number | null>(null)
 const selectedCategoryId = ref<number | null>(null)
 const attributeInputs = ref<Record<number, string>>({})
 const listingResponse = ref<ListingResponse | null>(null)
-const uploadedImageUrls = ref<string[]>([])
+const listingImagePreviews = ref<string[]>([])
 
 const categories = ref<CategoryResponse[]>([])
 onMounted(async () => {
@@ -89,11 +89,11 @@ const handleImageUpload = async (event: Event) => {
       console.error(e)
     }
   }
-  uploadedImageUrls.value = []
-  for (var i = 0; i < numImages; i++) {
-    uploadedImageUrls.value.push(
-      URL.createObjectURL(await getImageByIndex(listingResponse.value.id, i)),
-    )
+
+  listingImagePreviews.value = []
+  for (let i = 0; i < listingResponse.value.numberOfImages; i++) {
+    const blob = await getImageByIndex(listingResponse.value.id, i)
+    listingImagePreviews.value.push(URL.createObjectURL(blob))
   }
 }
 </script>
@@ -129,11 +129,11 @@ const handleImageUpload = async (event: Event) => {
       <label for="image-upload">Upload Images</label>
       <input type="file" @change="handleImageUpload" accept="image/*" multiple />
 
-      <div v-if="uploadedImageUrls.length">
+      <div v-if="listingImagePreviews.length">
         <h4>Uploaded Images:</h4>
         <div class="image-grid">
           <img
-            v-for="(url, index) in uploadedImageUrls"
+            v-for="(url, index) in listingImagePreviews"
             :key="index"
             :src="url"
             alt="Uploaded image"
