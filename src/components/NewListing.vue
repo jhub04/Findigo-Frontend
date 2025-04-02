@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import { addListing } from '@/services/listingApi.ts'
-import type { CategoryResponse, ListingAttributeRequest, ListingRequest, ListingResponse } from '@/types/dto.ts'
+import type {
+  CategoryResponse,
+  ListingAttributeRequest,
+  ListingRequest,
+  ListingResponse,
+} from '@/types/dto.ts'
 import { getCoordinatesFromPostcode } from '@/utils/geoUtils'
 import { getAllCategories } from '@/services/categoryApi.ts'
 import { uploadImageToListing, getImagesFromListing } from '@/services/imageApi'
@@ -23,8 +28,8 @@ onMounted(async () => {
   categories.value = await getAllCategories()
 })
 
-const selectedCategory = computed(() =>
-  categories.value.find((cat) => cat.id === selectedCategoryId.value) ?? null
+const selectedCategory = computed(
+  () => categories.value.find((cat) => cat.id === selectedCategoryId.value) ?? null,
 )
 
 const loading = ref(false)
@@ -75,7 +80,7 @@ const submit = async () => {
 const handleImageUpload = async (event: Event) => {
   const files = (event.target as HTMLInputElement).files
   if (!files || !listingResponse.value) return
-  var numImages = 0;
+  var numImages = 0
   for (const file of Array.from(files)) {
     try {
       numImages = await uploadImageToListing(listingResponse.value.id, file)
@@ -84,9 +89,11 @@ const handleImageUpload = async (event: Event) => {
       console.error(e)
     }
   }
-  uploadedImageUrls.value = [];
+  uploadedImageUrls.value = []
   for (var i = 0; i < numImages; i++) {
-    uploadedImageUrls.value.push(URL.createObjectURL(await getImagesFromListing(listingResponse.value.id, i)))
+    uploadedImageUrls.value.push(
+      URL.createObjectURL(await getImagesFromListing(listingResponse.value.id, i)),
+    )
   }
 }
 </script>
@@ -124,11 +131,15 @@ const handleImageUpload = async (event: Event) => {
 
       <div v-if="uploadedImageUrls.length">
         <h4>Uploaded Images:</h4>
-        <ul>
-          <li v-for="(url, index) in uploadedImageUrls" :key="index">
-            <img :src="url" alt="Image" class="uploaded-image" />
-          </li>
-        </ul>
+        <div class="image-grid">
+          <img
+            v-for="(url, index) in uploadedImageUrls"
+            :key="index"
+            :src="url"
+            alt="Uploaded image"
+            class="uploaded-image"
+          />
+        </div>
       </div>
     </div>
 
@@ -144,6 +155,22 @@ const handleImageUpload = async (event: Event) => {
 </template>
 
 <style scoped>
+.image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.uploaded-image {
+  width: 100%;
+  max-height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
 .form-container {
   max-width: 600px;
   margin: 0 auto;
