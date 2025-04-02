@@ -13,7 +13,7 @@
 import { ref, onMounted, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { getAllListings } from '@/services/listingApi'
-import { getListingsByCategory } from '@/services/categoryApi'
+import { getListingsByCategory } from '@/services/listingApi'
 import type { ListingResponse } from '@/types/dto'
 import noImage from '@/assets/no-image.jpg'
 

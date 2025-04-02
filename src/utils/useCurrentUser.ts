@@ -1,7 +1,7 @@
 import { ref, onMounted } from 'vue';
-import userApi from '@/services/userApi.ts';
 import type { UserResponse } from '@/types/dto.ts';
 import { useTokenStore } from '@/stores/token.ts';
+import { getCurrentUser } from '@/services/userApi.ts'
 
 export function useCurrentUser() {
   const user = ref<UserResponse | null>(null);
@@ -12,7 +12,7 @@ export function useCurrentUser() {
   const fetchUser = async () => {
     if (tokenStore.jwtToken) {
       try {
-        const userInfo = await userApi.getCurrentUser();
+        const userInfo = await getCurrentUser();
         user.value = userInfo;
       } catch (e) {
         error.value = true;

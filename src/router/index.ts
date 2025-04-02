@@ -12,21 +12,29 @@ import MyListingsView from '@/views/MyListingsView.vue'
 import SearchResultsView from '@/views/SearchResultsView.vue'
 import ListingView from '@/views/ListingView.vue'
 import OwnListingView from '@/views/OwnListingView.vue'
+import AdminCategoryView from '@/views/admin/AdminCategoryView.vue'
+import AdminAttributeView from '@/views/admin/AdminAttributeView.vue'
+import AdminDashboardView from '@/views/admin/AdminDashboardView.vue'
+import AdminUserView from '@/views/admin/AdminUserView.vue'
 
 const routes = [
+  { path: '/', redirect: '/home' },
   { path: '/home', component: HomeView, name: 'Home' },
   { path: '/login', component: LoginView, name: 'Login' },
   { path: '/register', component: RegisterView, name: 'Register' },
   { path: '/profile', component: ProfileView, name: 'Profile'},
   { path: '/profile/listings', component: MyListingsView, name: 'MyListings'},
   { path: '/map', component: MapView, name: 'Map' },
-  { path: '/listing', component: NewListingView, name: 'New listing' },
-  { path: '/listing/:id', component: ListingView, name: 'Listing page' },
-  { path: '/my-listing/:id', component: OwnListingView, name: 'Own listing page' },
+  { path: '/listing', component: NewListingView, name: 'NewListing' },
+  { path: '/listing/:id', component: ListingView, name: 'ListingPage' },
+  { path: '/my-listing/:id', component: OwnListingView, name: 'OwnListingPage' },
   { path: '/notifications', component: NotificationsView, name: 'Notifications' },
   { path: '/messages', component: MessagesView, name: 'Messages' },
-  { path: '/', redirect: '/home' },
-  { path: '/search', name: 'SearchResultsView', component: SearchResultsView }
+  { path: '/search', component: SearchResultsView, name: 'SearchResultsView' },
+  { path: '/admin', component: AdminDashboardView, name: 'AdminDashboard' },
+  { path: '/admin/category', component: AdminCategoryView, name: 'AdminCategory' },
+  { path: '/admin/attribute', component: AdminAttributeView, name: 'AdminAttribute' },
+  { path: '/admin/user', component: AdminUserView, name: 'AdminUser' }
 ];
 
 const router = createRouter({

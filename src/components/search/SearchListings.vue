@@ -3,7 +3,7 @@ import { useRoute } from 'vue-router'
 import { computed, onMounted, ref, watch } from 'vue'
 import { getAllListings} from '@/services/listingApi.ts'
 import type { ListingResponse } from '@/types/dto.ts'
-import { getListingsByCategory } from '@/services/categoryApi.ts'
+import { getListingsByCategory } from '@/services/listingApi.ts'
 import { navigateToListing } from '@/utils/navigationUtil.ts'
 const route = useRoute()
 
