@@ -6,9 +6,13 @@ import { getCoordinatesFromPostcode } from '@/utils/geoUtils'
 import { getAllCategories } from '@/services/categoryApi.ts'
 import { uploadImageToListing, getImagesFromListing } from '@/services/imageApi'
 
+// Form input states
 const briefDescription = ref('')
 const fullDescription = ref('')
 const postNumber = ref('')
+const address = ref('')
+const price = ref<number | null>(null)
+
 const selectedCategoryId = ref<number | null>(null)
 const attributeInputs = ref<Record<number, string>>({})
 const listingResponse = ref<ListingResponse | null>(null)
@@ -36,8 +40,9 @@ const successMessage = ref<string | null>(null)
 const submit = async () => {
   errorMessage.value = null
   successMessage.value = null
-  if (!selectedCategory.value || !postNumber.value) {
-    errorMessage.value = 'Category and postal code are required.'
+
+  if (!selectedCategory.value || !postNumber.value || !address.value || !price.value) {
+    errorMessage.value = 'All fields including address and price are required.'
     return
   }
 
@@ -55,13 +60,14 @@ const submit = async () => {
       fullDescription: fullDescription.value,
       longitude,
       latitude,
+      price: price.value,
+      address: address.value,
+      postalCode: postNumber.value,
       categoryId: selectedCategory.value.id,
       attributes,
     }
 
     const createdListing = await addListing(payload)
-
-    console.log(createdListing)
     successMessage.value = 'Listing created! Upload images below.'
     listingResponse.value = createdListing
   } catch (e) {
@@ -94,8 +100,9 @@ const handleImageUpload = async (event: Event) => {
 
     <input v-model="briefDescription" placeholder="Listing title" required />
     <textarea v-model="fullDescription" placeholder="Description" required rows="5" />
-
+    <input v-model="address" placeholder="Street address" required />
     <input v-model="postNumber" placeholder="Postal code" required />
+    <input v-model.number="price" type="number" placeholder="Price" required />
 
     <select v-model="selectedCategoryId" required>
       <option disabled value="">Select category</option>
