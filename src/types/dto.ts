@@ -21,9 +21,13 @@ export interface ListingResponse {
   longitude: number;
   latitude: number;
   imageUrls: string[];
+  price: number;
+  address: string;
+  postalCode: string;
   category: CategoryResponse;
   user: UserResponse;
   attributes: ListingAttributeResponse[];
+
 }
 
 export interface ListingAttributeRequest {

@@ -108,7 +108,7 @@ onMounted(async () => {
             >
               <div class="image-wrapper">
                 <img
-                  :src="listing.imageUrls[0] || noImage"
+                  :src="noImage"
                   @error="handleImageError"
                   alt="Listing image"
                   class="listing-image"

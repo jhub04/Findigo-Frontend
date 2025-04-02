@@ -11,6 +11,8 @@ export const addListing = async(data: ListingRequest): Promise<ListingResponse> 
 export const getAllListings = async(): Promise<ListingResponse[]> => {
   try {
     const response = await apiClient.get<ListingResponse[]>('/listings');
+    console.log(response.data);
+
     return response.data || [];
   } catch (error) {
     console.log(`Failed to fetch all listings: ${error}`);
