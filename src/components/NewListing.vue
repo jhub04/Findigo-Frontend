@@ -90,7 +90,7 @@ const handleImageUpload = async (event: Event) => {
       console.error(e)
     }
   }
-  uploadedImageUrls.value = await getImagesFromListing(listingResponse.value.id)
+  uploadedImageUrls.value = [URL.createObjectURL(await getImagesFromListing(listingResponse.value.id))];
 }
 </script>
 

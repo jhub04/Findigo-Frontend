@@ -9,7 +9,9 @@ export const uploadImageToListing = async (listingId: number, file: File): Promi
 };
 
 // Get all image URLs for a listing
-export const getImagesFromListing = async (listingId: number): Promise<string[]> => {
-  const response = await apiClient.get<string[]>(`/images/download/${listingId}`)
+export const getImagesFromListing = async (listingId: number) => {
+  const response = await apiClient.get(`/images/download/${listingId}`, {
+    responseType:"blob",
+  });
   return response.data
 };
