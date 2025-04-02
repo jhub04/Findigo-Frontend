@@ -9,6 +9,9 @@ export interface ListingRequest {
   fullDescription: string;
   longitude: number;
   latitude: number;
+  price: number;
+  address: string;
+  postalCode: string;
   categoryId: number;
   attributes: ListingAttributeRequest[];
 }
