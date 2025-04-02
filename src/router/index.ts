@@ -10,7 +10,7 @@ import ProfileView from '@/views/ProfileView.vue'
 import { useTokenStore } from '@/stores/token'
 import MyListingsView from '@/views/MyListingsView.vue'
 import MessageThreadView from '@/views/MessageThreadView.vue'
-import SearchResultsView from '@/views/SearchResultsView.vue'
+import SearchResultsView from '@/components/search/SearchResultsView.vue'
 import ListingView from '@/views/ListingView.vue'
 import OwnListingView from '@/views/OwnListingView.vue'
 
