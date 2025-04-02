@@ -1,3 +1,4 @@
+import type { UserLiteResponse } from '@/types/adminDto.ts'
 
 export interface TokenResponse {
   token: string;
@@ -22,7 +23,7 @@ export interface ListingResponse {
   latitude: number;
   imageUrls: string[];
   category: CategoryResponse;
-  user: UserResponse;
+  user: UserLiteResponse;
   attributes: ListingAttributeResponse[];
 }
 
@@ -34,6 +35,7 @@ export interface ListingAttributeRequest {
 export interface UserResponse {
   id: number;
   username: string;
+  listings: ListingResponse[]
 }
 
 export interface CategoryResponse {
@@ -51,4 +53,10 @@ export interface AttributeDef {
 export interface ListingAttributeResponse {
   name: string;
   value: string;
+}
+
+export interface AttributeResponse {
+  id: number;
+  name: string;
+  type: string;
 }
