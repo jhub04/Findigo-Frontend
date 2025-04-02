@@ -11,7 +11,6 @@ export interface ListingRequest {
   latitude: number;
   categoryId: number;
   attributes: ListingAttributeRequest[];
-  imageUrls?: string[];
 }
 
 export interface ListingResponse {
@@ -20,7 +19,6 @@ export interface ListingResponse {
   fullDescription: string;
   longitude: number;
   latitude: number;
-  imageUrls: string[];
   price: number;
   address: string;
   postalCode: string;
