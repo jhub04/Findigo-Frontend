@@ -28,7 +28,7 @@ watch(
     }
 
     const q = query.q
-    searchQuery.value = Array.isArray(q) ? q[0] : q || ''
+    searchQuery.value = typeof q === 'string' ? q : ''
   },
   { immediate: true }
 )
@@ -40,7 +40,7 @@ watch(
 .temporary {
   display: flex;
   flex-direction: row;
-  gap: 500px;
+  gap: 200px;
 }
 </style>
 
