@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { useCurrentUser } from '@/utils/useCurrentUser.ts'
 import { onMounted, ref } from 'vue'
-import { getUserListings } from '@/services/listingApi.ts'
 import type { ListingResponse } from '@/types/dto.ts'
 import noImage from '@/assets/no-image.jpg'
+import { getMyListings } from '@/services/userApi.ts'
+import { navigateToListing } from '@/utils/navigationUtil.ts'
 
 const { user, isLoading, error } = useCurrentUser()
 const listings = ref<ListingResponse[]>([])
@@ -16,7 +17,7 @@ const handleImageError = (event: Event) => {
 
 onMounted(async () => {
   try {
-    listings.value = await getUserListings()
+    listings.value = await getMyListings()
   } catch (e: any) {
     error.value = e.message || 'Failed to fetch listings'
   } finally {
@@ -47,9 +48,9 @@ onMounted(async () => {
       <h4>My Listings</h4>
       <div v-if="loading">Loading listings...</div>
       <div v-else-if="error">Error: {{ error }}</div>
-      
+
       <div class="listing-grid">
-        <div v-for="listing in listings" :key="listing.id" class="listing-card">
+        <div v-for="listing in listings" :key="listing.id" class="listing-card" @click="navigateToListing(listing)">
           <div class="image-wrapper">
             <img :src="noImage"  @error="handleImageError" alt="Listing image" class="listing-image" />
             <!-- Add price overlay-->

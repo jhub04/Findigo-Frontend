@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useCurrentUser } from '@/utils/useCurrentUser.ts'
-import { getAllListings } from '@/services/listingApi.ts'
-import { getAllCategories, getListingsByCategory } from '@/services/categoryApi'
+import { getAllCategories } from '@/services/categoryApi'
 import { getImageByIndex } from '@/services/imageApi'
+import { getAllListings, getListingsByCategory } from '@/services/listingApi.ts' // juster path hvis den er annerledes
 import type { CategoryResponse, ListingResponse } from '@/types/dto.ts'
 import noImage from '@/assets/no-image.jpg'
 import { navigateToListing } from '@/utils/navigationUtil.ts'
