@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import noImage from '@/assets/no-image.jpg'
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import type { ListingResponse } from '@/types/dto'
@@ -8,11 +7,10 @@ import ImageSlideshow from './ImageSlideshow.vue'
 import { useImages } from '@/utils/useImages'
 
 
-const { images, loading, error, fetchImages} = useImages();
+const { images, loading, error, fetchImagesForListing} = useImages();
 const route = useRoute()
 const id = Number(route.params.id)
 const listing = ref<ListingResponse | null>(null)
-
 
 
 onMounted(async () => {
@@ -22,7 +20,7 @@ onMounted(async () => {
     listing.value = currentListing
 
     if (listing.value.numberOfImages > 0) {
-      await fetchImages(listing.value.id, listing.value.numberOfImages)
+      await fetchImagesForListing(listing.value.id, listing.value.numberOfImages)
     }
   } catch (error: any) {
     error.value = true
