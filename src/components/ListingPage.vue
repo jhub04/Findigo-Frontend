@@ -15,16 +15,32 @@ const listing = ref<ListingResponse | null>(null)
 const loading = ref(true)
 const error = ref(false)
 
+const fetchImages = async (listingId: number, count: number) => {
+  const fetched: string[] = [];
+  for (let i = 0; i < count; i++) {
+    try {
+      const blob = await getImageByIndex(listingId, i);
+      fetched.push(URL.createObjectURL(blob));
+    } catch (e) {
+      console.log(`Failed to load image at index ${i}`, i);
+      fetched.push(noImage);
+    }
+  } 
+  images.value = fetched;
+}
+
 onMounted(async () => {
   try {
     const currentListing = await getListingById(id)
-    if (!currentListing) {
-      console.log("Could fetch listing by id ", id);
-      return;
-    }
+    if (!currentListing) throw new Error("Listing not found"); // Good practice?
     listing.value = currentListing;
+
+    if (listing.value.numberOfImages > 0) {
+      await fetchImages(listing.value.id, listing.value.numberOfImages);
+    }
   } catch (error: any) {
     error.value = true
+    console.error(error);
   } finally {
     loading.value = false
   }
