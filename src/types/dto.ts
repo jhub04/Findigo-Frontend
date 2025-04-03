@@ -42,6 +42,11 @@ export interface UserResponse {
   listings: ListingResponse[]
 }
 
+export interface UserLiteResponse {
+  id: number;
+  username: string;
+}
+
 export interface CategoryResponse {
   id: number;
   name: string;
