@@ -48,12 +48,18 @@ const router = createRouter({
 
 
 router.beforeEach(async (to) => {
-  const isAuth = await authApi.isAuthenticated();
+  let isAuth;
+  if (to.name === "Login" && !isAuth) {
+    //When loading webpage first time
+    return;
+  }
+
+  isAuth = await authApi.isAuthenticated();
   // If the user is not logged in and tries to access a protected page → redirect to log in.
   if (to.name !== 'Login' && to.name !== 'Register' && !isAuth) {
     return { name: 'Login' };
   }
-
+  
   // If the user is logged in and tries to access the login page → redirect to "/home".
   if (to.name === 'Login' && isAuth) { //AUthstatus should be true/false
     return { name: 'Home' };

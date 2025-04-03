@@ -26,8 +26,9 @@ export const login = async (username: string, password: string) => {
 };
 
 export const isAuthenticated = async () => {
+  let response;
   try {
-    const response = await apiClient.get("/auth/auth-status");
+    response = await apiClient.get("/auth/auth-status");
     return response.data.authenticated === true;
   } catch (error) {
     //Not valid jwt token in cookie

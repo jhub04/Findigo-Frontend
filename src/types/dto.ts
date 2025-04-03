@@ -1,3 +1,4 @@
+import type { UserLiteResponse } from "./adminDto";
 
 export interface TokenResponse {
   token: string;
