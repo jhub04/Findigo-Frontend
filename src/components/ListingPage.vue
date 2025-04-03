@@ -4,43 +4,29 @@ import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import type { ListingResponse } from '@/types/dto'
 import { getListingById } from '@/services/listingApi'
-import { getImageByIndex } from '@/services/imageApi'
+import ImageSlideshow from './ImageSlideshow.vue'
+import { useImages } from '@/utils/useImages'
 
-const images = ref<string[]>([])
 
+const { images, loading, error, fetchImages} = useImages();
 const route = useRoute()
 const id = Number(route.params.id)
-
 const listing = ref<ListingResponse | null>(null)
-const loading = ref(true)
-const error = ref(false)
 
-const fetchImages = async (listingId: number, count: number) => {
-  const fetched: string[] = [];
-  for (let i = 0; i < count; i++) {
-    try {
-      const blob = await getImageByIndex(listingId, i);
-      fetched.push(URL.createObjectURL(blob));
-    } catch (e) {
-      console.log(`Failed to load image at index ${i}`, i);
-      fetched.push(noImage);
-    }
-  } 
-  images.value = fetched;
-}
+
 
 onMounted(async () => {
   try {
     const currentListing = await getListingById(id)
-    if (!currentListing) throw new Error("Listing not found"); // Good practice?
-    listing.value = currentListing;
+    if (!currentListing) throw new Error('Listing not found') // Good practice?
+    listing.value = currentListing
 
     if (listing.value.numberOfImages > 0) {
-      await fetchImages(listing.value.id, listing.value.numberOfImages);
+      await fetchImages(listing.value.id, listing.value.numberOfImages)
     }
   } catch (error: any) {
     error.value = true
-    console.error(error);
+    console.error(error)
   } finally {
     loading.value = false
   }
@@ -54,17 +40,7 @@ onMounted(async () => {
       <div v-else-if="error" class="error-message">Could not find listing.</div>
 
       <div v-else-if="listing" class="listing">
-        <div class="listing-images">
-          <div class="listing-images__main">
-            <img
-              v-for="(url, i) in images"
-              :key="i"
-              :src="url || noImage"
-              :alt="`Image ${i + 1}`"
-              class="listing-image"
-            />
-          </div>
-        </div>
+        <ImageSlideshow :images="images"/>
 
         <div class="listing-content">
           <div class="listing-header">
