@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { useCurrentUser } from '@/utils/useCurrentUser.ts';
 import { useRouter } from 'vue-router';
-import { useTokenStore } from '@/stores/token.ts';
+import { useUserStore } from '@/stores/user.ts';
 
 const { user, isLoading, error } = useCurrentUser();
-const tokenStore = useTokenStore();
+const tokenStore = useUserStore();
 const router = useRouter();
 
 const logout = () => {

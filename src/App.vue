@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useTokenStore } from '@/stores/token.ts'
+import { useUserStore } from '@/stores/user.ts'
 import { useRouter } from 'vue-router'
 import NavigationSearch from '@/components/search/NavigationSearch.vue'
 
-const tokenStore = useTokenStore()
+const tokenStore = useUserStore()
 const router = useRouter()
 </script>
 

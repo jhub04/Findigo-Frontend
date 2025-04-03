@@ -1,5 +1,4 @@
 import apiClient from '@/services/apiClient.ts'
-import type { TokenResponse } from '@/types/dto.ts'
 
 // Registrerer en ny bruker i backend
 export const registerUser = async (username: string, password: string) => {
@@ -15,25 +14,32 @@ export const registerUser = async (username: string, password: string) => {
   }
 };
 
-// Takes username and password as parameters,
-// sends HTTP post request to the server,
-// and in response gets a JWT token from server
-export const getJwtToken = async (username: string, password: string): Promise<TokenResponse | null> => {
+export const login = async (username: string, password: string) => {
   try {
-    const response = await apiClient.post<TokenResponse>("/auth/login", { username, password }, {
-      headers: { Authorization: "" },
-    });
-
-    return response.data; // Forventer at serveren returnerer JWT-token
+    await apiClient.post<String>("/auth/login", { username, password });
+    //Hvis ikke noe returneres og bare 200 OK er login successfull og jwt lagres som cookie, ikke tilgjengleoig fra JS
   } catch (error) {
+    //Hvis creds er feil
     console.error("Login failed", error);
-    return null;
+    throw error;
   }
 };
 
+export const isAuthenticated = async () => {
+  try {
+    const response = await apiClient.get("/auth/auth-status");
+    return response.data.authenticated === true;
+  } catch (error) {
+    //Not valid jwt token in cookie
+    return false;
+  }
+}
+
+
 const authApi = {
   registerUser,
-  getJwtToken,
+  login,
+  isAuthenticated,
 };
 
 export default authApi;

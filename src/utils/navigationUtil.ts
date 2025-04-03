@@ -1,9 +1,9 @@
 import type { ListingResponse } from '@/types/dto.ts'
-import { useTokenStore } from '@/stores/token.ts'
+import { useUserStore } from '@/stores/user.ts'
 
 
 export const navigateToListing = async (listing: ListingResponse) => {
-  const currentUsername = useTokenStore().loggedInUser;
+  const currentUsername = useUserStore().loggedInUser;
   const isOwner = currentUsername === listing.user.username;
   const listingId = listing.id;
 

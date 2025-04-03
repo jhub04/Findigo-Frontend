@@ -1,16 +1,12 @@
 import axios from 'axios'
-import { useTokenStore } from '@/stores/token.ts'
+import { useUserStore } from '@/stores/user'
 
 const apiClient = axios.create({
-  baseURL: 'https://localhost:8443/api'
+  baseURL: 'https://localhost:8443/api',
+  withCredentials: true
 });
 
 apiClient.interceptors.request.use((config) => {
-  const tokenStore = useTokenStore();
-  console.log("JWT Token:", tokenStore.jwtToken);
-  if (tokenStore.jwtToken) {
-    config.headers.Authorization = `Bearer ${tokenStore.jwtToken}`;
-  }
   return config;
 }, (error) => {
   return Promise.reject(error);
@@ -20,11 +16,11 @@ apiClient.interceptors.request.use((config) => {
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const tokenStore = useTokenStore();
+    const userStore = useUserStore();
 
     if (error.response?.status === 401 || error.response?.status === 403) {
       console.log('Unauthorized or forbidden, logging out');
-      tokenStore.logout();
+      userStore.logout();
       window.location.href = '/login'
     }
     return Promise.reject(error)

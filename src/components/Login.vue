@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { useTokenStore } from "../stores/token";
+import { useUserStore } from '@/stores/user'
 import { useRouter } from "vue-router";
 
-const tokenStore = useTokenStore();
+const userStore = useUserStore();
 const router = useRouter();
 
 const username = ref("");
@@ -11,10 +11,11 @@ const password = ref("");
 const loginStatus = ref("");
 
 const handleLoginClick = async () => {
-  await tokenStore.getTokenAndSaveInStore(username.value, password.value);
-  if (tokenStore.jwtToken) {
+  try {
+    await userStore.loginAndSaveUser(username.value, password.value);
     await router.push("/home");
-  } else {
+  } catch(error) {
+    //Couldnt log in
     loginStatus.value = "Login failed!";
   }
 };
