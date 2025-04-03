@@ -2,15 +2,20 @@
 import { useUserStore } from '@/stores/user.ts'
 import { useRouter } from 'vue-router'
 import NavigationSearch from '@/components/search/NavigationSearch.vue'
+import { isAuthenticated } from './services/authApi';
 
-const tokenStore = useUserStore()
-const router = useRouter()
+const userStore = useUserStore();
+
+
+let response = false;
+
+
 </script>
 
 <template>
   <div>
     <header class="navbar-container">
-      <nav v-if="tokenStore.loggedInUser" class="main-navbar">
+      <nav v-if="userStore.loggedInUser" class="main-navbar">
         <div class="navbar-brand">
           <router-link to="/home" class="app-name">Findigo</router-link>
         </div>
