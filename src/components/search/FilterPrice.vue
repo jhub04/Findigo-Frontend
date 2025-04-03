@@ -1,5 +1,5 @@
 <template>
-  <div class = "filer-price">
+  <div class = "filter-price">
     <h3>Price</h3>
     <input type="number" placeholder="Min" />
     <input type="number" placeholder="Max" />
@@ -14,4 +14,13 @@
 </script>
 
 <style scoped>
+
+.filter-price
+{
+ margin-left: 1.5rem;
+  border-radius: 70px;
+}
+input[type="number"] {
+  width: 100px;
+}
 </style>
