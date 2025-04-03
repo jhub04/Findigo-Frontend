@@ -6,17 +6,15 @@ import { getListingById } from '@/services/listingApi'
 import ImageSlideshow from './ImageSlideshow.vue'
 import { useImages } from '@/utils/useImages'
 
-
-const { images, loading, error, fetchImagesForListing} = useImages();
+const { images, loading, error, fetchImagesForListing } = useImages()
 const route = useRoute()
 const id = Number(route.params.id)
 const listing = ref<ListingResponse | null>(null)
 
-
 onMounted(async () => {
   try {
     const currentListing = await getListingById(id)
-    if (!currentListing) throw new Error('Listing not found') // Good practice?
+    if (!currentListing) throw new Error('Listing not found')
     listing.value = currentListing
 
     if (listing.value.numberOfImages > 0) {
@@ -38,29 +36,37 @@ onMounted(async () => {
       <div v-else-if="error" class="error-message">Could not find listing.</div>
 
       <div v-else-if="listing" class="listing">
-        <ImageSlideshow :images="images"/>
+        <div class="image-slideshow">
+          <ImageSlideshow :images="images" />
+        </div>
 
-        <div class="listing-content">
-          <div class="listing-header">
-            <h1 class="listing-title">{{ listing.briefDescription }}</h1>
-            <p class="listing-price">price here</p>
-          </div>
+        <div class="listing-info-container">
+          <div class="listing-details">
+            <h1 class="title">{{ listing.briefDescription }}</h1>
+            <p class="price">{{ listing.price }} NOK</p>
 
-          <p class="listing-description">{{ listing.fullDescription }}</p>
+            <button class="buy-button">Buy Now</button>
 
-          <div class="listing-attributes">
-            <div
-              class="listing-attribute"
-              v-for="(attribute, index) in listing.attributes"
-              :key="index"
-            >
-              <strong>{{ attribute.name }}:</strong> {{ attribute.value }}
+            <p class="description">{{ listing.fullDescription }}</p>
+            <p class="location">{{ listing.postalCode }}, {{ listing.address }}</p>
+
+            <div class="listing-attributes" v-if="listing.attributes?.length">
+              <h2>Details</h2>
+              <ul>
+                <li v-for="(attribute, index) in listing.attributes" :key="index">
+                  <strong>{{ attribute.name }}:</strong> {{ attribute.value }}
+                </li>
+              </ul>
             </div>
           </div>
 
-          <div class="listing-user-info">
-            <p><strong>Owner:</strong> {{ listing.user.username }}</p>
-            <p><strong>Category:</strong> {{ listing.category.name }}</p>
+          <div class="contact-info">
+            <h2>Seller</h2>
+            <p>Username: {{ listing.user.username }}</p>
+            <p>Phone number: 416 72 162</p>
+            <router-link :to="`/messages/${listing.user.id}`">
+              <button class="send-message-button">Send Message</button>
+            </router-link>
           </div>
         </div>
       </div>
@@ -69,75 +75,124 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-.listing-page {
-  max-width: 1000px;
-  margin: 2rem auto;
+.listing-info-container {
+  display: flex;
+  gap: 2rem;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 2rem;
+}
+
+.listing-details {
+  flex: 2;
+}
+
+.contact-info {
+  flex: 1;
   padding: 1rem;
-  font-family: Arial, sans-serif;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.listing-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
 }
 
 .loading-message,
 .error-message {
   text-align: center;
-  font-size: 18px;
+  font-size: 1.2rem;
+  padding: 1rem;
 }
 
-.error-message {
-  color: red;
+.image-slideshow {
+  margin-bottom: 2rem;
 }
 
-.listing {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+.listing-info {
+  border: 1px solid #ddd;
+  padding: 1.5rem;
+  border-radius: 8px;
+  background-color: #fafafa;
 }
 
-.listing-images {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.title {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
 }
 
-.listing-images__main img {
-  max-width: 100%;
-  border-radius: 10px;
-  border: 1px solid #ccc;
+.price {
+  font-size: 1.4rem;
+  font-weight: bold;
   margin-bottom: 1rem;
 }
 
-.listing-content {
-  padding: 0 1rem;
+.buy-button {
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+  cursor: pointer;
 }
 
-.listing-header {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+.buy-button:hover {
+  background-color: #218838;
 }
 
-.listing-title {
-  font-size: 28px;
-  font-weight: bold;
+.description {
+  margin-bottom: 1rem;
 }
 
-.listing-price {
-  font-size: 22px;
-  color: #2e7d32;
-}
-
-.listing-description {
-  margin: 1rem 0;
+.location {
+  color: #555;
+  margin-bottom: 1.5rem;
 }
 
 .listing-attributes {
-  margin-top: 1rem;
+  margin-bottom: 2rem;
 }
 
-.listing-attribute {
+.listing-attributes h2 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.listing-attributes ul {
+  list-style: none;
+  padding: 0;
+}
+
+.listing-attributes li {
   margin-bottom: 0.4rem;
 }
 
-.listing-user-info {
-  margin-top: 1.5rem;
+.contact-info {
+  margin-top: 2rem;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.contact-info h2 {
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.send-message-button {
+  padding: 0.5rem 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.send-message-button:hover {
+  background-color: #0056b3;
 }
 </style>
