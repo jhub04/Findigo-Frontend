@@ -7,6 +7,7 @@
       @update:searchQuery="($event) => emit('update:searchQuery', $event)"
     />
     <FilterPrice />
+    <FilterDates />
 
   </div>
 </template>
@@ -14,6 +15,7 @@
 <script setup lang="ts">
 import FilterCategories from '@/components/search/FilterCategories.vue'
 import FilterPrice from '@/components/search/FilterPrice.vue'
+import FilterDates from '@/components/search/FilterDates.vue'
 
 const props = defineProps<{
   selectedCategory: number | 'all'
