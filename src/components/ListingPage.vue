@@ -1,44 +1,3 @@
-<template>
-  <div class="listing-page">
-    <div v-if="loading" class="status-message">Laster annonse...</div>
-    <div v-else-if="error" class="status-message error">Fant ikke annonsen</div>
-
-    <div v-else-if="listing" class="listing-container">
-      <div class="image-section">
-        <div class="main-image">
-          <img 
-          v-for="(url, i) in images"
-          :key="i"
-          :src="url || noImage"
-          alt="Hovedbilde" />
-        </div>
-        <div class="thumbnail-row">
-          <p>Fetch images here</p>
-        </div>
-      </div>
-
-      <div class="text-section">
-        <h1 class="title">{{ listing.briefDescription }}</h1>
-        <p class="price">price here</p>
-
-        <p class="description">{{ listing.fullDescription }}</p>
-
-        <div class="attributes">
-          <div v-for="(attribute, index) in listing.attributes" :key="index">
-            {{ attribute.name }}: {{ attribute.value }}
-          </div>
-        </div>
-
-
-        <div class="info">
-          <p><strong>Bruker:</strong> {{ listing.user.username }}</p>
-          <p><strong>Kategori:</strong> {{ listing.category.name }}</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import noImage from '@/assets/no-image.jpg'
 import { onMounted, ref } from 'vue'
@@ -70,6 +29,53 @@ onMounted(async () => {
 })
 </script>
 
+<template>
+  <main>
+    <div class="listing-page">
+      <div v-if="loading" class="loading-message">Loading listing...</div>
+      <div v-else-if="error" class="error-message">Could not find listing.</div>
+
+      <div v-else-if="listing" class="listing">
+        <div class="listing-images">
+          <div class="listing-images__main">
+            <img
+              v-for="(url, i) in images"
+              :key="i"
+              :src="url || noImage"
+              :alt="`Image ${i + 1}`"
+              class="listing-image"
+            />
+          </div>
+        </div>
+
+        <div class="listing-content">
+          <div class="listing-header">
+            <h1 class="listing-title">{{ listing.briefDescription }}</h1>
+            <p class="listing-price">price here</p>
+          </div>
+
+          <p class="listing-description">{{ listing.fullDescription }}</p>
+
+          <div class="listing-attributes">
+            <div
+              class="listing-attribute"
+              v-for="(attribute, index) in listing.attributes"
+              :key="index"
+            >
+              <strong>{{ attribute.name }}:</strong> {{ attribute.value }}
+            </div>
+          </div>
+
+          <div class="listing-user-info">
+            <p><strong>Owner:</strong> {{ listing.user.username }}</p>
+            <p><strong>Category:</strong> {{ listing.category.name }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</template>
+
 <style scoped>
 .listing-page {
   max-width: 1000px;
@@ -78,71 +84,68 @@ onMounted(async () => {
   font-family: Arial, sans-serif;
 }
 
-.status-message {
+.loading-message,
+.error-message {
   text-align: center;
   font-size: 18px;
 }
 
-.error {
+.error-message {
   color: red;
 }
 
-.listing-container {
+.listing {
   display: flex;
   flex-direction: column;
   gap: 2rem;
 }
 
-.image-section {
+.listing-images {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.main-image img {
+.listing-images__main img {
   max-width: 100%;
   border-radius: 10px;
   border: 1px solid #ccc;
+  margin-bottom: 1rem;
 }
 
-.thumbnail-row {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin-top: 1rem;
-  gap: 10px;
-}
-
-.thumbnail {
-  max-width: 120px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 2px;
-  cursor: pointer;
-}
-
-.text-section {
+.listing-content {
   padding: 0 1rem;
 }
 
-.title {
+.listing-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.listing-title {
   font-size: 28px;
   font-weight: bold;
-  margin-bottom: 0.5rem;
 }
 
-.price {
+.listing-price {
   font-size: 22px;
   color: #2e7d32;
-  margin-bottom: 1rem;
 }
 
-.description {
-  margin-bottom: 1rem;
+.listing-description {
+  margin: 1rem 0;
 }
 
-.attributes p,
-.info p {
-  margin: 0.3rem 0;
+.listing-attributes {
+  margin-top: 1rem;
+}
+
+.listing-attribute {
+  margin-bottom: 0.4rem;
+}
+
+.listing-user-info {
+  margin-top: 1.5rem;
 }
 </style>
