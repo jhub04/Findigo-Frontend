@@ -17,10 +17,12 @@ const error = ref(false)
 
 onMounted(async () => {
   try {
-    const res = await getListingById(id)
-    if (!res) throw new Error('Ikke funnet')
-    listing.value = res
-    console.log(listing.value.id)
+    const currentListing = await getListingById(id)
+    if (!currentListing) {
+      console.log("Could fetch listing by id ", id);
+      return;
+    }
+    listing.value = currentListing;
   } catch (error: any) {
     error.value = true
   } finally {
