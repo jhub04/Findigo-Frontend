@@ -26,28 +26,26 @@
 
 
 <script setup lang="ts">
-import {useRoute, useRouter} from 'vue-router'
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import {getAllCategories} from '@/services/categoryApi.ts'
-import type { CategoryResponse, ListingResponse } from '@/types/dto.ts'
+import type { CategoryResponse } from '@/types/dto.ts'
+import router from '@/router'
+import { useRoute } from 'vue-router'
 
 const categories = ref<CategoryResponse[]>([])
 const route = useRoute()
-const router = useRouter()
 
-const props = defineProps<{
-  selectedCategory: number | 'all'
-  searchQuery: string
-}>()
+const selectedCategory = computed<"all" | number>(() => {
+  const c = route.query.category
+  if (!c || Array.isArray(c) || c === 'all') return 'all'
+  const n = Number(c)
+  return isNaN(n) ? 'all' : n
+})
 
 const selectCategory = (categoryId: number) => {
   const currentQuery = { ...route.query }
-
-  if (props.selectedCategory === categoryId) {
-    currentQuery.category = 'all'
-  } else {
-    currentQuery.category = categoryId
-  }
+  currentQuery.category =
+    selectedCategory.value === categoryId ? 'all' : String(categoryId)
 
   router.push({ query: currentQuery })
 }
@@ -60,7 +58,6 @@ onMounted(async () => {
     console.error(err)
   }
 })
-
 
 </script>
 
@@ -78,6 +75,5 @@ onMounted(async () => {
 .category-options a {
   text-decoration: none;
 }
-
 
 </style>
