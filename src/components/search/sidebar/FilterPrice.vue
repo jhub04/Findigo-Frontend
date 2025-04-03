@@ -5,14 +5,13 @@
       type="number"
       placeholder="Min"
       v-model.number="min"
-      @change="updatePrice"
     />
     <input
       type="number"
       placeholder="Max"
       v-model.number="max"
-      @change="updatePrice"
     />
+    <button class="search-button" @click="updatePrice">Search</button>
   </div>
 </template>
 
@@ -44,7 +43,30 @@ function updatePrice() {
   margin-left: 1.5rem;
   border-radius: 70px;
 }
+
 input[type="number"] {
   width: 100px;
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.search-button {
+  margin-left: 10px;
+  padding: 5px 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.search-button:hover {
+  background-color: #0056b3;
 }
 </style>
