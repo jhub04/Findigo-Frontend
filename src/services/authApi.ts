@@ -35,11 +35,16 @@ export const isAuthenticated = async () => {
   }
 }
 
+export const clearCookie = async () => {
+  await apiClient.post("auth/logout");
+}
+
 
 const authApi = {
   registerUser,
   login,
   isAuthenticated,
+  clearCookie
 };
 
 export default authApi;

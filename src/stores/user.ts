@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import { login } from '@/services/authApi.ts';
+import { login, clearCookie } from '@/services/authApi.ts';
 
 export const useUserStore = defineStore("token", () => {
   const loggedInUser = ref<string | null>(sessionStorage.getItem("loggedInUser"));
@@ -11,8 +11,16 @@ export const useUserStore = defineStore("token", () => {
     sessionStorage.setItem("loggedInUser", username);
   };
 
-  const logout = () => {
-    //TODO api call to backend to log out
+  const logout = async () => {
+    try {
+      await clearCookie();
+    } catch (error) {
+      console.error("Error during logout:", error);
+      return;
+    }
+  
+    // After logout request, redirect to login page
+    window.location.href = "/login";
     loggedInUser.value = null;
     sessionStorage.clear();
   };
