@@ -45,17 +45,11 @@ function performDateFilter() {
     delete query.dateFrom
   }
 
-  router.push({ query })
+  router.replace({ query })
 }
 </script>
 
 <style scoped>
-.filter-dates {
-  margin-left: 1.5rem;
-  margin-top: 2.5rem;
-  border-radius: 70px;
-}
-
 .calendar-button {
   display: flex;
   gap: 10px;
@@ -81,5 +75,9 @@ input[type="date"] {
 .apply-button:disabled {
   background-color: #aaa;
   cursor: not-allowed;
+}
+
+.filter-dates h3 {
+  font-size: 1.03rem;
 }
 </style>

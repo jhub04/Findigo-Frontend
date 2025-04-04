@@ -1,29 +1,11 @@
 <template>
   <div class="sidebar">
-    <!-- Container that holds both the search box and category buttons -->
-    <div class="searchAndCategories">
-      <!-- Emits 'search' when user types or submits a search query -->
       <SearchBox @search="onSearch" />
-
-      <!-- Category filter buttons -->
-      <div class="filters">
-        <!-- 'All' is default and resets category filtering -->
-        <button
-          :class="{ active: selectedCategory === 'All' }"
-          @click="selectCategory('All')"
-        >
-          All
-        </button>
-
-        <!-- Dynamically render category buttons fetched from API -->
-        <button
-          v-for="cat in categories"
-          :key="cat"
-          :class="{ active: selectedCategory === cat.id }"
-          @click="selectCategory(cat.id)"
-        >
-          {{ cat.name }}
-        </button>
+    <div class = filters-container>
+      <FilterCategories/>
+      <div class = "filter-price-and-dates">
+      <FilterPrice />
+      <FilterDates />
       </div>
     </div>
   </div>
@@ -39,7 +21,10 @@
 import { ref, defineEmits, onMounted } from 'vue'
 import { getAllCategories } from '@/services/categoryApi.ts'
 import SearchBox from '@/components/map/MapSearchBar.vue'
-
+import FilterSideBar  from '@/components/search/SearchSideBar.vue'
+import FilterCategories from '@/components/sidebarFilters/FilterCategories.vue'
+import FilterPrice from '@/components/sidebarFilters/FilterPrice.vue'
+import FilterDates from '@/components/sidebarFilters/FilterDates.vue'
 /**
  * Emits events to parent component:
  * - 'updateCategory': when a new category is selected
@@ -88,8 +73,7 @@ onMounted(async () => {
 <style scoped>
 .sidebar {
   position: absolute;
-  top: 0.62rem;
-  left: 1.02rem;
+  top: 0rem;
   z-index: 1000;
   background: white;
   border-radius: 0 10px 10px 10px;
@@ -101,20 +85,18 @@ onMounted(async () => {
   border: 2.5px solid #ccc;
 }
 
-.searchAndCategories {
+.filters-container {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.filters {
+.filter-price-and-dates {
   display: flex;
   flex-direction: column;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 0.6rem;
-  padding-bottom: 10px;
+  gap: 1rem;
 }
+
 
 .filters button {
   display: inline-block;

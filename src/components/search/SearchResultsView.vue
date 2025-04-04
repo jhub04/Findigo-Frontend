@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-import FilterSideBar from '@/components/search/sidebar/FilterSideBar.vue'
+import FilterSideBar from '@/components/search/SearchSideBar.vue'
 import SearchListings from '@/components/search/SearchListings.vue'
 </script>
 

@@ -1,6 +1,6 @@
 <template>
   <div class="search-container">
-    <!-- Input for search query. Emits 'search' on Enter -->
+    <!-- Input for search query. --->
     <input
       v-model="searchQuery"
       type="text"
@@ -20,38 +20,28 @@
 </template>
 
 <script setup lang="ts">
-/**
- * SearchBox component for entering listing queries.
- * Emits the search input both on change and on explicit submit (Enter or icon click).
- */
+import { ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
-import { defineEmits, ref, watch } from 'vue'
+const router = useRouter()
+const route = useRoute()
 
-/**
- * Emits the 'search' event to parent component when the input changes or is submitted.
- */
-const emit = defineEmits(['search'])
-
-/**
- * Reactive value for the current search input.
- */
 const searchQuery = ref('')
 
-/**
- * Automatically emits 'search' on each keystroke for live filtering.
- * @param newValue The updated input string
- */
-watch(searchQuery, (newValue) => {
-  emit('search', newValue.trim().toLowerCase())
-})
 
-/**
- * Manually emits the current query (used for Enter key or search icon click).
- */
 const performSearch = () => {
-  emit('search', searchQuery.value.trim().toLowerCase())
+  const trimmed = searchQuery.value.trim()
+  const newQuery = { ...route.query }
+
+  if (trimmed) newQuery.q = trimmed
+  else delete newQuery.q
+
+  router.replace({ query: newQuery })
 }
+
+
 </script>
+
 
 <style scoped>
 .search-container {
