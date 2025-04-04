@@ -27,6 +27,7 @@ export interface ListingResponse {
   address: string;
   postalCode: string;
   numberOfImages: number;
+  dateCreated: string;
   category: CategoryResponse;
   user: UserLiteResponse;
   attributes: ListingAttributeResponse[];
