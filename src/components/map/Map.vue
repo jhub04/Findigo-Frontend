@@ -33,8 +33,8 @@
     mapTypeControl: false // ← fjerner "Kart / Satellitt"-knappen
   }
 
-  const mapRef = ref<never>(null)
-  const infoWindow = ref<never>(null)
+  const mapRef = ref<any>(null)
+  const infoWindow = ref<any>(null)
 
 
   // Listings and category state
