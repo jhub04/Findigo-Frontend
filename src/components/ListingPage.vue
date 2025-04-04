@@ -11,6 +11,8 @@ const route = useRoute()
 const id = Number(route.params.id)
 const listing = ref<ListingResponse | null>(null)
 
+const formatDate = (iso: string) => new Date(iso).toLocaleString()
+
 onMounted(async () => {
   try {
     const currentListing = await getListingById(id)
@@ -57,6 +59,7 @@ onMounted(async () => {
                   <strong>{{ attribute.name }}:</strong> {{ attribute.value }}
                 </li>
               </ul>
+              <h6>Created at: {{ formatDate(listing.dateCreated) }}</h6>
             </div>
           </div>
 
