@@ -67,6 +67,7 @@ watch(
         filtered = filtered.filter(l => l.price >= pF && l.price <= pT)
       }
       listings.value = filtered
+      console.log('Filtered listings:', filtered)
     } catch (err: any) {
       error.value = err.message || 'Failed to fetch listings'
     } finally {

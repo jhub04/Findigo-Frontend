@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useUserStore } from '@/stores/user.ts'
 import { useRouter } from 'vue-router'
-import NavigationSearch from '@/components/search/NavigationSearch.vue'
+import NavigationSearch from '@/components/search/NavigationBarSearch.vue'
 import { isAuthenticated } from './services/authApi';
 
 const userStore = useUserStore();

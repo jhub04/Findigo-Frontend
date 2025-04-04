@@ -12,9 +12,8 @@
             href="#"
             @click.prevent="selectCategory(category.id)"
             :class="[
-              'no-underline text-blue-600 hover-font-semibold',
-              selectedCategory === category.id ? 'font-semibold' : ''
-            ]"
+              'category-link',
+              selectedCategory === category.id ?  'selected-category' : '']"
           >
             {{ category.name }}
           </a>
@@ -47,7 +46,7 @@ const selectCategory = (categoryId: number) => {
   currentQuery.category =
     selectedCategory.value === categoryId ? 'all' : String(categoryId)
 
-  router.push({ query: currentQuery })
+  router.replace({ query: currentQuery })
 }
 
 
@@ -62,18 +61,38 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.categories {
-  margin-left: 1.5rem;
-}
-
 
 .category-options {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.7rem;
   padding: 1px 1px 1px 1px;
   list-style: none;
+  margin-left: -25px;
 }
 .category-options a {
   text-decoration: none;
 }
+
+.category-link {
+  text-decoration: none;
+  color: #007bff;      /* blue text */
+  padding: 4px 8px;    /* add padding to show the background */
+  border-radius: 4px;
+  transition: background-color 0.2s, font-weight 0.2s;
+}
+
+.category-link:hover {
+  font-weight: bold;
+}
+
+.selected-category {
+  background-color: #ebf8ff;  /* faint blue background */
+  font-weight: bold;
+}
+
+.categories h3 {
+  font-size: 1.03rem; /* Adjust the value as needed */
+}
+
+
 
 </style>
