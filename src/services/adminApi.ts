@@ -36,3 +36,28 @@ export const editUser = async (userId: number, data: UserRequest): Promise<strin
   const response = await apiClient.put<string>(`/admin/users/edit/${userId}`, data);
   return response.data;
 };
+
+export const editCategory = async (categoryId: number, data: CategoryRequest): Promise<string> => {
+    const response = await apiClient.put(`/admin/categories/edit/${categoryId}`, data);
+    return response.data;
+};
+
+export const deleteCategory = async (categoryId: number): Promise<string> => {
+  const response = await apiClient.delete(`/admin/categories/${categoryId}`);
+  return response.data;
+}
+
+export const editAttribute = async (attributeId: number, data: AttributeRequest): Promise<string> => {
+  const response = await apiClient.put(`/admin/attributes/edit/${attributeId}`, data);
+  return response.data;
+};
+
+export const deleteAttribute = async (attributeId: number): Promise<string> => {
+  const response = await apiClient.delete(`/admin/attributes/${attributeId}`);
+  return response.data;
+};
+
+export const getAllAttributes = async (): Promise<AttributeResponse[]> => {
+  const response = await apiClient.get('/admin/attributes');
+  return response.data;
+};
