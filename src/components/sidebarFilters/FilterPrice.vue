@@ -1,17 +1,19 @@
 <template>
   <div class="filter-price">
     <h3>Price</h3>
-    <input
-      type="number"
-      placeholder="Min"
-      v-model.number="min"
-    />
-    <input
-      type="number"
-      placeholder="Max"
-      v-model.number="max"
-    />
-    <button class="search-button" @click="updatePrice">Search</button>
+    <div class="price-inputs">
+      <input
+        type="number"
+        placeholder="Min"
+        v-model.number="min"
+      />
+      <input
+        type="number"
+        placeholder="Max"
+        v-model.number="max"
+      />
+      <button class="apply-button" @click="updatePrice">Search</button>
+    </div>
   </div>
 </template>
 
@@ -34,18 +36,23 @@ function updatePrice() {
   if (max.value != null) query.priceTo = String(max.value)
   else delete query.priceTo
 
-  router.push({ query })
+  router.replace({ query })
 }
 </script>
 
 <style scoped>
-.filter-price {
-  margin-left: 1.5rem;
-  border-radius: 70px;
+.filter-price h3 {
+  font-size: 1.03rem;
+}
+
+.price-inputs {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
 }
 
 input[type="number"] {
-  width: 100px;
+  width: 90px;
   appearance: textfield;
   -moz-appearance: textfield;
 }
@@ -56,17 +63,16 @@ input[type="number"]::-webkit-inner-spin-button {
   margin: 0;
 }
 
-.search-button {
-  margin-left: 10px;
-  padding: 5px 10px;
+.apply-button {
+  padding: 6px 12px;
+  border-radius: 6px;
   background-color: #007bff;
   color: white;
   border: none;
-  border-radius: 5px;
   cursor: pointer;
 }
 
-.search-button:hover {
+.apply-button:hover {
   background-color: #0056b3;
 }
 </style>
