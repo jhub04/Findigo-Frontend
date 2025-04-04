@@ -41,6 +41,7 @@ export interface ListingAttributeRequest {
 export interface UserResponse {
   id: number;
   username: string;
+  phoneNumber: number;
   listings: ListingResponse[]
 }
 

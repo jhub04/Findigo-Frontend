@@ -13,10 +13,12 @@ export type Role = 'USER' | 'ADMIN';
 export interface UserRequest {
   username: string;
   password: string;
+  phoneNumber: number;
   roles: Role[];
 }
 
 export interface UserLiteResponse {
   id: number;
   username: string;
+  phoneNumber: number;
 }
