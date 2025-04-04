@@ -7,11 +7,12 @@ import { getAllListings, getListingsByCategory } from '@/services/listingApi.ts'
 import type { CategoryResponse, ListingResponse } from '@/types/dto.ts'
 import noImage from '@/assets/no-image.jpg'
 import { navigateToListing } from '@/utils/navigationUtil.ts'
+import { useImages } from '@/utils/useImages'
 
 const { user, isLoading, error } = useCurrentUser()
+const { imageMap, fetchFirstImageForListings } = useImages();
 
 const listings = ref<ListingResponse[]>([])
-const listingImageMap = ref<Record<number, string>>({}) // listingId => image URL
 const categories = ref<CategoryResponse[]>([])
 const selectedCategory = ref<number | null>(null)
 const categoryListings = ref<ListingResponse[] | null>(null)
@@ -21,23 +22,6 @@ const listingsError = ref<string | null>(null)
 const handleImageError = (event: Event) => {
   const target = event.target as HTMLImageElement
   target.src = noImage
-}
-
-const fetchFirstImageForListings = async (targetListings: ListingResponse[]) => {
-  for (const listing of targetListings) {
-    if (listing.numberOfImages > 0) {
-      try {
-        const blob = await getImageByIndex(listing.id, 0)
-        listingImageMap.value[listing.id] = URL.createObjectURL(blob)
-        console.log(listingImageMap.value[74])
-      } catch (err) {
-        console.warn(`Failed to load image for listing ${listing.id}`, err)
-        listingImageMap.value[listing.id] = noImage
-      }
-    } else {
-      listingImageMap.value[listing.id] = noImage
-    }
-  }
 }
 
 const handleCategoryClick = async (categoryId: number) => {
@@ -128,7 +112,7 @@ onMounted(async () => {
             >
               <div class="image-wrapper">
                 <img
-                  :src="listingImageMap[listing.id] || noImage"
+                  :src="imageMap[listing.id] || noImage"
                   @error="handleImageError"
                   alt="Listing image"
                   class="listing-image"

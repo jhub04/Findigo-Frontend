@@ -1,29 +1,28 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
-import { addListing } from '@/services/listingApi.ts'
-import type {
-  CategoryResponse,
-  ListingAttributeRequest,
-  ListingRequest,
-  ListingResponse,
-} from '@/types/dto.ts'
+import { ref, computed, onMounted } from 'vue'
+import { addListing } from '@/services/listingApi'
 import { getCoordinatesFromPostcode } from '@/utils/geoUtils'
-import { getAllCategories } from '@/services/categoryApi.ts'
-import { uploadImageToListing, getImageByIndex } from '@/services/imageApi'
+import { getAllCategories } from '@/services/categoryApi'
+import type { CategoryResponse, ListingAttributeRequest, ListingRequest, ListingResponse } from '@/types/dto'
+import { useImageUpload } from '@/utils/useImageUpload'
+import { useImagePreviews } from '@/utils/useImagePreviews'
 
-// Form input states
 const briefDescription = ref('')
 const fullDescription = ref('')
 const postNumber = ref('')
 const address = ref('')
 const price = ref<number | null>(null)
-
 const selectedCategoryId = ref<number | null>(null)
 const attributeInputs = ref<Record<number, string>>({})
 const listingResponse = ref<ListingResponse | null>(null)
-const listingImagePreviews = ref<string[]>([])
-
 const categories = ref<CategoryResponse[]>([])
+const errorMessage = ref<string | null>(null)
+const successMessage = ref<string | null>(null)
+const loading = ref(false)
+
+const { uploadImages, isUploading, uploadError } = useImageUpload()
+const { previews, fetchPreviews, loadingPreviews } = useImagePreviews()
+
 onMounted(async () => {
   categories.value = await getAllCategories()
 })
@@ -31,10 +30,6 @@ onMounted(async () => {
 const selectedCategory = computed(
   () => categories.value.find((cat) => cat.id === selectedCategoryId.value) ?? null,
 )
-
-const loading = ref(false)
-const errorMessage = ref<string | null>(null)
-const successMessage = ref<string | null>(null)
 
 const submit = async () => {
   errorMessage.value = null
@@ -80,21 +75,10 @@ const submit = async () => {
 const handleImageUpload = async (event: Event) => {
   const files = (event.target as HTMLInputElement).files
   if (!files || !listingResponse.value) return
-  var numImages = 0
-  for (const file of Array.from(files)) {
-    try {
-      numImages = await uploadImageToListing(listingResponse.value.id, file)
-    } catch (e) {
-      errorMessage.value = `Error uploading ${file.name}`
-      console.error(e)
-    }
-  }
 
-  listingImagePreviews.value = []
-  for (let i = 0; i < numImages; i++) {
-    const blob = await getImageByIndex(listingResponse.value.id, i)
-    listingImagePreviews.value.push(URL.createObjectURL(blob))
-  }
+  const numUploaded = await uploadImages(listingResponse.value.id, files)
+  
+  await fetchPreviews(listingResponse.value.id, numUploaded)
 }
 </script>
 
@@ -127,13 +111,17 @@ const handleImageUpload = async (event: Event) => {
 
     <div v-if="listingResponse">
       <label for="image-upload">Upload Images</label>
-      <input type="file" @change="handleImageUpload" accept="image/*" multiple />
-
-      <div v-if="listingImagePreviews.length">
+      <input type="file" id="image-upload" @change="handleImageUpload" accept="image/*" multiple />
+      
+      <div v-if="isUploading">Uploading images...</div>
+      <div v-if="uploadError" class="error-message">{{ uploadError }}</div>
+      <div v-if="loadingPreviews">Loading previews...</div>
+      
+      <div v-if="previews.length">
         <h4>Uploaded Images:</h4>
         <div class="image-grid">
           <img
-            v-for="(url, index) in listingImagePreviews"
+            v-for="(url, index) in previews"
             :key="index"
             :src="url"
             alt="Uploaded image"
@@ -208,10 +196,5 @@ button {
 
 .error-message {
   color: red;
-}
-
-.uploaded-image {
-  max-width: 150px;
-  margin-top: 0.5rem;
 }
 </style>

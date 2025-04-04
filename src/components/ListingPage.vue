@@ -1,148 +1,198 @@
-<template>
-  <div class="listing-page">
-    <div v-if="loading" class="status-message">Laster annonse...</div>
-    <div v-else-if="error" class="status-message error">Fant ikke annonsen</div>
-
-    <div v-else-if="listing" class="listing-container">
-      <div class="image-section">
-        <div class="main-image">
-          <img 
-          v-for="(url, i) in images"
-          :key="i"
-          :src="url || noImage"
-          alt="Hovedbilde" />
-        </div>
-        <div class="thumbnail-row">
-          <p>Fetch images here</p>
-        </div>
-      </div>
-
-      <div class="text-section">
-        <h1 class="title">{{ listing.briefDescription }}</h1>
-        <p class="price">price here</p>
-
-        <p class="description">{{ listing.fullDescription }}</p>
-
-        <div class="attributes">
-          <div v-for="(attribute, index) in listing.attributes" :key="index">
-            {{ attribute.name }}: {{ attribute.value }}
-          </div>
-        </div>
-
-
-        <div class="info">
-          <p><strong>Bruker:</strong> {{ listing.user.username }}</p>
-          <p><strong>Kategori:</strong> {{ listing.category.name }}</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
-import noImage from '@/assets/no-image.jpg'
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import type { ListingResponse } from '@/types/dto'
 import { getListingById } from '@/services/listingApi'
-import { getImageByIndex } from '@/services/imageApi'
+import ImageSlideshow from './ImageSlideshow.vue'
+import { useImages } from '@/utils/useImages'
 
-const images = ref<string[]>([])
-
+const { images, loading, error, fetchImagesForListing } = useImages()
 const route = useRoute()
 const id = Number(route.params.id)
-
 const listing = ref<ListingResponse | null>(null)
-const loading = ref(true)
-const error = ref(false)
 
 onMounted(async () => {
   try {
-    const res = await getListingById(id)
-    if (!res) throw new Error('Ikke funnet')
-    listing.value = res
-    console.log(listing.value.id)
+    const currentListing = await getListingById(id)
+    if (!currentListing) throw new Error('Listing not found')
+    listing.value = currentListing
+
+    if (listing.value.numberOfImages > 0) {
+      await fetchImagesForListing(listing.value.id, listing.value.numberOfImages)
+    }
   } catch (error: any) {
     error.value = true
+    console.error(error)
   } finally {
     loading.value = false
   }
 })
 </script>
 
+<template>
+  <main>
+    <div class="listing-page">
+      <div v-if="loading" class="loading-message">Loading listing...</div>
+      <div v-else-if="error" class="error-message">Could not find listing.</div>
+
+      <div v-else-if="listing" class="listing">
+        <div class="image-slideshow">
+          <ImageSlideshow :images="images" />
+        </div>
+
+        <div class="listing-info-container">
+          <div class="listing-details">
+            <h1 class="title">{{ listing.briefDescription }}</h1>
+            <p class="price">{{ listing.price }} NOK</p>
+
+            <button class="buy-button">Buy Now</button>
+
+            <p class="description">{{ listing.fullDescription }}</p>
+            <p class="location">{{ listing.postalCode }}, {{ listing.address }}</p>
+
+            <div class="listing-attributes" v-if="listing.attributes?.length">
+              <h2>Details</h2>
+              <ul>
+                <li v-for="(attribute, index) in listing.attributes" :key="index">
+                  <strong>{{ attribute.name }}:</strong> {{ attribute.value }}
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="contact-info">
+            <h2>Seller</h2>
+            <p>Username: {{ listing.user.username }}</p>
+            <p>Phone number: 416 72 162</p>
+            <router-link :to="`/messages/${listing.user.id}`">
+              <button class="send-message-button">Send Message</button>
+            </router-link>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</template>
+
 <style scoped>
-.listing-page {
-  max-width: 1000px;
-  margin: 2rem auto;
-  padding: 1rem;
-  font-family: Arial, sans-serif;
-}
-
-.status-message {
-  text-align: center;
-  font-size: 18px;
-}
-
-.error {
-  color: red;
-}
-
-.listing-container {
+.listing-info-container {
   display: flex;
-  flex-direction: column;
   gap: 2rem;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 2rem;
 }
 
-.image-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.listing-details {
+  flex: 2;
 }
 
-.main-image img {
-  max-width: 100%;
-  border-radius: 10px;
+.contact-info {
+  flex: 1;
+  padding: 1rem;
   border: 1px solid #ccc;
+  border-radius: 8px;
 }
 
-.thumbnail-row {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin-top: 1rem;
-  gap: 10px;
+.listing-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
 }
 
-.thumbnail {
-  max-width: 120px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 2px;
-  cursor: pointer;
+.loading-message,
+.error-message {
+  text-align: center;
+  font-size: 1.2rem;
+  padding: 1rem;
 }
 
-.text-section {
-  padding: 0 1rem;
+.image-slideshow {
+  margin-bottom: 2rem;
+}
+
+.listing-info {
+  border: 1px solid #ddd;
+  padding: 1.5rem;
+  border-radius: 8px;
+  background-color: #fafafa;
 }
 
 .title {
-  font-size: 28px;
-  font-weight: bold;
+  font-size: 1.8rem;
   margin-bottom: 0.5rem;
 }
 
 .price {
-  font-size: 22px;
-  color: #2e7d32;
+  font-size: 1.4rem;
+  font-weight: bold;
   margin-bottom: 1rem;
+}
+
+.buy-button {
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+  cursor: pointer;
+}
+
+.buy-button:hover {
+  background-color: #218838;
 }
 
 .description {
   margin-bottom: 1rem;
 }
 
-.attributes p,
-.info p {
-  margin: 0.3rem 0;
+.location {
+  color: #555;
+  margin-bottom: 1.5rem;
+}
+
+.listing-attributes {
+  margin-bottom: 2rem;
+}
+
+.listing-attributes h2 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.listing-attributes ul {
+  list-style: none;
+  padding: 0;
+}
+
+.listing-attributes li {
+  margin-bottom: 0.4rem;
+}
+
+.contact-info {
+  margin-top: 2rem;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.contact-info h2 {
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.send-message-button {
+  padding: 0.5rem 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.send-message-button:hover {
+  background-color: #0056b3;
 }
 </style>
