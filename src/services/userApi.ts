@@ -19,3 +19,21 @@ export const getMyListings = async (): Promise<ListingResponse[]> => {
   const response = await apiClient.get<ListingResponse[]>('/users/me/listings')
   return response.data
 }
+
+// Add new favorite. Returns a listingResponse
+export const addFavorite = async (listingId: number): Promise<ListingResponse> => {
+  const response = await apiClient.post<ListingResponse>(`/users/favorites/${listingId}`)
+  return response.data
+} 
+
+// Removes a favorite. Returns the deleted listingResponse
+export const removeFavorite = async (listingId: number): Promise<ListingResponse> => {
+  const response = await apiClient.delete<ListingResponse>(`/users/favorites/${listingId}`);
+  return response.data;
+}
+
+// Gets all the users favorite listings. Return a list of listresponses 
+export const getFavorites = async (): Promise<ListingResponse[]> => {
+  const response = await apiClient.get<ListingResponse[]>(`/users/favorites`);
+  return response.data;
+}
