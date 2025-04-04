@@ -2,9 +2,9 @@
   <div>
     <h1>Admin Dashboard</h1>
     <ul>
-      <li><router-link to="/admin/category">Add Category</router-link></li>
-      <li><router-link to="/admin/attribute">Add Attribute</router-link></li>
-      <li><router-link to="/admin/user">Add User</router-link></li>
+      <li><router-link to="/admin/category">Category</router-link></li>
+      <li><router-link to="/admin/attribute">Attribute</router-link></li>
+      <li><router-link to="/admin/user">User</router-link></li>
     </ul>
   </div>
 </template>
