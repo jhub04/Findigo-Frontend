@@ -5,8 +5,11 @@ import type { ListingResponse } from '@/types/dto'
 import { getListingById } from '@/services/listingApi'
 import ImageSlideshow from './ImageSlideshow.vue'
 import { useImages } from '@/utils/useImages'
+import { useFavorites } from '@/utils/useFavorites'
 
-const { images, loading, error, fetchImagesForListing } = useImages()
+const { images, loading, error, fetchImagesForListing } = useImages();
+const { favorites, addToFavorites, removeFromFavorites, isFavorited, fetchFavorites } = useFavorites();
+
 const route = useRoute()
 const id = Number(route.params.id)
 const listing = ref<ListingResponse | null>(null)
@@ -22,6 +25,8 @@ onMounted(async () => {
     if (listing.value.numberOfImages > 0) {
       await fetchImagesForListing(listing.value.id, listing.value.numberOfImages)
     }
+
+    await fetchFavorites();
   } catch (error: any) {
     error.value = true
     console.error(error)
@@ -29,6 +34,17 @@ onMounted(async () => {
     loading.value = false
   }
 })
+
+const toggleFavorite = async () => {
+  if (!listing.value) return;
+  if (isFavorited(listing.value.id)) {
+    console.log("Removing from favorites")
+    await removeFromFavorites(listing.value.id)
+  } else {
+    console.log("Adding to favorites")
+    await addToFavorites(listing.value.id)
+  }
+}
 </script>
 
 <template>
@@ -48,6 +64,10 @@ onMounted(async () => {
             <p class="price">{{ listing.price }} NOK</p>
 
             <button class="buy-button">Buy Now</button>
+
+            <button @click="toggleFavorite">
+              {{ isFavorited(listing.id) ? 'Remove from Favorites' : 'Add to Favorites'}}
+            </button>
 
             <p class="description">{{ listing.fullDescription }}</p>
             <p class="location">{{ listing.postalCode }}, {{ listing.address }}</p>

@@ -48,13 +48,7 @@ const router = createRouter({
 
 
 router.beforeEach(async (to) => {
-  let isAuth;
-  if (to.name === "Login" && !isAuth) {
-    //When loading webpage first time
-    return;
-  }
-
-  isAuth = await authApi.isAuthenticated();
+  let isAuth = await authApi.isAuthenticated();
   // If the user is not logged in and tries to access a protected page → redirect to log in.
   if (to.name !== 'Login' && to.name !== 'Register' && !isAuth) {
     return { name: 'Login' };
