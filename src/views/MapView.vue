@@ -1,17 +1,12 @@
 <template>
   <div class="map-page">
     <!-- Sidebar for search and category filter -->
-    <MapSidebar
-      @updateCategory="updateCategory"
-      @search="updateSearch"
-    />
+    <MapSidebar/>
 
     <!-- Main map display with current filter and search state -->
     <Map
       :center="center"
       :zoom="zoom"
-      :selectedCategory="selectedCategory"
-      :searchQuery="searchQuery"
     />
   </div>
 </template>
@@ -36,41 +31,22 @@ const center = ref({ lat: 63.5, lng: 11 })
  */
 const zoom = ref(5.2)
 
-/**
- * Current selected category ('All' by default).
- */
-const selectedCategory = ref<'All' | number>('All')
-
-/**
- * Current search query (initially empty).
- */
-const searchQuery = ref('')
-
-/**
- * Update selected category from child component.
- * @param cat Category ID or 'All'
- */
-const updateCategory = (cat: number | 'All') => {
-  selectedCategory.value = cat
-}
-
-/**
- * Update search query from child component.
- * @param query Search string
- */
-const updateSearch = (query: string) => {
-  searchQuery.value = query
-}
 </script>
 
 <style scoped>
 .map-page {
-  width: 100%;
-  height: 100vh;
-  padding: 1rem;
+  display: flex;
+  position: absolute;
+  top: 69px; /* Account for navbar height */
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
 }
 
-.map-page > *:first-child {
-  margin-top: 69px;
+.map-wrapper {
+  flex: 1;
+  position: relative;
+  height: 100%;
 }
 </style>
