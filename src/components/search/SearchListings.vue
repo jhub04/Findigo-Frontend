@@ -8,7 +8,7 @@
         v-for="listing in listings"
         :key="listing.id"
         :listing="listing"
-        :image-url="imageMap[listing.id] || noImage"
+        :image-url="imageMap[listing.id] || ''"
       />
     </div>
   </div>
@@ -20,20 +20,26 @@ import { onMounted, ref, watch } from 'vue'
 import { getAllListings, getListingsByCategory } from '@/services/listingApi.ts'
 import ListingCard from '@/components/search/ListingCard.vue'
 import type { ListingResponse } from '@/types/dto.ts'
-import { useImages } from '@/utils/useImages'
-import noImage from '@/assets/no-image.jpg'
 
-const { imageMap, fetchFirstImageForListings } = useImages()
-
-onMounted(async () => {
-  listings.value = await getAllListings()
-  await fetchFirstImageForListings(listings.value)
-})
+import { useImages } from '@/composables/useImages'
 
 const route = useRoute()
 const listings = ref<ListingResponse[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
+
+const { imageMap, fetchFirstImageForListings } = useImages()
+
+onMounted(async () => {
+  try {
+    listings.value = await getAllListings()
+    await fetchFirstImageForListings(listings.value)
+  } catch (err: any) {
+    error.value = err.message ?? 'Kunne ikke hente annonser'
+  } finally {
+    loading.value = false
+  }
+})
 
 watch(
   () => route.query,
@@ -61,16 +67,19 @@ watch(
       }
 
       listings.value = filtered
+
+      await fetchFirstImageForListings(listings.value)
+
     } catch (err: any) {
-      error.value = err.message || 'Kunne ikke hente annonser'
+      error.value = err.message ?? 'Kunne ikke hente annonser'
     } finally {
       loading.value = false
     }
   },
   { immediate: true }
 )
-
 </script>
+
 <style scoped>
 .search-results {
   padding: 2rem;

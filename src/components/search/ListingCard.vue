@@ -6,7 +6,6 @@
       class="listing-image"
       @error="handleImageError"
     />
-
     <div class="listing-info">
       <h3>{{ listing.briefDescription }}</h3>
       <p>{{ listing.price }} NOK</p>
@@ -62,7 +61,6 @@ function handleImageError(event: Event) {
   width: 100%;
 }
 
-/* Grid-bilde-stil etc. */
 .listing-image {
   width: 100%;
   height: auto;
@@ -73,10 +71,6 @@ function handleImageError(event: Event) {
   padding: 1rem;
 }
 
-/*
-  Legg "Go to listing" til venstre,
-  hjerteknappen til høyre
-*/
 .listing-actions {
   display: flex;
   justify-content: space-between;
@@ -84,25 +78,21 @@ function handleImageError(event: Event) {
   margin-top: 1rem;
 }
 
-/* Lysere blå, hel tekstnode med pil,
-   og underlinje ved hover */
 .go-to-listing-btn {
   background: none;
   border: none;
-  color: #6da9fe; /* Lysere blåfarge */
+  color: #6da9fe;
   font-weight: bold;
   cursor: pointer;
   padding: 0;
   font-size: 1rem;
-  text-decoration: none; /* Start med ingen underlinje */
+  text-decoration: none;
 }
 
-/* Understreker hele knappen (tekst + pil) ved hover */
 .go-to-listing-btn:hover {
   text-decoration: underline;
 }
 
-/* Hjerteknapp */
 .favorite-btn {
   background: none;
   border: none;
