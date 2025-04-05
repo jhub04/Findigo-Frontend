@@ -22,15 +22,14 @@ import ListingCard from '@/components/ListingCard.vue'
 import type { ListingResponse } from '@/types/dto.ts'
 
 import { useImages } from '@/composables/useImages'
+import { useFavorites } from '@/composables/useFavorites'
 
 const route = useRoute()
 const listings = ref<ListingResponse[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
-
 const { firstImage, fetchFirstImageForListing } = useImages()
 const imageMap = ref<Record<number, string>>({})
-
 const fetchFirstImageForListings = async (listingList: ListingResponse[]) => {
   imageMap.value = {}
 
@@ -39,6 +38,9 @@ const fetchFirstImageForListings = async (listingList: ListingResponse[]) => {
     imageMap.value[listing.id] = firstImage.value
   }))
 }
+const { fetchFavorites } = useFavorites()
+
+
 
 
 watch(
@@ -66,6 +68,7 @@ watch(
         filtered = filtered.filter(l => l.price >= pF && l.price <= pT)
       }
 
+      await fetchFavorites()
       listings.value = filtered
 
       await fetchFirstImageForListings(listings.value)
