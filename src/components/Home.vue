@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue'
 import { useCurrentUser } from '@/utils/useCurrentUser.ts'
 import { getAllCategories } from '@/services/categoryApi'
 import { getImageByIndex } from '@/services/imageApi'
-import { getAllListings, getListingsByCategory } from '@/services/listingApi.ts' // juster path hvis den er annerledes
+import { getListingsByCategory,getRecommendedListingsPage } from '@/services/listingApi.ts' // juster path hvis den er annerledes
 import type { CategoryResponse, ListingResponse } from '@/types/dto.ts'
 import noImage from '@/assets/no-image.jpg'
 import { navigateToListing } from '@/utils/navigationUtil.ts'
@@ -18,6 +18,26 @@ const selectedCategory = ref<number | null>(null)
 const categoryListings = ref<ListingResponse[] | null>(null)
 const listingsLoading = ref(true)
 const listingsError = ref<string | null>(null)
+
+const pageNumber = ref(1);
+const totalPages = ref<number>(1);
+
+async function nextPage() {
+  if (pageNumber.value < totalPages.value) {
+    console.log("Getting page " + pageNumber.value+1)
+    pageNumber.value++
+    let listingsPage = await getRecommendedListingsPage(pageNumber.value);
+    listings.value = listingsPage.content;
+  }
+}
+
+async function prevPage() {
+  if (pageNumber.value > 1) {
+    console.log("Getting page " + pageNumber.value+1);
+    pageNumber.value--
+    listings.value = await getRecommendedListingsPage(pageNumber.value);
+  }
+}
 
 const handleImageError = (event: Event) => {
   const target = event.target as HTMLImageElement
@@ -43,8 +63,10 @@ const handleCategoryClick = async (categoryId: number) => {
 
 onMounted(async () => {
   try {
-    listings.value = await getAllListings()
-    categories.value = await getAllCategories()
+    let listingsPage= await getRecommendedListingsPage(pageNumber.value);
+    listings.value = listingsPage.content;
+    totalPages.value = listingsPage.totalPages;
+    categories.value = await getAllCategories();
     await fetchFirstImageForListings(listings.value)
   } catch (err: any) {
     listingsError.value = err.message || 'Failed to load listings'
@@ -134,6 +156,11 @@ onMounted(async () => {
         <h2 v-if="error">Error loading user</h2>
         <h2 v-else>Unauthorized!</h2>
       </div>
+    </div>
+    <div class="paginationControls">
+      <p>Current Page: {{ pageNumber }}, Total pages: {{ totalPages }}</p>
+      <button @click="prevPage" :disabled="pageNumber === 1">Previous</button>
+      <button @click="nextPage" :disabled="pageNumber === totalPages">Next</button>
     </div>
   </div>
 </template>
