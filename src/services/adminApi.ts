@@ -33,12 +33,12 @@ export const addUser = async (data: UserRequest): Promise<UserLiteResponse> => {
 };
 
 export const editUser = async (userId: number, data: UserRequest): Promise<string> => {
-  const response = await apiClient.put<string>(`/admin/users/edit/${userId}`, data);
+  const response = await apiClient.put<string>(`/admin/users/${userId}`, data);
   return response.data;
 };
 
 export const editCategory = async (categoryId: number, data: CategoryRequest): Promise<string> => {
-    const response = await apiClient.put(`/admin/categories/edit/${categoryId}`, data);
+    const response = await apiClient.put(`/admin/categories/${categoryId}`, data);
     return response.data;
 };
 
@@ -48,7 +48,7 @@ export const deleteCategory = async (categoryId: number): Promise<string> => {
 }
 
 export const editAttribute = async (attributeId: number, data: AttributeRequest): Promise<string> => {
-  const response = await apiClient.put(`/admin/attributes/edit/${attributeId}`, data);
+  const response = await apiClient.put(`/admin/attributes/${attributeId}`, data);
   return response.data;
 };
 
