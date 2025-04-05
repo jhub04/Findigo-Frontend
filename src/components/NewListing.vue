@@ -4,8 +4,8 @@ import { addListing } from '@/services/listingApi'
 import { getCoordinatesFromPostcode } from '@/utils/geoUtils'
 import { getAllCategories } from '@/services/categoryApi'
 import type { CategoryResponse, ListingAttributeRequest, ListingRequest, ListingResponse } from '@/types/dto'
-import { useImageUpload } from '@/utils/useImageUpload'
-import { useImagePreviews } from '@/utils/useImagePreviews'
+import { useImageUpload } from '@/composables/useImageUpload'
+import { useImagePreviews } from '@/composables/useImagePreviews'
 
 const briefDescription = ref('')
 const fullDescription = ref('')

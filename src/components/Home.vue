@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useCurrentUser } from '@/utils/useCurrentUser.ts'
+import { useCurrentUser } from '@/composables/useCurrentUser'
 import { getAllCategories } from '@/services/categoryApi'
-import { getImageByIndex } from '@/services/imageApi'
-import { getAllListings, getListingsByCategory } from '@/services/listingApi.ts' // juster path hvis den er annerledes
+import { getListingsByCategory, getRecommendedListingsPage } from '@/services/listingApi.ts'
+
 import type { CategoryResponse, ListingResponse } from '@/types/dto.ts'
 import noImage from '@/assets/no-image.jpg'
-import { navigateToListing } from '@/utils/navigationUtil.ts'
-import { useImages } from '@/utils/useImages'
+import { useImages } from '@/composables/useImages'
+import ListingCard from '@/components/search/ListingCard.vue'
+
 
 const { user, isLoading, error } = useCurrentUser()
-const { imageMap, fetchFirstImageForListings } = useImages();
 
 const listings = ref<ListingResponse[]>([])
 const categories = ref<CategoryResponse[]>([])
@@ -19,9 +19,25 @@ const categoryListings = ref<ListingResponse[] | null>(null)
 const listingsLoading = ref(true)
 const listingsError = ref<string | null>(null)
 
-const handleImageError = (event: Event) => {
-  const target = event.target as HTMLImageElement
-  target.src = noImage
+const pageNumber = ref(1);
+const totalPages = ref<number>(1);
+
+async function nextPage() {
+  if (pageNumber.value < totalPages.value) {
+    console.log("Getting page " + pageNumber.value+1)
+    pageNumber.value++
+    let listingsPage = await getRecommendedListingsPage(pageNumber.value);
+    listings.value = listingsPage.content;
+  }
+}
+
+async function prevPage() {
+  if (pageNumber.value > 1) {
+    console.log("Getting page " + pageNumber.value+1);
+    pageNumber.value--;
+    let listingsPage = await getRecommendedListingsPage(pageNumber.value);
+    listings.value = listingsPage.content;
+  }
 }
 
 const handleCategoryClick = async (categoryId: number) => {
@@ -32,7 +48,6 @@ const handleCategoryClick = async (categoryId: number) => {
   try {
     const result = await getListingsByCategory(categoryId)
     categoryListings.value = result
-    await fetchFirstImageForListings(result)
   } catch (err: any) {
     listingsError.value = err.message || 'Failed to load listings by category'
     categoryListings.value = null
@@ -43,9 +58,10 @@ const handleCategoryClick = async (categoryId: number) => {
 
 onMounted(async () => {
   try {
-    listings.value = await getAllListings()
-    categories.value = await getAllCategories()
-    await fetchFirstImageForListings(listings.value)
+    let listingsPage= await getRecommendedListingsPage(pageNumber.value);
+    listings.value = listingsPage.content;
+    totalPages.value = listingsPage.totalPages;
+    categories.value = await getAllCategories();
   } catch (err: any) {
     listingsError.value = err.message || 'Failed to load listings'
   } finally {
@@ -53,6 +69,8 @@ onMounted(async () => {
   }
 })
 </script>
+
+
 
 <template>
   <div class="homepage-container">
@@ -75,7 +93,6 @@ onMounted(async () => {
             >
               {{ category.name }}
             </button>
-            <!-- Optional "All Categories" button -->
             <button
               v-if="selectedCategory !== null"
               class="category-button"
@@ -95,35 +112,17 @@ onMounted(async () => {
           <div v-if="listingsLoading">Loading listings...</div>
           <div v-else-if="listingsError">Error: {{ listingsError }}</div>
           <div
-            v-else-if="
-              (selectedCategory && categoryListings?.length === 0) ||
-              (!selectedCategory && listings.length === 0)
-            "
+            v-else-if="(selectedCategory && categoryListings?.length === 0) || (!selectedCategory && listings.length === 0)"
           >
             No listings found.
           </div>
+
           <div class="listing-grid">
-            <div
+            <ListingCard
               v-for="listing in selectedCategory ? categoryListings : listings"
               :key="listing.id"
-              class="listing-card"
-              @click="navigateToListing(listing)"
-              style="cursor: pointer"
-            >
-              <div class="image-wrapper">
-                <img
-                  :src="imageMap[listing.id] || noImage"
-                  @error="handleImageError"
-                  alt="Listing image"
-                  class="listing-image"
-                />
-              </div>
-              <div class="listing-info">
-                <strong>{{ listing.briefDescription }}</strong
-                ><br /><br />
-                Eier: {{ listing.user.username }}
-              </div>
-            </div>
+              :listing="listing"
+            />
           </div>
 
           <p v-if="listings.length === 0">You have no listings yet.</p>
@@ -135,8 +134,14 @@ onMounted(async () => {
         <h2 v-else>Unauthorized!</h2>
       </div>
     </div>
+    <div class="paginationControls">
+      <p>Current Page: {{ pageNumber }}, Total pages: {{ totalPages }}</p>
+      <button @click="prevPage" :disabled="pageNumber === 1">Previous</button>
+      <button @click="nextPage" :disabled="pageNumber === totalPages">Next</button>
+    </div>
   </div>
 </template>
+
 
 <style scoped>
 .homepage-container {

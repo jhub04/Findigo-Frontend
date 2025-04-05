@@ -1,56 +1,53 @@
 <script setup lang="ts">
-import { useCurrentUser } from '@/utils/useCurrentUser.ts';
-import { useRouter } from 'vue-router';
-import { useUserStore } from '@/stores/user.ts';
+import { useCurrentUser } from '@/composables/useCurrentUser'
+import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user.ts'
 
-const { user, isLoading, error } = useCurrentUser();
-const tokenStore = useUserStore();
-const router = useRouter();
+const { user, isLoading, error } = useCurrentUser()
+const tokenStore = useUserStore()
+const router = useRouter()
 
 const logout = () => {
-  tokenStore.logout();
-  router.push('/login');
-};
+  tokenStore.logout()
+  router.push('/login')
+}
 </script>
 
-
 <template>
-    <header class="userdetails">
-      <div v-if="isLoading">Loading...</div>
+  <header class="userdetails">
+    <div v-if="isLoading">Loading...</div>
+    <div v-else>
+      <div v-if="user">
+        <h3>{{ user.username }}</h3>
+        <!-- Implement when userDto is complete-->
+        <p>User email</p>
+        <button class="logout-button" @click="logout">Log out</button>
+      </div>
+      <div v-else-if="error">
+        <p>Error loading user data.</p>
+      </div>
       <div v-else>
-        <div v-if="user">
-          <h3>{{ user.username }}</h3>
-          <!-- Implement when userDto is complete-->
-          <p>User email</p> 
-          <button class="logout-button" @click="logout">Log out</button>
-        </div>
-        <div v-else-if="error">
-          <p>Error loading user data.</p>
-        </div>
-        <div v-else>
-          <p>Unauthorized</p>
-        </div>
+        <p>Unauthorized</p>
       </div>
-    </header>
-  
-    <main>
-      <div class="grid-container">
-        <div class="mylistings" @click="router.push('/profile/listings')">
-          <h6>My Listings</h6>
-          <p>View all your posted listings</p>
-        </div>
-        <div class="myfavorites">
-          <h6>Favorites</h6>
-          <p>View all your favorite listings</p>
-        </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="grid-container">
+      <div class="mylistings" @click="router.push('/profile/listings')">
+        <h6>My Listings</h6>
+        <p>View all your posted listings</p>
       </div>
-      <router-view />
-    </main>
-  </template>
-  
+      <div class="myfavorites">
+        <h6>Favorites</h6>
+        <p>View all your favorite listings</p>
+      </div>
+    </div>
+    <router-view />
+  </main>
+</template>
 
 <style scoped>
-
 .logout-button {
   margin-top: 15px;
   background-color: #dc3545;
@@ -82,7 +79,9 @@ const logout = () => {
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
   cursor: pointer;
   text-align: center;
 }
@@ -104,5 +103,3 @@ p {
   color: #666;
 }
 </style>
-
-
