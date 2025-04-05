@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import { onMounted, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { getAllListings, getListingsByCategory } from '@/services/listingApi.ts'
 import ListingCard from '@/components/ListingCard.vue'
 import type { ListingResponse } from '@/types/dto.ts'
@@ -40,9 +40,6 @@ const fetchFirstImageForListings = async (listingList: ListingResponse[]) => {
 }
 const { fetchFavorites } = useFavorites()
 
-
-
-
 watch(
   () => route.query,
   async (query) => {
@@ -64,6 +61,12 @@ watch(
         ? results.filter(l => l.briefDescription.toLowerCase().includes(q.toLowerCase()))
         : results
 
+      if (pF != null && !isNaN(pF)) {
+        filtered = filtered.filter(l => l.price >= pF)
+      }
+      if (pT != null && !isNaN(pT)) {
+        filtered = filtered.filter(l => l.price <= pT)
+      }
       if (pF !== null && pT !== null && !isNaN(pF) && !isNaN(pT)) {
         filtered = filtered.filter(l => l.price >= pF && l.price <= pT)
       }
