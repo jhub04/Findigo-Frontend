@@ -2,10 +2,9 @@
 import { ref, onMounted } from 'vue'
 import { useCurrentUser } from '@/composables/useCurrentUser'
 import { getAllCategories } from '@/services/categoryApi'
-import { getAllListings, getListingsByCategory } from '@/services/listingApi.ts'
+import { getListingsByCategory, getRecommendedListingsPage } from '@/services/listingApi.ts'
 import type { CategoryResponse, ListingResponse } from '@/types/dto.ts'
 import noImage from '@/assets/no-image.jpg'
-import { navigateToListing } from '@/utils/navigationUtil.ts'
 import { useImages } from '@/composables/useImages'
 import ListingCard from '@/components/search/ListingCard.vue' // ✅ IMPORTERT
 
