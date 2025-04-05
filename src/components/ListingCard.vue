@@ -1,7 +1,7 @@
 <template>
   <div class="listing-card">
     <img
-      :src="imageUrl"
+      :src="firstImage"
       alt="Listing image"
       class="listing-image"
       @error="handleImageError"
@@ -32,20 +32,20 @@
 
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import noImage from '@/assets/no-image.jpg'
 import type { ListingResponse } from '@/types/dto.ts'
 import { navigateToListing } from '@/utils/navigationUtil.ts'
 import { useFavorites } from '@/composables/useFavorites'
+import { useImages} from '@/composables/useImages'
 
 const props = defineProps<{
   listing: ListingResponse,
-  imageUrl: string
 }>()
 
-const router = useRouter()
-const { isFavorited, addToFavorites, removeFromFavorites } = useFavorites()
+const { isFavorited, addToFavorites, removeFromFavorites } = useFavorites();
+const { firstImage, fetchFirstImageForListing } = useImages();
 
 const isFavorite = computed(() => isFavorited(props.listing.id))
 
@@ -65,6 +65,10 @@ function handleImageError(event: Event) {
   const target = event.target as HTMLImageElement
   target.src = noImage
 }
+
+onMounted(async () => {
+  await fetchFirstImageForListing(props.listing)
+})
 </script>
 
 
@@ -111,7 +115,7 @@ function handleImageError(event: Event) {
 .go-to-listing-btn {
   background: none;
   border: none;
-  color: #6da9fe;
+  color: #1F7A8C;
   font-weight: bold;
   cursor: pointer;
   padding: 0;

@@ -146,9 +146,9 @@ function performSearch() {
 }
 
 .search-form button {
+  background-color: #BFDBF7;
+  margin: 0;
   padding: 0 20px;
-  background: #2196f3;
-  color: white;
   font-size: 17px;
   border: none;
   cursor: pointer;
@@ -169,6 +169,5 @@ function performSearch() {
   white-space: nowrap;
   font-size: 16px;
   padding: 10px 10px 10px 20px;
-  font-family: inherit;
 }
 </style>

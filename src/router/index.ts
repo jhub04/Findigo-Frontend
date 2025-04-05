@@ -16,6 +16,7 @@ import AdminAttributeView from '@/views/admin/AdminAttributeView.vue'
 import AdminDashboardView from '@/views/admin/AdminDashboardView.vue'
 import AdminUserView from '@/views/admin/AdminUserView.vue'
 import authApi from '@/services/authApi'
+import MyFavoritesView from '@/views/profile/MyFavoritesView.vue'
 
 const routes = [
   { path: '/', redirect: '/home' },
@@ -24,6 +25,7 @@ const routes = [
   { path: '/register', component: RegisterView, name: 'Register' },
   { path: '/profile', component: ProfileView, name: 'Profile'},
   { path: '/profile/listings', component: MyListingsView, name: 'MyListings'},
+  { path: '/profile/favorites', component: MyFavoritesView, name: 'MyFavorites'},
   { path: '/map', component: MapView, name: 'Map' },
   { path: '/listing', component: NewListingView, name: 'NewListing' },
   { path: '/listing/:id', component: ListingView, name: 'ListingPage' },
@@ -44,12 +46,12 @@ const router = createRouter({
 
 
 router.beforeEach(async (to) => {
-  let isAuth = await authApi.isAuthenticated();
+  const isAuth = await authApi.isAuthenticated();
   // If the user is not logged in and tries to access a protected page → redirect to log in.
   if (to.name !== 'Login' && to.name !== 'Register' && !isAuth) {
     return { name: 'Login' };
   }
-  
+
   // If the user is logged in and tries to access the login page → redirect to "/home".
   if (to.name === 'Login' && isAuth) { //AUthstatus should be true/false
     return { name: 'Home' };

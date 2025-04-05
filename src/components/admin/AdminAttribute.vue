@@ -110,10 +110,6 @@ const showMessage = (type: 'success' | 'error', message: string) => {
   } else {
     errorMessage.value = message
   }
-
-  setTimeout(() => {
-    resetMessages()
-  }, 6000)
 }
 
 // Handlers

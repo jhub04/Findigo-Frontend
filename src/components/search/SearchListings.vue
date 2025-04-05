@@ -18,7 +18,7 @@
 import { useRoute } from 'vue-router'
 import { onMounted, ref, watch } from 'vue'
 import { getAllListings, getListingsByCategory } from '@/services/listingApi.ts'
-import ListingCard from '@/components/search/ListingCard.vue'
+import ListingCard from '@/components/ListingCard.vue'
 import type { ListingResponse } from '@/types/dto.ts'
 
 import { useImages } from '@/composables/useImages'
@@ -28,18 +28,18 @@ const listings = ref<ListingResponse[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
 
-const { imageMap, fetchFirstImageForListings } = useImages()
+const { firstImage, fetchFirstImageForListing } = useImages()
+const imageMap = ref<Record<number, string>>({})
 
-onMounted(async () => {
-  try {
-    listings.value = await getAllListings()
-    await fetchFirstImageForListings(listings.value)
-  } catch (err: any) {
-    error.value = err.message ?? 'Kunne ikke hente annonser'
-  } finally {
-    loading.value = false
-  }
-})
+const fetchFirstImageForListings = async (listingList: ListingResponse[]) => {
+  imageMap.value = {}
+
+  await Promise.all(listingList.map(async (listing) => {
+    await fetchFirstImageForListing(listing)
+    imageMap.value[listing.id] = firstImage.value
+  }))
+}
+
 
 watch(
   () => route.query,

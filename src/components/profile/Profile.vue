@@ -38,7 +38,7 @@ const logout = () => {
         <h6>My Listings</h6>
         <p>View all your posted listings</p>
       </div>
-      <div class="myfavorites">
+      <div class="myfavorites" @click="router.push('profile/favorites')">
         <h6>Favorites</h6>
         <p>View all your favorite listings</p>
       </div>
@@ -72,6 +72,10 @@ const logout = () => {
   padding: 30px 20px;
   max-width: 1000px;
   margin: 0 auto;
+}
+
+.grid-container > div {
+  background-color: white;
 }
 
 .mylistings,
