@@ -2,12 +2,12 @@
 import { ref, onMounted } from 'vue'
 import { useCurrentUser } from '@/composables/useCurrentUser'
 import { getAllCategories } from '@/services/categoryApi'
-import { getImageByIndex } from '@/services/imageApi'
-import { getListingsByCategory,getRecommendedListingsPage } from '@/services/listingApi.ts' // juster path hvis den er annerledes
+import { getAllListings, getListingsByCategory } from '@/services/listingApi.ts'
 import type { CategoryResponse, ListingResponse } from '@/types/dto.ts'
 import noImage from '@/assets/no-image.jpg'
 import { navigateToListing } from '@/utils/navigationUtil.ts'
 import { useImages } from '@/composables/useImages'
+import ListingCard from '@/components/search/ListingCard.vue' // ✅ IMPORTERT
 
 const { user, isLoading, error } = useCurrentUser()
 const { imageMap, fetchFirstImageForListings } = useImages()
@@ -117,35 +117,18 @@ onMounted(async () => {
           <div v-if="listingsLoading">Loading listings...</div>
           <div v-else-if="listingsError">Error: {{ listingsError }}</div>
           <div
-            v-else-if="
-              (selectedCategory && categoryListings?.length === 0) ||
-              (!selectedCategory && listings.length === 0)
-            "
+            v-else-if="(selectedCategory && categoryListings?.length === 0) || (!selectedCategory && listings.length === 0)"
           >
             No listings found.
           </div>
+
           <div class="listing-grid">
-            <div
+            <ListingCard
               v-for="listing in selectedCategory ? categoryListings : listings"
               :key="listing.id"
-              class="listing-card"
-              @click="navigateToListing(listing)"
-              style="cursor: pointer"
-            >
-              <div class="image-wrapper">
-                <img
-                  :src="imageMap[listing.id] || noImage"
-                  @error="handleImageError"
-                  alt="Listing image"
-                  class="listing-image"
-                />
-              </div>
-              <div class="listing-info">
-                <strong>{{ listing.briefDescription }}</strong
-                ><br /><br />
-                Eier: {{ listing.user.username }}
-              </div>
-            </div>
+              :listing="listing"
+              :imageUrl="imageMap[listing.id] || noImage"
+            />
           </div>
 
           <p v-if="listings.length === 0">You have no listings yet.</p>
