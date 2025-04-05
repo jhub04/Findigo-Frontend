@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { fetchMessageThread } from '@/services/messageApi'
-import { useCurrentUser } from '@/utils/useCurrentUser'
+import { useCurrentUser } from '@/composables/useCurrentUser'
 import type { MessageResponse, MessageRequest } from '@/types/dto'
 import { ref, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
@@ -25,9 +25,8 @@ const sendMessageToUser = async () => {
 
   sending.value = true
 
-  console.log("Sending message as user:", user.value.id);
-  console.log("To user ID:", otherUserId);
-
+  console.log('Sending message as user:', user.value.id)
+  console.log('To user ID:', otherUserId)
 
   const messageRequest: MessageRequest = {
     fromUserId: user.value.id,
@@ -43,7 +42,7 @@ const sendMessageToUser = async () => {
   } catch (e) {
     console.log('Failed to send message', e)
   } finally {
-    sending.value = false;
+    sending.value = false
   }
 }
 
@@ -73,9 +72,9 @@ const sortedMessages = computed(() =>
   [...messages.value].sort((a, b) => new Date(a.sentAt).getTime() - new Date(b.sentAt).getTime()),
 )
 
-const canSend = computed(() =>
-  !!user.value && newMessageText.value.trim().length > 0 && !sending.value
-);
+const canSend = computed(
+  () => !!user.value && newMessageText.value.trim().length > 0 && !sending.value,
+)
 
 // Retrieve other user's username from messages
 const otherUsername = computed(() => {

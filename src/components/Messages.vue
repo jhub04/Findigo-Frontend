@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { fetchAllUserMessages } from '@/services/messageApi'
-import { useCurrentUser } from '@/utils/useCurrentUser.ts'
+import { useCurrentUser } from '@/composables/useCurrentUser'
 import type { MessageResponse } from '@/types/dto'
 import { ref, watch, computed } from 'vue'
 import { useRouter } from 'vue-router'
@@ -29,7 +29,6 @@ watch(
 )
 
 const formatDate = (dateStr: string) => new Date(dateStr).toLocaleString()
-
 
 const getOtherUsername = (message: MessageResponse): string => {
   return message.fromUserId === user.value!.id ? message.toUsername : message.fromUsername
@@ -60,7 +59,7 @@ const openMessageThread = (message: MessageResponse) => {
         v-for="message in messages"
         :key="message.messageId"
         class="message-preview"
-        :class="{ 'unread-message': (!message.read && message.toUserId === user!.id) }"
+        :class="{ 'unread-message': !message.read && message.toUserId === user!.id }"
         @click="openMessageThread(message)"
       >
         <div class="message-header">
@@ -134,7 +133,6 @@ h1 {
 .error-message {
   color: red;
 }
-
 
 a,
 a:hover,

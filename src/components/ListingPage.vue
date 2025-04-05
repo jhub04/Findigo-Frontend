@@ -4,8 +4,8 @@ import { useRoute } from 'vue-router'
 import type { ListingResponse } from '@/types/dto'
 import { getListingById } from '@/services/listingApi'
 import ImageSlideshow from './ImageSlideshow.vue'
-import { useImages } from '@/utils/useImages'
-import { useFavorites } from '@/utils/useFavorites'
+import { useImages } from '@/composables/useImages'
+import { useFavorites } from '@/composables/useFavorites'
 
 const { images, loading, error, fetchImagesForListing } = useImages()
 const { favorites, addToFavorites, removeFromFavorites, isFavorited, fetchFavorites } =
@@ -137,7 +137,6 @@ const toggleFavorite = async () => {
 .favorite-icon:hover {
   transform: scale(1.1);
 }
-
 
 .listing-info-container {
   display: flex;
