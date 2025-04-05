@@ -37,3 +37,10 @@ export const deleteListing = async (listingId: number): Promise<string> => {
   const response = await apiClient.delete<string>(`/listings/${listingId}`)
   return response.data
 }
+
+// Get all a page of recommended listings
+export const getRecommendedListingsPage = async (pageNumber:number) => {
+  const response = await apiClient.get(`/listings/recommended/${pageNumber}`);
+  console.log(response.data)
+  return response.data;
+}
