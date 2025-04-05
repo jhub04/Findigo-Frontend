@@ -115,7 +115,7 @@ onMounted(async () => {
 .go-to-listing-btn {
   background: none;
   border: none;
-  color: #6da9fe;
+  color: #1F7A8C;
   font-weight: bold;
   cursor: pointer;
   padding: 0;

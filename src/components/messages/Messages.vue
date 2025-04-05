@@ -91,6 +91,7 @@ h1 {
 }
 
 .message-preview {
+  background-color: white;
   cursor: pointer;
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -108,7 +109,7 @@ h1 {
 }
 
 .unread-message {
-  background-color: #e3f2fd;
+  background-color: #BFDBF7;
 }
 
 .message-header {

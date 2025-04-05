@@ -167,6 +167,13 @@ const handleImageUpload = async (event: Event) => {
   gap: 1rem;
 }
 
+textarea {
+  resize: vertical;
+  min-height: 3rem;
+  font-size: 1rem;
+  padding: 0.75rem;
+}
+
 input,
 textarea,
 select {
