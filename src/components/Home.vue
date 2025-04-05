@@ -82,7 +82,6 @@ onMounted(async () => {
 
         <!-- Category Buttons -->
         <div v-if="categories.length > 0" class="category-buttons">
-          <h3>Categories</h3>
           <div class="button-grid">
             <button
               v-for="category in categories"
@@ -105,10 +104,6 @@ onMounted(async () => {
 
         <!-- Listings Section -->
         <div>
-          <h3>
-            {{ selectedCategory ? 'Listings in Selected Category' : 'All Listings' }}
-          </h3>
-
           <div v-if="listingsLoading">Loading listings...</div>
           <div v-else-if="listingsError">Error: {{ listingsError }}</div>
           <div
@@ -174,23 +169,35 @@ li {
 }
 
 .category-button {
-  background-color: #007bff;
-  color: white;
   border: none;
+  outline: none;
   padding: 8px 14px;
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.9rem;
-  transition: background-color 0.3s ease;
+  background-color: #f0f0f0;
+  color: #022B3A;
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    color 0.2s ease;
 }
 
 .category-button:hover {
-  background-color: #0056b3;
+  background-color: #022B3A;
+  color: white;
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 .category-button.selected {
-  background-color: #0056b3;
+  background-color: #022B3A;
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
+
 
 .button-grid {
   display: flex;

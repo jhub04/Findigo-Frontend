@@ -32,9 +32,9 @@ const isAuthenticated = computed(() => userStore.authenticated)
 <style scoped>
 
 .navbar-container {
+  background-color: #022B3A;
   font-weight: 900;
   width: 100%;
-  background-color: #f8f9fa;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -54,15 +54,27 @@ const isAuthenticated = computed(() => userStore.authenticated)
 
 .app-name {
   font-weight: bold;
-  color: #333;
+  color: #bfdbf7;
   font-size: 1.5rem;
   text-decoration: none;
+  transition: 
+    transform 0.3s ease,
+    color 0.3s ease,
+    text-shadow 0.3s ease;
 }
+
+.app-name:hover {
+  transform: scale(1.05);
+  color: #ffffff;
+  text-shadow: 0 2px 8px rgba(255, 255, 255, 0.3);
+}
+
 
 .navbar-brand {
   display: flex;
   align-items: center;
   padding: 0 20px;
+
 }
 
 .welcome-message {
@@ -81,7 +93,7 @@ const isAuthenticated = computed(() => userStore.authenticated)
 .nav-link {
   white-space: nowrap;
   text-decoration: none;
-  color: #555;
+  color: white;
   font-size: 0.9rem;
   padding: 8px 12px;
   border-radius: 4px;
