@@ -6,6 +6,12 @@
 
 body {
   margin: 0;
+  background-color: #E1E5F2;
+}
+
+button {
+  background-color: #022B3A;
+  color: white
 }
 
 .userdetails {
