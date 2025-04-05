@@ -2,12 +2,10 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 import MapView from '@/views/MapView.vue'
 import NewListingView from '@/views/NewListingView.vue'
-import NotificationsView from '@/views/NotificationsView.vue'
 import MessagesView from '@/views/MessagesView.vue'
 import LoginView from '@/views/LoginView.vue'
 import RegisterView from '@/views/RegisterView.vue'
 import ProfileView from '@/views/ProfileView.vue'
-import { useUserStore } from '@/stores/user'
 import MyListingsView from '@/views/MyListingsView.vue'
 import MessageThreadView from '@/views/MessageThreadView.vue'
 import SearchResultsView from '@/components/search/SearchResultsView.vue'
@@ -17,7 +15,6 @@ import AdminCategoryView from '@/views/admin/AdminCategoryView.vue'
 import AdminAttributeView from '@/views/admin/AdminAttributeView.vue'
 import AdminDashboardView from '@/views/admin/AdminDashboardView.vue'
 import AdminUserView from '@/views/admin/AdminUserView.vue'
-import apiClient from '@/services/apiClient'
 import authApi from '@/services/authApi'
 
 const routes = [
@@ -31,7 +28,6 @@ const routes = [
   { path: '/listing', component: NewListingView, name: 'NewListing' },
   { path: '/listing/:id', component: ListingView, name: 'ListingPage' },
   { path: '/my-listing/:id', component: OwnListingView, name: 'OwnListingPage' },
-  { path: '/notifications', component: NotificationsView, name: 'Notifications' },
   { path: '/messages', component: MessagesView, name: 'Messages' },
   { path: '/messages/:userId', component: MessageThreadView, name: 'MessageThread'},
   { path: '/search', component: SearchResultsView, name: 'SearchResultsView' },
