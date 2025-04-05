@@ -55,3 +55,38 @@ onMounted(async () => {
     </div>
   </main>
 </template>
+
+<style scoped>
+.mylistings-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+h2 {
+  margin-top: 1rem;
+}
+
+ul {
+  margin-top: 1rem;
+  padding-left: 1.5rem;
+}
+
+li {
+  margin-bottom: 0.75rem;
+}
+
+.mylistings-container h4 {
+  margin-top: 2rem;
+  font-size: 1.3rem;
+}
+
+.listing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  justify-items: center;
+}
+</style>

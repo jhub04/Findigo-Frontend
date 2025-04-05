@@ -5,6 +5,7 @@ import type { ListingResponse } from '@/types/dto.ts'
 import noImage from '@/assets/no-image.jpg'
 import { getMyListings } from '@/services/userApi.ts'
 import { navigateToListing } from '@/utils/navigationUtil.ts'
+import ListingCard from '../ListingCard.vue'
 
 const { user, isLoading, error } = useCurrentUser()
 const listings = ref<ListingResponse[]>([])
@@ -50,25 +51,7 @@ onMounted(async () => {
       <div v-else-if="error">Error: {{ error }}</div>
 
       <div class="listing-grid">
-        <div
-          v-for="listing in listings"
-          :key="listing.id"
-          class="listing-card"
-          @click="navigateToListing(listing)"
-        >
-          <div class="image-wrapper">
-            <img
-              :src="noImage"
-              @error="handleImageError"
-              alt="Listing image"
-              class="listing-image"
-            />
-            <!-- Add price overlay-->
-          </div>
-          <div class="listing-info">
-            <h5>{{ listing.briefDescription }}</h5>
-          </div>
-        </div>
+        <ListingCard v-for="listing in listings" :key="listing.id" :listing="listing" />
       </div>
 
       <p v-if="listings.length === 0">You have no listings yet.</p>
@@ -77,16 +60,36 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-main {
+.mylistings-container {
   max-width: 1000px;
   margin: 0 auto;
   padding: 2rem 1rem;
   text-align: center;
 }
-.mylistings-container {
-  margin-top: 20px;
+
+h2 {
+  margin-top: 1rem;
 }
+
+ul {
+  margin-top: 1rem;
+  padding-left: 1.5rem;
+}
+
 li {
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.mylistings-container h4 {
+  margin-top: 2rem;
+  font-size: 1.3rem;
+}
+
+.listing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  justify-items: center;
 }
 </style>
