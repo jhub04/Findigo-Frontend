@@ -1,11 +1,11 @@
 import { ref } from 'vue'
 import { addFavorite, removeFavorite, getFavorites } from '@/services/userApi'
 import type { ListingResponse } from '@/types/dto'
-
+const favorites = ref<ListingResponse[]>([]);
+const loading = ref(false);
+const error = ref<string | null>(null);
 export const useFavorites = () => {
-    const favorites = ref<ListingResponse[]>([]);
-    const loading = ref(false);
-    const error = ref<string | null>(null);
+
 
     const fetchFavorites = async () => {
         loading.value = true
@@ -39,7 +39,7 @@ export const useFavorites = () => {
 
     const isFavorited = (listingId: number) => {
         return favorites.value.some(listing => listing.id === listingId);
-    } 
+    }
 
     return {
         favorites,
