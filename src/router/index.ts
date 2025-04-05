@@ -16,6 +16,7 @@ import AdminAttributeView from '@/views/admin/AdminAttributeView.vue'
 import AdminDashboardView from '@/views/admin/AdminDashboardView.vue'
 import AdminUserView from '@/views/admin/AdminUserView.vue'
 import authApi from '@/services/authApi'
+import MyFavoritesView from '@/views/profile/MyFavoritesView.vue'
 
 const routes = [
   { path: '/', redirect: '/home' },
@@ -24,6 +25,7 @@ const routes = [
   { path: '/register', component: RegisterView, name: 'Register' },
   { path: '/profile', component: ProfileView, name: 'Profile'},
   { path: '/profile/listings', component: MyListingsView, name: 'MyListings'},
+  { path: '/profile/favorites', component: MyFavoritesView, name: 'MyFavorites'},
   { path: '/map', component: MapView, name: 'Map' },
   { path: '/listing', component: NewListingView, name: 'NewListing' },
   { path: '/listing/:id', component: ListingView, name: 'ListingPage' },
