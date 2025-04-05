@@ -2,16 +2,16 @@
 import { ref, onMounted } from 'vue'
 import { useCurrentUser } from '@/composables/useCurrentUser'
 import { getAllCategories } from '@/services/categoryApi'
-import { getImageByIndex } from '@/services/imageApi'
-import { getAllListings, getListingsByCategory } from '@/services/listingApi.ts' // juster path hvis den er annerledes
+import { getListingsByCategory, getRecommendedListingsPage } from '@/services/listingApi.ts'
+
 import type { CategoryResponse, ListingResponse } from '@/types/dto.ts'
 import noImage from '@/assets/no-image.jpg'
-import { navigateToListing } from '@/utils/navigationUtil.ts'
 import { useImages } from '@/composables/useImages'
 import { handleImageError } from '@/utils/handleImageError'
 
+import ListingCard from '@/components/ListingCard.vue'
+
 const { user, isLoading, error } = useCurrentUser()
-const { imageMap, fetchFirstImageForListings } = useImages()
 
 const listings = ref<ListingResponse[]>([])
 const categories = ref<CategoryResponse[]>([])
@@ -20,7 +20,34 @@ const categoryListings = ref<ListingResponse[] | null>(null)
 const listingsLoading = ref(true)
 const listingsError = ref<string | null>(null)
 
+const pageNumber = ref(1)
+const totalPages = ref<number>(1)
+
+async function nextPage() {
+  if (pageNumber.value < totalPages.value) {
+    console.log('Getting page ' + pageNumber.value + 1)
+    pageNumber.value++
+    let listingsPage = await getRecommendedListingsPage(pageNumber.value)
+    listings.value = listingsPage.content
+  }
+}
+
+async function prevPage() {
+  if (pageNumber.value > 1) {
+    console.log('Getting page ' + pageNumber.value + 1)
+    pageNumber.value--
+    let listingsPage = await getRecommendedListingsPage(pageNumber.value)
+    listings.value = listingsPage.content
+  }
+}
+
 const handleCategoryClick = async (categoryId: number) => {
+  if (selectedCategory.value === categoryId) {
+    selectedCategory.value = null
+    categoryListings.value = null
+    return
+  }
+
   selectedCategory.value = categoryId
   listingsLoading.value = true
   listingsError.value = null
@@ -28,7 +55,6 @@ const handleCategoryClick = async (categoryId: number) => {
   try {
     const result = await getListingsByCategory(categoryId)
     categoryListings.value = result
-    await fetchFirstImageForListings(result)
   } catch (err: any) {
     listingsError.value = err.message || 'Failed to load listings by category'
     categoryListings.value = null
@@ -39,9 +65,10 @@ const handleCategoryClick = async (categoryId: number) => {
 
 onMounted(async () => {
   try {
-    listings.value = await getAllListings()
+    let listingsPage = await getRecommendedListingsPage(pageNumber.value)
+    listings.value = listingsPage.content
+    totalPages.value = listingsPage.totalPages
     categories.value = await getAllCategories()
-    await fetchFirstImageForListings(listings.value)
   } catch (err: any) {
     listingsError.value = err.message || 'Failed to load listings'
   } finally {
@@ -60,7 +87,6 @@ onMounted(async () => {
 
         <!-- Category Buttons -->
         <div v-if="categories.length > 0" class="category-buttons">
-          <h3>Categories</h3>
           <div class="button-grid">
             <button
               v-for="category in categories"
@@ -68,26 +94,20 @@ onMounted(async () => {
               class="category-button"
               @click="handleCategoryClick(category.id)"
               :class="{ selected: selectedCategory === category.id }"
+              :aria-pressed="selectedCategory === category.id"
+              :title="
+                selectedCategory === category.id
+                  ? 'Click to clear filter'
+                  : 'Filter by ' + category.name
+              "
             >
               {{ category.name }}
-            </button>
-            <!-- Optional "All Categories" button -->
-            <button
-              v-if="selectedCategory !== null"
-              class="category-button"
-              @click="selectedCategory = null"
-            >
-              Show All
             </button>
           </div>
         </div>
 
         <!-- Listings Section -->
         <div>
-          <h3>
-            {{ selectedCategory ? 'Listings in Selected Category' : 'All Listings' }}
-          </h3>
-
           <div v-if="listingsLoading">Loading listings...</div>
           <div v-else-if="listingsError">Error: {{ listingsError }}</div>
           <div
@@ -98,28 +118,13 @@ onMounted(async () => {
           >
             No listings found.
           </div>
+
           <div class="listing-grid">
-            <div
+            <ListingCard
               v-for="listing in selectedCategory ? categoryListings : listings"
               :key="listing.id"
-              class="listing-card"
-              @click="navigateToListing(listing)"
-              style="cursor: pointer"
-            >
-              <div class="image-wrapper">
-                <img
-                  :src="imageMap[listing.id] || noImage"
-                  @error="handleImageError"
-                  alt="Listing image"
-                  class="listing-image"
-                />
-              </div>
-              <div class="listing-info">
-                <strong>{{ listing.briefDescription }}</strong
-                ><br /><br />
-                Eier: {{ listing.user.username }}
-              </div>
-            </div>
+              :listing="listing"
+            />
           </div>
 
           <p v-if="listings.length === 0">You have no listings yet.</p>
@@ -130,6 +135,11 @@ onMounted(async () => {
         <h2 v-if="error">Error loading user</h2>
         <h2 v-else>Unauthorized!</h2>
       </div>
+    </div>
+    <div class="paginationControls">
+      <p>Current Page: {{ pageNumber }}, Total pages: {{ totalPages }}</p>
+      <button @click="prevPage" :disabled="pageNumber === 1">Previous</button>
+      <button @click="nextPage" :disabled="pageNumber === totalPages">Next</button>
     </div>
   </div>
 </template>
@@ -165,22 +175,33 @@ li {
 }
 
 .category-button {
-  background-color: #007bff;
-  color: white;
   border: none;
+  outline: none;
   padding: 8px 14px;
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.9rem;
-  transition: background-color 0.3s ease;
+  background-color: #f4f4f4; /* light gray for untoggled */
+  color: #022b3a; /* base text color */
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    color 0.2s ease;
 }
 
 .category-button:hover {
-  background-color: #0056b3;
+  background-color: #022b3a;
+  color: white;
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 .category-button.selected {
-  background-color: #0056b3;
+  background-color: #022b3a;
+  color: white;
+  font-weight: bold;
+  box-shadow: inset 0 0 0 2px white;
 }
 
 .button-grid {

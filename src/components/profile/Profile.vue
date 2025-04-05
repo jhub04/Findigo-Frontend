@@ -74,6 +74,10 @@ const logout = () => {
   margin: 0 auto;
 }
 
+.grid-container > div {
+  background-color: white;
+}
+
 .mylistings,
 .myfavorites {
   padding: 20px;

@@ -1,5 +1,17 @@
+* {
+  font-family: 'Roboto', sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
 body {
   margin: 0;
+  background-color: #E1E5F2;
+}
+
+button {
+  background-color: white;
+  color: #022B3A;
 }
 
 .userdetails {
@@ -74,7 +86,7 @@ body {
   color: white;
   padding: 6px 10px;
   border-radius: 8px;
-  font-weight: 600;
+  font-weight: 300;
   font-size: 0.9rem;
 }
 

@@ -6,7 +6,7 @@ import type { ListingResponse } from '@/types/dto.ts'
 
 export function useImages() {
   const images = ref<string[]>([])
-  const imageMap = ref<Record<number, string>>({})
+  const firstImage = ref<string>(noImage)
   const loading = ref(false)
   const error = ref<string | null>(null)
 
@@ -28,21 +28,18 @@ export function useImages() {
     loading.value = false
   }
 
-  // Fetches only the first image for all listings. Used on the homepage for listing previews/thumbnails
-  const fetchFirstImageForListings = async (listings: ListingResponse[]) => {
+  // Fetches only the first image for a single listing. Used on the homepage for listing previews/thumbnails
+  const fetchFirstImageForListing = async (listing: ListingResponse) => {
     loading.value = true
     error.value = null
-    for (const listing of listings) {
-      if (listing.numberOfImages > 0) {
-        try {
-          const blob = await getImageByIndex(listing.id, 0)
-          imageMap.value[listing.id] = URL.createObjectURL(blob)
-        } catch (e) {
-          console.error(`Failed to load image for listing ${listing.id}`, e)
-          imageMap.value[listing.id] = noImage
-        }
-      } else {
-        imageMap.value[listing.id] = noImage
+
+    if (listing.numberOfImages > 0) {
+      try {
+        const blob = await getImageByIndex(listing.id, 0)
+        firstImage.value = URL.createObjectURL(blob);
+      } catch (e) {
+        console.error(`Failed to load first image for listing ${listing.id}`, e)
+        firstImage.value = noImage;
       }
     }
     loading.value = false
@@ -50,10 +47,10 @@ export function useImages() {
 
   return {
     images,
-    imageMap,
+    firstImage,
     loading,
     error,
     fetchImagesForListing,
-    fetchFirstImageForListings,
+    fetchFirstImageForListing,
   }
 }
