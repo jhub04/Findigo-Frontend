@@ -32,6 +32,9 @@ const isAuthenticated = computed(() => userStore.authenticated)
 <style scoped>
 
 .navbar-container {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
   background-color: #022B3A;
   font-weight: 900;
   width: 100%;
