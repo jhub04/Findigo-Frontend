@@ -17,13 +17,14 @@
           Go to listing details &rarr;
         </button>
 
-        <button class="favorite-btn" @click.stop="toggleFavorite" :aria-label="isFavorite ? 'Unfavorite' : 'Favorite'">
+        <div class="favorite-btn" @click="toggleFavorite">
           <v-icon
-            :name="isFavorite ? 'oi-star-fill' : 'md-staroutline-round'"
-            scale="1.8"
+            :name="isFavorited(props.listing.id) ? 'oi-star-fill' : 'md-staroutline-round'"
+            scale="2"
             fill="gold"
+            class="favorite-icon"
           />
-        </button>
+        </div>
       </div>
     </div>
 
