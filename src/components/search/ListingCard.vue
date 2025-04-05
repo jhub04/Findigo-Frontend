@@ -15,33 +15,43 @@
           Go to listing details &rarr;
         </button>
 
-        <button class="favorite-btn" @click.stop="toggleFavorite">
-          <span v-if="isFavorite">♥</span>
-          <span v-else>♡</span>
+        <button class="favorite-btn" @click.stop="toggleFavorite" :aria-label="isFavorite ? 'Unfavorite' : 'Favorite'">
+          <v-icon
+            :name="isFavorite ? 'oi-star-fill' : 'md-staroutline-round'"
+            scale="1.8"
+            fill="gold"
+          />
         </button>
-
       </div>
     </div>
   </div>
 </template>
 
+
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import noImage from '@/assets/no-image.jpg'
 import type { ListingResponse } from '@/types/dto.ts'
 import { navigateToListing } from '@/utils/navigationUtil.ts'
+import { useFavorites } from '@/composables/useFavorites'
 
 const props = defineProps<{
   listing: ListingResponse,
   imageUrl: string
 }>()
 
-const isFavorite = ref(false)
 const router = useRouter()
+const { isFavorited, addToFavorites, removeFromFavorites } = useFavorites()
 
-function toggleFavorite() {
-  isFavorite.value = !isFavorite.value
+const isFavorite = computed(() => isFavorited(props.listing.id))
+
+async function toggleFavorite() {
+  if (isFavorite.value) {
+    await removeFromFavorites(props.listing.id)
+  } else {
+    await addToFavorites(props.listing.id)
+  }
 }
 
 function goToListing() {
@@ -53,6 +63,7 @@ function handleImageError(event: Event) {
   target.src = noImage
 }
 </script>
+
 
 <style scoped>
 .listing-card {
@@ -99,7 +110,21 @@ function handleImageError(event: Event) {
   background: none;
   border: none;
   cursor: pointer;
-  padding: 0;
+  padding: 0.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: transform 0.2s ease;
 }
+
+.favorite-btn:hover {
+  transform: scale(1.1);
+}
+.favorite-btn:focus {
+  outline: none;
+}
+.favorite-btn:active {
+  transform: scale(0.95);
+}
+
 </style>
