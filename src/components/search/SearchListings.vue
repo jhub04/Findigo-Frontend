@@ -30,16 +30,6 @@ const error = ref<string | null>(null)
 
 const { imageMap, fetchFirstImageForListings } = useImages()
 
-onMounted(async () => {
-  try {
-    listings.value = await getAllListings()
-    await fetchFirstImageForListings(listings.value)
-  } catch (err: any) {
-    error.value = err.message ?? 'Kunne ikke hente annonser'
-  } finally {
-    loading.value = false
-  }
-})
 
 watch(
   () => route.query,
