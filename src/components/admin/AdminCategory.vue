@@ -92,9 +92,6 @@ const showMessage = (type: 'success' | 'error', message: string) => {
     errorMessage.value = message;
   }
 
-  setTimeout(() => {
-    resetMessages();
-  }, 6000);
 }
 
 const handleCreateClick = async () => {

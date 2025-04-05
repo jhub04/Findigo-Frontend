@@ -17,7 +17,6 @@ import AdminCategoryView from '@/views/admin/AdminCategoryView.vue'
 import AdminAttributeView from '@/views/admin/AdminAttributeView.vue'
 import AdminDashboardView from '@/views/admin/AdminDashboardView.vue'
 import AdminUserView from '@/views/admin/AdminUserView.vue'
-import apiClient from '@/services/apiClient'
 import authApi from '@/services/authApi'
 
 const routes = [
@@ -48,12 +47,12 @@ const router = createRouter({
 
 
 router.beforeEach(async (to) => {
-  let isAuth = await authApi.isAuthenticated();
+  const isAuth = await authApi.isAuthenticated();
   // If the user is not logged in and tries to access a protected page → redirect to log in.
   if (to.name !== 'Login' && to.name !== 'Register' && !isAuth) {
     return { name: 'Login' };
   }
-  
+
   // If the user is logged in and tries to access the login page → redirect to "/home".
   if (to.name === 'Login' && isAuth) { //AUthstatus should be true/false
     return { name: 'Home' };
