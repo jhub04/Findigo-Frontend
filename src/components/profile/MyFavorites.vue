@@ -44,7 +44,11 @@ onMounted(async () => {
       <div v-else-if="error">Error: {{ error }}</div>
 
       <div class="listing-grid">
-        <!-- TODO: implement-->
+        <ListingCard
+              v-for="listing in favorites"
+              :key="listing.id"
+              :listing="listing"
+            />
       </div>
 
       <p v-if="favorites.length === 0">You have no listings yet.</p>
