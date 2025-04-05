@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import MessageThread from '@/components/MessageThread.vue';
+import MessageThread from '@/components/messages/MessageThread.vue';
 </script>
 
 <template>
