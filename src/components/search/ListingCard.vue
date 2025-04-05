@@ -7,8 +7,10 @@
       @error="handleImageError"
     />
     <div class="listing-info">
-      <h3>{{ listing.briefDescription }}</h3>
-      <p>{{ listing.price }} NOK</p>
+      <div class="content-wrapper">
+        <h3>{{ listing.briefDescription }}</h3>
+        <p>{{ listing.price }} NOK</p>
+      </div>
 
       <div class="listing-actions">
         <button class="go-to-listing-btn" @click.stop="goToListing">
@@ -24,6 +26,7 @@
         </button>
       </div>
     </div>
+
   </div>
 </template>
 
@@ -72,7 +75,23 @@ function handleImageError(event: Event) {
   overflow: hidden;
   margin: 1rem;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
+
+.listing-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1rem;
+  height: 100%;
+}
+
+.content-wrapper {
+  flex-grow: 1;
+}
+
 
 .listing-image {
   width: 100%;
@@ -80,9 +99,7 @@ function handleImageError(event: Event) {
   object-fit: cover;
 }
 
-.listing-info {
-  padding: 1rem;
-}
+
 
 .listing-actions {
   display: flex;
