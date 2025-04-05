@@ -131,7 +131,6 @@ const otherUsername = computed(() => {
   max-width: 600px;
   margin: 0 auto;
   padding: 20px;
-  font-family: Arial, sans-serif;
 }
 
 ul {
@@ -182,7 +181,6 @@ ul {
   font-size: 14px;
   border-radius: 6px;
   border: 1px solid #ccc;
-  font-family: Arial, sans-serif;
 }
 
 .message-input button {

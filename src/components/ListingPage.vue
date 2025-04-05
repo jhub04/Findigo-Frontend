@@ -188,7 +188,6 @@ const toggleFavorite = async () => {
 
 .price {
   font-size: 1.4rem;
-  font-weight: bold;
   margin-bottom: 1rem;
 }
 

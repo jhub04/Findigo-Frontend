@@ -81,7 +81,6 @@ onMounted(async () => {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   width: auto;
   height: auto;
-  font-family: sans-serif;
   border: 2.5px solid #ccc;
 }
 

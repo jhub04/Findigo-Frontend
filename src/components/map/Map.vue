@@ -147,7 +147,6 @@
       const content = document.createElement('div')
       content.style.cssText = `
         width: 200px;
-        font-family: sans-serif;
         background-color: #fff;
         padding: 0px 8px 8px 8px;
         border-radius: 6px;
