@@ -7,10 +7,10 @@ import { getListingsByCategory, getRecommendedListingsPage } from '@/services/li
 import type { CategoryResponse, ListingResponse } from '@/types/dto.ts'
 import noImage from '@/assets/no-image.jpg'
 import { useImages } from '@/composables/useImages'
-import ListingCard from '@/components/search/ListingCard.vue' // ✅ IMPORTERT
+import ListingCard from '@/components/search/ListingCard.vue'
+
 
 const { user, isLoading, error } = useCurrentUser()
-const { imageMap, fetchFirstImageForListings } = useImages()
 
 const listings = ref<ListingResponse[]>([])
 const categories = ref<CategoryResponse[]>([])
@@ -40,11 +40,6 @@ async function prevPage() {
   }
 }
 
-const handleImageError = (event: Event) => {
-  const target = event.target as HTMLImageElement
-  target.src = noImage
-}
-
 const handleCategoryClick = async (categoryId: number) => {
   selectedCategory.value = categoryId
   listingsLoading.value = true
@@ -53,7 +48,6 @@ const handleCategoryClick = async (categoryId: number) => {
   try {
     const result = await getListingsByCategory(categoryId)
     categoryListings.value = result
-    await fetchFirstImageForListings(result)
   } catch (err: any) {
     listingsError.value = err.message || 'Failed to load listings by category'
     categoryListings.value = null
@@ -68,7 +62,6 @@ onMounted(async () => {
     listings.value = listingsPage.content;
     totalPages.value = listingsPage.totalPages;
     categories.value = await getAllCategories();
-    await fetchFirstImageForListings(listings.value)
   } catch (err: any) {
     listingsError.value = err.message || 'Failed to load listings'
   } finally {
@@ -129,7 +122,6 @@ onMounted(async () => {
               v-for="listing in selectedCategory ? categoryListings : listings"
               :key="listing.id"
               :listing="listing"
-              :imageUrl="imageMap[listing.id] || noImage"
             />
           </div>
 
