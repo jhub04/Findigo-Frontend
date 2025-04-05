@@ -16,8 +16,10 @@
         </button>
 
         <button class="favorite-btn" @click.stop="toggleFavorite">
-          <!-- hjerte -->
+          <span v-if="isFavorite">♥</span>
+          <span v-else>♡</span>
         </button>
+
       </div>
     </div>
   </div>
