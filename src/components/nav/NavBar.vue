@@ -44,6 +44,7 @@ const isAuthenticated = computed(() => userStore.authenticated)
   align-items: center;
   max-width: 1200px;
   margin: 0 auto;
+  flex-wrap: nowrap;
   padding: 15px 20px;
 }
 
@@ -78,6 +79,7 @@ const isAuthenticated = computed(() => userStore.authenticated)
 }
 
 .nav-link {
+  white-space: nowrap;
   text-decoration: none;
   color: #555;
   font-size: 0.9rem;
