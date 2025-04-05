@@ -58,7 +58,6 @@ const deleteListing = () => alert('Slett annonse');
 .admin-listing-container {
   width: 800px;
   margin: 0 auto;
-  font-family: Arial, sans-serif;
   padding: 20px;
   background-color: #ffffff;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);

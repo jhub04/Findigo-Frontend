@@ -25,7 +25,6 @@ import FilterDates from '@/components/sidebarFilters/FilterDates.vue'
   border-right: 1px solid #e5e7eb;
   height: 100vh;
   width: auto;
-  font-family: 'Inter', sans-serif;
 }
 
 .sidebar a {
