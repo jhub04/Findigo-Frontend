@@ -7,6 +7,7 @@ import ImageSlideshow from './ImageSlideshow.vue'
 import { useImages } from '@/composables/useImages'
 import { useFavorites } from '@/composables/useFavorites'
 
+
 const { images, loading, error, fetchImagesForListing } = useImages()
 const { favorites, addToFavorites, removeFromFavorites, isFavorited, fetchFavorites } =
   useFavorites()
@@ -66,7 +67,7 @@ const toggleFavorite = async () => {
           </div>
 
           <div class="image-slideshow">
-            <ImageSlideshow :images="images" />
+            <ImageSlideshow :images="images"/>
           </div>
         </div>
 

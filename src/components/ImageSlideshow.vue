@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { handleImageError } from '@/utils/handleImageError';
+import { ref, computed } from 'vue'
+import noImage from '@/assets/no-image.jpg'
 
 const props = defineProps<{
   images: string[]
@@ -7,6 +9,10 @@ const props = defineProps<{
 }>()
 
 const currentImageIndex = ref(props.initialIndex || 0)
+
+const currentImage = computed(() => {
+  return props.images && props.images.length > 0 ? props.images[currentImageIndex.value] : noImage
+})
 
 const nextImage = () => {
   if (props.images.length > 0) {
@@ -23,9 +29,14 @@ const prevImage = () => {
 </script>
 
 <template>
-  <div class="slideshow-container" v-if="images && images.length">
+  <div class="slideshow-container">
     <div class="image-wrapper">
-      <img :src="images[currentImageIndex]" class="slideshow-image" alt="Image" />
+      <img
+      :src="currentImage"
+      class="slideshow-image"
+      @error="handleImageError"
+      alt="Image"
+    />
     </div>
     <div class="controls" v-if="images.length > 1">
       <button @click="prevImage" class="nav-button">&lt;</button>

@@ -8,6 +8,7 @@ import type { CategoryResponse, ListingResponse } from '@/types/dto.ts'
 import noImage from '@/assets/no-image.jpg'
 import { navigateToListing } from '@/utils/navigationUtil.ts'
 import { useImages } from '@/composables/useImages'
+import { handleImageError } from '@/utils/handleImageError'
 
 const { user, isLoading, error } = useCurrentUser()
 const { imageMap, fetchFirstImageForListings } = useImages()
@@ -18,11 +19,6 @@ const selectedCategory = ref<number | null>(null)
 const categoryListings = ref<ListingResponse[] | null>(null)
 const listingsLoading = ref(true)
 const listingsError = ref<string | null>(null)
-
-const handleImageError = (event: Event) => {
-  const target = event.target as HTMLImageElement
-  target.src = noImage
-}
 
 const handleCategoryClick = async (categoryId: number) => {
   selectedCategory.value = categoryId
