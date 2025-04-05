@@ -28,7 +28,17 @@ const listings = ref<ListingResponse[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
 
-const { imageMap, fetchFirstImageForListings } = useImages()
+const { firstImage, fetchFirstImageForListing } = useImages()
+const imageMap = ref<Record<number, string>>({})
+
+const fetchFirstImageForListings = async (listingList: ListingResponse[]) => {
+  imageMap.value = {}
+
+  await Promise.all(listingList.map(async (listing) => {
+    await fetchFirstImageForListing(listing)
+    imageMap.value[listing.id] = firstImage.value
+  }))
+}
 
 onMounted(async () => {
   try {

@@ -28,7 +28,7 @@ export function useImages() {
     loading.value = false
   }
 
-  // Fetches only the first image for all listings. Used on the homepage for listing previews/thumbnails
+  // Fetches only the first image for a single listing. Used on the homepage for listing previews/thumbnails
   const fetchFirstImageForListing = async (listing: ListingResponse) => {
     loading.value = true
     error.value = null
