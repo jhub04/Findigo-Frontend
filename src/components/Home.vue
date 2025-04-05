@@ -9,7 +9,6 @@ import noImage from '@/assets/no-image.jpg'
 import { useImages } from '@/composables/useImages'
 import ListingCard from '@/components/search/ListingCard.vue'
 
-
 const { user, isLoading, error } = useCurrentUser()
 
 const listings = ref<ListingResponse[]>([])
@@ -19,28 +18,34 @@ const categoryListings = ref<ListingResponse[] | null>(null)
 const listingsLoading = ref(true)
 const listingsError = ref<string | null>(null)
 
-const pageNumber = ref(1);
-const totalPages = ref<number>(1);
+const pageNumber = ref(1)
+const totalPages = ref<number>(1)
 
 async function nextPage() {
   if (pageNumber.value < totalPages.value) {
-    console.log("Getting page " + pageNumber.value+1)
+    console.log('Getting page ' + pageNumber.value + 1)
     pageNumber.value++
-    let listingsPage = await getRecommendedListingsPage(pageNumber.value);
-    listings.value = listingsPage.content;
+    let listingsPage = await getRecommendedListingsPage(pageNumber.value)
+    listings.value = listingsPage.content
   }
 }
 
 async function prevPage() {
   if (pageNumber.value > 1) {
-    console.log("Getting page " + pageNumber.value+1);
-    pageNumber.value--;
-    let listingsPage = await getRecommendedListingsPage(pageNumber.value);
-    listings.value = listingsPage.content;
+    console.log('Getting page ' + pageNumber.value + 1)
+    pageNumber.value--
+    let listingsPage = await getRecommendedListingsPage(pageNumber.value)
+    listings.value = listingsPage.content
   }
 }
 
 const handleCategoryClick = async (categoryId: number) => {
+  if (selectedCategory.value === categoryId) {
+    selectedCategory.value = null
+    categoryListings.value = null
+    return
+  }
+
   selectedCategory.value = categoryId
   listingsLoading.value = true
   listingsError.value = null
@@ -58,10 +63,10 @@ const handleCategoryClick = async (categoryId: number) => {
 
 onMounted(async () => {
   try {
-    let listingsPage= await getRecommendedListingsPage(pageNumber.value);
-    listings.value = listingsPage.content;
-    totalPages.value = listingsPage.totalPages;
-    categories.value = await getAllCategories();
+    let listingsPage = await getRecommendedListingsPage(pageNumber.value)
+    listings.value = listingsPage.content
+    totalPages.value = listingsPage.totalPages
+    categories.value = await getAllCategories()
   } catch (err: any) {
     listingsError.value = err.message || 'Failed to load listings'
   } finally {
@@ -69,8 +74,6 @@ onMounted(async () => {
   }
 })
 </script>
-
-
 
 <template>
   <div class="homepage-container">
@@ -89,15 +92,14 @@ onMounted(async () => {
               class="category-button"
               @click="handleCategoryClick(category.id)"
               :class="{ selected: selectedCategory === category.id }"
+              :aria-pressed="selectedCategory === category.id"
+              :title="
+                selectedCategory === category.id
+                  ? 'Click to clear filter'
+                  : 'Filter by ' + category.name
+              "
             >
               {{ category.name }}
-            </button>
-            <button
-              v-if="selectedCategory !== null"
-              class="category-button"
-              @click="selectedCategory = null"
-            >
-              Show All
             </button>
           </div>
         </div>
@@ -107,7 +109,10 @@ onMounted(async () => {
           <div v-if="listingsLoading">Loading listings...</div>
           <div v-else-if="listingsError">Error: {{ listingsError }}</div>
           <div
-            v-else-if="(selectedCategory && categoryListings?.length === 0) || (!selectedCategory && listings.length === 0)"
+            v-else-if="
+              (selectedCategory && categoryListings?.length === 0) ||
+              (!selectedCategory && listings.length === 0)
+            "
           >
             No listings found.
           </div>
@@ -136,7 +141,6 @@ onMounted(async () => {
     </div>
   </div>
 </template>
-
 
 <style scoped>
 .homepage-container {
@@ -175,8 +179,8 @@ li {
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.9rem;
-  background-color: #f0f0f0;
-  color: #022B3A;
+  background-color: #f4f4f4; /* light gray for untoggled */
+  color: #022b3a; /* base text color */
   transition:
     background-color 0.3s ease,
     transform 0.2s ease,
@@ -185,19 +189,18 @@ li {
 }
 
 .category-button:hover {
-  background-color: #022B3A;
+  background-color: #022b3a;
   color: white;
   transform: scale(1.05);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 .category-button.selected {
-  background-color: #022B3A;
+  background-color: #022b3a;
   color: white;
   font-weight: bold;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  box-shadow: inset 0 0 0 2px white;
 }
-
 
 .button-grid {
   display: flex;
