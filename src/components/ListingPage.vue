@@ -4,11 +4,12 @@ import { useRoute } from 'vue-router'
 import type { ListingResponse } from '@/types/dto'
 import { getListingById } from '@/services/listingApi'
 import ImageSlideshow from './ImageSlideshow.vue'
-import { useImages } from '@/utils/useImages'
-import { useFavorites } from '@/utils/useFavorites'
+import { useImages } from '@/composables/useImages'
+import { useFavorites } from '@/composables/useFavorites'
 
-const { images, loading, error, fetchImagesForListing } = useImages();
-const { favorites, addToFavorites, removeFromFavorites, isFavorited, fetchFavorites } = useFavorites();
+const { images, loading, error, fetchImagesForListing } = useImages()
+const { favorites, addToFavorites, removeFromFavorites, isFavorited, fetchFavorites } =
+  useFavorites()
 
 const route = useRoute()
 const id = Number(route.params.id)
@@ -26,7 +27,7 @@ onMounted(async () => {
       await fetchImagesForListing(listing.value.id, listing.value.numberOfImages)
     }
 
-    await fetchFavorites();
+    await fetchFavorites()
   } catch (error: any) {
     error.value = true
     console.error(error)
@@ -36,12 +37,12 @@ onMounted(async () => {
 })
 
 const toggleFavorite = async () => {
-  if (!listing.value) return;
+  if (!listing.value) return
   if (isFavorited(listing.value.id)) {
-    console.log("Removing from favorites")
+    console.log('Removing from favorites')
     await removeFromFavorites(listing.value.id)
   } else {
-    console.log("Adding to favorites")
+    console.log('Adding to favorites')
     await addToFavorites(listing.value.id)
   }
 }
@@ -54,8 +55,19 @@ const toggleFavorite = async () => {
       <div v-else-if="error" class="error-message">Could not find listing.</div>
 
       <div v-else-if="listing" class="listing">
-        <div class="image-slideshow">
-          <ImageSlideshow :images="images" />
+        <div class="listing-image-wrapper">
+          <div class="favorite-icon-wrapper" @click="toggleFavorite">
+            <v-icon
+              :name="isFavorited(listing.id) ? 'oi-star-fill' : 'md-staroutline-round'"
+              scale="2"
+              fill="gold"
+              class="favorite-icon"
+            />
+          </div>
+
+          <div class="image-slideshow">
+            <ImageSlideshow :images="images" />
+          </div>
         </div>
 
         <div class="listing-info-container">
@@ -64,10 +76,6 @@ const toggleFavorite = async () => {
             <p class="price">{{ listing.price }} NOK</p>
 
             <button class="buy-button">Buy Now</button>
-
-            <button @click="toggleFavorite">
-              {{ isFavorited(listing.id) ? 'Remove from Favorites' : 'Add to Favorites'}}
-            </button>
 
             <p class="description">{{ listing.fullDescription }}</p>
             <p class="location">{{ listing.postalCode }}, {{ listing.address }}</p>
@@ -98,6 +106,38 @@ const toggleFavorite = async () => {
 </template>
 
 <style scoped>
+.listing-image-wrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.favorite-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  height: 48px;
+  width: 48px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.favorite-icon-wrapper:hover {
+  background-color: #f5f5f5;
+}
+
+.favorite-icon {
+  transition: transform 0.2s ease;
+}
+
+.favorite-icon:hover {
+  transform: scale(1.1);
+}
+
 .listing-info-container {
   display: flex;
   gap: 2rem;

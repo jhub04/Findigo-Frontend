@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useCurrentUser } from '@/utils/useCurrentUser.ts'
+import { useCurrentUser } from '@/composables/useCurrentUser'
 import { onMounted, ref } from 'vue'
 import type { ListingResponse } from '@/types/dto.ts'
 import noImage from '@/assets/no-image.jpg'
@@ -11,9 +11,9 @@ const listings = ref<ListingResponse[]>([])
 const loading = ref(true)
 
 const handleImageError = (event: Event) => {
-  const target = event.target as HTMLImageElement;
-  target.src = noImage;
-};
+  const target = event.target as HTMLImageElement
+  target.src = noImage
+}
 
 onMounted(async () => {
   try {
@@ -50,9 +50,19 @@ onMounted(async () => {
       <div v-else-if="error">Error: {{ error }}</div>
 
       <div class="listing-grid">
-        <div v-for="listing in listings" :key="listing.id" class="listing-card" @click="navigateToListing(listing)">
+        <div
+          v-for="listing in listings"
+          :key="listing.id"
+          class="listing-card"
+          @click="navigateToListing(listing)"
+        >
           <div class="image-wrapper">
-            <img :src="noImage"  @error="handleImageError" alt="Listing image" class="listing-image" />
+            <img
+              :src="noImage"
+              @error="handleImageError"
+              alt="Listing image"
+              class="listing-image"
+            />
             <!-- Add price overlay-->
           </div>
           <div class="listing-info">
