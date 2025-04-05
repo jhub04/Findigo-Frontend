@@ -34,8 +34,9 @@ async function nextPage() {
 async function prevPage() {
   if (pageNumber.value > 1) {
     console.log("Getting page " + pageNumber.value+1);
-    pageNumber.value--
-    listings.value = await getRecommendedListingsPage(pageNumber.value);
+    pageNumber.value--;
+    let listingsPage = await getRecommendedListingsPage(pageNumber.value);
+    listings.value = listingsPage.content;
   }
 }
 
