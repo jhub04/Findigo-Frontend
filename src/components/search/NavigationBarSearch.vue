@@ -169,6 +169,5 @@ function performSearch() {
   white-space: nowrap;
   font-size: 16px;
   padding: 10px 10px 10px 20px;
-  font-family: inherit;
 }
 </style>

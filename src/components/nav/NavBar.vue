@@ -32,6 +32,7 @@ const isAuthenticated = computed(() => userStore.authenticated)
 <style scoped>
 
 .navbar-container {
+  font-weight: 900;
   width: 100%;
   background-color: #f8f9fa;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -43,6 +44,7 @@ const isAuthenticated = computed(() => userStore.authenticated)
   align-items: center;
   max-width: 1200px;
   margin: 0 auto;
+  flex-wrap: nowrap;
   padding: 15px 20px;
 }
 
@@ -54,7 +56,6 @@ const isAuthenticated = computed(() => userStore.authenticated)
   font-weight: bold;
   color: #333;
   font-size: 1.5rem;
-  font-family: 'Arial', sans-serif;
   text-decoration: none;
 }
 
@@ -78,6 +79,7 @@ const isAuthenticated = computed(() => userStore.authenticated)
 }
 
 .nav-link {
+  white-space: nowrap;
   text-decoration: none;
   color: #555;
   font-size: 0.9rem;
