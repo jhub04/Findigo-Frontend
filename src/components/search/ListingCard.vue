@@ -1,46 +1,103 @@
 <template>
   <div class="listing-card">
+    <img
+      :src="imageUrl"
+      alt="Listing image"
+      class="listing-image"
+      @error="handleImageError"
+    />
     <div class="listing-info">
       <h3>{{ listing.briefDescription }}</h3>
       <p>{{ listing.price }} NOK</p>
-      <button @click.stop="toggleFavorite">⭐ Favorite</button>
+
+      <div class="listing-actions">
+        <button class="go-to-listing-btn" @click.stop="goToListing">
+          Go to listing details &rarr;
+        </button>
+
+        <button class="favorite-btn" @click.stop="toggleFavorite">
+          <!-- hjerte -->
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import noImage from '@/assets/no-image.jpg'
 import type { ListingResponse } from '@/types/dto.ts'
-defineProps<{ listing: ListingResponse }>()
+import { navigateToListing } from '@/utils/navigationUtil.ts'
+
+const props = defineProps<{
+  listing: ListingResponse,
+  imageUrl: string
+}>()
+
+const isFavorite = ref(false)
+const router = useRouter()
+
 function toggleFavorite() {
-  // TODO: Implementer favorittlogikk (f.eks. API-kall eller lokal tilstand)
+  isFavorite.value = !isFavorite.value
+}
+
+function goToListing() {
+  navigateToListing(props.listing)
+}
+
+function handleImageError(event: Event) {
+  const target = event.target as HTMLImageElement
+  target.src = noImage
 }
 </script>
 
 <style scoped>
 .listing-card {
-  background: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.07);
+  border: 1px solid #ccc;
+  border-radius: 8px;
   overflow: hidden;
-  cursor: pointer;
-  transition: transform 0.2s ease;
+  margin: 1rem;
+  width: 100%;
 }
-.listing-card:hover {
-  transform: translateY(-2px);
-}
+
 .listing-image {
   width: 100%;
-  height: 180px;
+  height: auto;
   object-fit: cover;
 }
+
 .listing-info {
-  padding: 0.8rem;
+  padding: 1rem;
 }
-button {
-  margin-top: 0.5rem;
+
+.listing-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.go-to-listing-btn {
+  background: none;
+  border: none;
+  color: #6da9fe;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0;
+  font-size: 1rem;
+  text-decoration: none;
+}
+
+.go-to-listing-btn:hover {
+  text-decoration: underline;
+}
+
+.favorite-btn {
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 1.2rem;
+  padding: 0;
+  transition: transform 0.2s ease;
 }
 </style>

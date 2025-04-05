@@ -14,7 +14,7 @@ import SearchListings from '@/components/search/SearchListings.vue'
 .temporary {
   display: flex;
   flex-direction: row;
-  gap: 200px;
+  gap: 1px;
 }
 </style>
 

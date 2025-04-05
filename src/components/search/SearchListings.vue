@@ -1,46 +1,46 @@
 <template>
   <div class="search-results">
-    <div v-if="loading" class="loading">Loading...</div>
+    <div v-if="loading" class="loading">Laster inn...</div>
     <div v-else-if="error" class="error">{{ error }}</div>
-    <div v-else-if="listings.length === 0" class="no-results">No results</div>
-    <div v-else>
-      <div
-        class="listing"
+    <div v-else-if="listings.length === 0" class="no-results">Ingen resultater</div>
+    <div class="grid-container">
+      <ListingCard
         v-for="listing in listings"
         :key="listing.id"
-        @click="navigateToListing(listing)"
-        style="cursor: pointer"
-      >
-        <p>{{ listing.briefDescription }}</p><br />
-      </div>
+        :listing="listing"
+        :image-url="imageMap[listing.id] || ''"
+      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-/**
- * Displays search results based on URL query parameters (?q= and ?category=).
- * Fetches listings via API, applies local filtering, and handles error or empty states.
- */
-
 import { useRoute } from 'vue-router'
-import { ref, watch } from 'vue'
-import { getAllListings } from '@/services/listingApi.ts'
-import { getListingsByCategory } from '@/services/listingApi.ts'
-import { navigateToListing } from '@/utils/navigationUtil.ts'
+import { onMounted, ref, watch } from 'vue'
+import { getAllListings, getListingsByCategory } from '@/services/listingApi.ts'
+import ListingCard from '@/components/search/ListingCard.vue'
 import type { ListingResponse } from '@/types/dto.ts'
 
-const route = useRoute()
+import { useImages } from '@/composables/useImages'
 
-// Reactive state
+const route = useRoute()
 const listings = ref<ListingResponse[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
 
-/**
- * Fetches all listings from the backend.
- * TODO: Create a function that retrieves lsitings from backend based on category and query directly.
- */
+const { imageMap, fetchFirstImageForListings } = useImages()
+
+onMounted(async () => {
+  try {
+    listings.value = await getAllListings()
+    await fetchFirstImageForListings(listings.value)
+  } catch (err: any) {
+    error.value = err.message ?? 'Kunne ikke hente annonser'
+  } finally {
+    loading.value = false
+  }
+})
+
 watch(
   () => route.query,
   async (query) => {
@@ -54,7 +54,6 @@ watch(
       const pT = query.priceTo ? Number(query.priceTo) : null
 
       const category = !c || Array.isArray(c) || c === 'all' ? 'all' : Number(c)
-
       const results = category === 'all'
         ? await getAllListings()
         : await getListingsByCategory(category)
@@ -66,10 +65,13 @@ watch(
       if (pF !== null && pT !== null && !isNaN(pF) && !isNaN(pT)) {
         filtered = filtered.filter(l => l.price >= pF && l.price <= pT)
       }
+
       listings.value = filtered
-      console.log('Filtered listings:', filtered)
+
+      await fetchFirstImageForListings(listings.value)
+
     } catch (err: any) {
-      error.value = err.message || 'Failed to fetch listings'
+      error.value = err.message ?? 'Kunne ikke hente annonser'
     } finally {
       loading.value = false
     }
@@ -78,3 +80,31 @@ watch(
 )
 </script>
 
+<style scoped>
+.search-results {
+  padding: 2rem;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+.grid-container > * {
+  margin: 0;
+}
+
+/* Hvis bredde er under 768px */
+@media (max-width: 768px) {
+  .grid-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Eksempel: Hvis du vil ha 1 kolonne på veldig smal skjerm (under 480px) */
+@media (max-width: 480px) {
+  .grid-container {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
