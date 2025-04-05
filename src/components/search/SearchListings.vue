@@ -18,7 +18,7 @@
 import { useRoute } from 'vue-router'
 import { onMounted, ref, watch } from 'vue'
 import { getAllListings, getListingsByCategory } from '@/services/listingApi.ts'
-import ListingCard from '@/components/search/ListingCard.vue'
+import ListingCard from '@/components/ListingCard.vue'
 import type { ListingResponse } from '@/types/dto.ts'
 
 import { useImages } from '@/composables/useImages'

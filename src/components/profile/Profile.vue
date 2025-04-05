@@ -38,7 +38,7 @@ const logout = () => {
         <h6>My Listings</h6>
         <p>View all your posted listings</p>
       </div>
-      <div class="myfavorites">
+      <div class="myfavorites" @click="router.push('profile/favorites')">
         <h6>Favorites</h6>
         <p>View all your favorite listings</p>
       </div>

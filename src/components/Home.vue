@@ -7,7 +7,9 @@ import { getListingsByCategory, getRecommendedListingsPage } from '@/services/li
 import type { CategoryResponse, ListingResponse } from '@/types/dto.ts'
 import noImage from '@/assets/no-image.jpg'
 import { useImages } from '@/composables/useImages'
-import ListingCard from '@/components/search/ListingCard.vue'
+import { handleImageError } from '@/utils/handleImageError'
+
+import ListingCard from '@/components/ListingCard.vue'
 
 const { user, isLoading, error } = useCurrentUser()
 

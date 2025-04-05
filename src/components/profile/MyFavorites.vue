@@ -1,26 +1,19 @@
 <script setup lang="ts">
-import { useCurrentUser } from '@/composables/useCurrentUser'
+import type { ListingResponse } from '@/types/dto'
 import { onMounted, ref } from 'vue'
-import type { ListingResponse } from '@/types/dto.ts'
-import noImage from '@/assets/no-image.jpg'
-import { getMyListings } from '@/services/userApi.ts'
-import { navigateToListing } from '@/utils/navigationUtil.ts'
+import { getFavorites } from '@/services/userApi'
+import { useCurrentUser } from '@/composables/useCurrentUser'
 import ListingCard from '../ListingCard.vue'
 
+const favorites = ref<ListingResponse[]>([])
 const { user, isLoading, error } = useCurrentUser()
-const listings = ref<ListingResponse[]>([])
 const loading = ref(true)
-
-const handleImageError = (event: Event) => {
-  const target = event.target as HTMLImageElement
-  target.src = noImage
-}
 
 onMounted(async () => {
   try {
-    listings.value = await getMyListings()
-  } catch (e: any) {
-    error.value = e.message || 'Failed to fetch listings'
+    favorites.value = await getFavorites()
+  } catch (error: any) {
+    error.value = error.message || 'Failed to fetch favorites'
   } finally {
     loading.value = false
   }
@@ -46,15 +39,19 @@ onMounted(async () => {
   </header>
   <main>
     <div class="mylistings-container">
-      <h4>My Listings</h4>
+      <h4>My Favorites</h4>
       <div v-if="loading">Loading listings...</div>
       <div v-else-if="error">Error: {{ error }}</div>
 
       <div class="listing-grid">
-        <ListingCard v-for="listing in listings" :key="listing.id" :listing="listing" />
+        <ListingCard
+              v-for="listing in favorites"
+              :key="listing.id"
+              :listing="listing"
+            />
       </div>
 
-      <p v-if="listings.length === 0">You have no listings yet.</p>
+      <p v-if="favorites.length === 0">You have no listings yet.</p>
     </div>
   </main>
 </template>
