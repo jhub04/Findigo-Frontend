@@ -7,6 +7,10 @@ const { user, isLoading, error } = useCurrentUser()
 const tokenStore = useUserStore()
 const router = useRouter()
 
+const navigateToProfile = () => {
+  router.push("/profile/edit")
+}
+
 const logout = () => {
   tokenStore.logout()
   router.push('/login')
@@ -22,6 +26,7 @@ const logout = () => {
         <!-- Implement when userDto is complete-->
         <p>User email</p>
         <button class="logout-button" @click="logout">Log out</button>
+        <button class="edit-button" @click="navigateToProfile">To profile</button>
       </div>
       <div v-else-if="error">
         <p>Error loading user data.</p>
@@ -50,6 +55,7 @@ const logout = () => {
 <style scoped>
 .logout-button {
   margin-top: 15px;
+  margin-right: 10px; /* space between buttons */
   background-color: #dc3545;
   color: white;
   border: none;
@@ -64,6 +70,24 @@ const logout = () => {
 .logout-button:hover {
   background-color: #c82333;
 }
+
+.edit-button {
+  margin-top: 15px;
+  background-color: #1F7A8C; /* Teal */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.edit-button:hover {
+  background-color: #022B3A; /* Gunmetal for hover effect */
+}
+
 
 .grid-container {
   display: grid;
