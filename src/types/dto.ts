@@ -84,3 +84,13 @@ export interface AttributeResponse {
   name: string;
   type: string;
 }
+
+export interface FilterRequest {
+  categoryId?: number | null;
+  query?: string | null;
+  fromPrice?: number | null;
+  toPrice?: number | null;
+  fromDate?: string | null;
+}
+
+
