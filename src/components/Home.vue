@@ -3,12 +3,9 @@ import { ref, onMounted } from 'vue'
 import { useCurrentUser } from '@/composables/useCurrentUser'
 import { getAllCategories } from '@/services/categoryApi'
 import { getListingsByCategory, getRecommendedListingsPage } from '@/services/listingApi.ts'
+import { useFavorites } from '@/composables/useFavorites'
 
 import type { CategoryResponse, ListingResponse } from '@/types/dto.ts'
-import noImage from '@/assets/no-image.jpg'
-import { useImages } from '@/composables/useImages'
-import { handleImageError } from '@/utils/handleImageError'
-
 import ListingCard from '@/components/ListingCard.vue'
 
 const { user, isLoading, error } = useCurrentUser()
@@ -19,9 +16,9 @@ const selectedCategory = ref<number | null>(null)
 const categoryListings = ref<ListingResponse[] | null>(null)
 const listingsLoading = ref(true)
 const listingsError = ref<string | null>(null)
-
 const pageNumber = ref(1)
 const totalPages = ref<number>(1)
+const {fetchFavorites} = useFavorites()
 
 async function nextPage() {
   if (pageNumber.value < totalPages.value) {
@@ -65,6 +62,7 @@ const handleCategoryClick = async (categoryId: number) => {
 
 onMounted(async () => {
   try {
+    await fetchFavorites()
     let listingsPage = await getRecommendedListingsPage(pageNumber.value)
     listings.value = listingsPage.content
     totalPages.value = listingsPage.totalPages
@@ -74,6 +72,7 @@ onMounted(async () => {
   } finally {
     listingsLoading.value = false
   }
+  await fetchFirstImageForListing(listing)
 })
 </script>
 
