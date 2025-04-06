@@ -72,7 +72,6 @@ onMounted(async () => {
   } finally {
     listingsLoading.value = false
   }
-  await fetchFirstImageForListing(listing)
 })
 </script>
 
