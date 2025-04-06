@@ -95,7 +95,7 @@ const toggleFavorite = async () => {
           <div class="contact-info">
             <h2>{{ t('Seller') }}</h2>
             <p>{{ t('Username') }}: {{ listing.user.username }}</p>
-            <p>{{ t('Phone number') }}: 416 72 162</p>
+            <p v-if="listing.user.phoneNumber">{{ t('Phone number') }}: {{ listing.user.phoneNumber }}</p>
             <router-link :to="`/messages/${listing.user.id}`">
               <button class="send-message-button">{{ t('Send Message') }}</button>
             </router-link>

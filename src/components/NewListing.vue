@@ -138,9 +138,11 @@ const handleImageUpload = async (event: Event) => {
 
     <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
 
-    <button type="submit" :disabled="loading">
+    <!-- Submit button only shown if no listing has been created -->
+    <button v-if="!listingResponse" type="submit" :disabled="loading">
       {{ loading ? $t('Submitting...') : $t('Submit Listing') }}
     </button>
+    
     <div v-if="successMessage" class="success-message">
       {{ successMessage }}
     </div>
