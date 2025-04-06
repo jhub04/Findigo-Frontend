@@ -70,10 +70,8 @@
 import { ref, onMounted } from 'vue'
 import { useCurrentUser } from '@/composables/useCurrentUser'
 import { getAllCategories } from '@/services/categoryApi'
-import {
-  getListingsByCategory,
-  getRecommendedListingsPage,
-} from '@/services/listingApi.ts'
+import { getListingsByCategory, getRecommendedListingsPage } from '@/services/listingApi.ts'
+import { useFavorites } from '@/composables/useFavorites'
 import type { CategoryResponse, ListingResponse } from '@/types/dto.ts'
 import ListingCard from '@/components/ListingCard.vue'
 import { useI18n } from 'vue-i18n'
@@ -88,9 +86,9 @@ const selectedCategory = ref<number | null>(null)
 const categoryListings = ref<ListingResponse[] | null>(null)
 const listingsLoading = ref(true)
 const listingsError = ref<string | null>(null)
-
 const pageNumber = ref(1)
 const totalPages = ref<number>(1)
+const {fetchFavorites} = useFavorites()
 
 async function nextPage() {
   if (pageNumber.value < totalPages.value) {
@@ -136,6 +134,7 @@ const handleCategoryClick = async (categoryId: number) => {
 onMounted(async () => {
   try {
     const listingsPage = await getRecommendedListingsPage(pageNumber.value)
+    await fetchFavorites()
     listings.value = listingsPage.content
     totalPages.value = listingsPage.totalPages
     categories.value = await getAllCategories()
