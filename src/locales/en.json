@@ -28,5 +28,20 @@
     "min": "min",
     "max": "max",
     "Publish from": "Publish from",
-    "Apply": "Apply"
+    "Apply": "Apply",
+    "Create a Listing": "Create a Listing",
+    "All fields including address and price are required.": "All fields including address and price are required.",
+    "Listing created! Upload images below.": "Listing created! Upload images below.",
+    "Something went wrong while submitting.": "Something went wrong while submitting.",
+    "Listing Title": "Listing Title",
+    "Description": "Description",
+    "Street address": "Street address",
+    "Postal code": "Postal code",
+    "Select category": "Select category",
+    "Upload Images": "Upload Images",
+    "Uploading images...": "Uploading images...",
+    "Loading previews...": "Loading previews...",
+    "Uploaded Images:": "Uploaded Images:",
+    "Submitting...": "Submitting...",
+    "Submit Listing": "Submit Listing"
 }

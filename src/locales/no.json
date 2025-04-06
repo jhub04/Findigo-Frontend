@@ -28,5 +28,20 @@
     "min" : "min",
     "max": "maks",
     "Publish from": "Publisert fra",
-    "Apply": "Påfør"
+    "Apply": "Påfør",
+    "Create a Listing": "Opprett en annonse",
+    "All fields including address and price are required.": "Alle felter inkludert adresse og pris må fylles inn",
+    "Listing created! Upload images below.": "Annonse opprettet! Last opp bilder nedenfor.",
+    "Something went wrong while submitting.": "Noe gikk feil under innsending.",
+    "Listing Title": "Annonse Tittel",
+    "Description": "Beskrivelse",
+    "Street address": "Gate adresse",
+    "Postal code": "Postkode",
+    "Select category": "Velg kategori",
+    "Upload Images": "Last opp bilder",
+    "Uploading images...": "Laster opp bilder...",
+    "Loading previews...": "Laster forhåndsvisning...",
+    "Uploaded Images:": "Lastet opp bilder:",
+    "Submitting...": "Oppretter...",
+    "Submit Listing": "Opprett Annonse"
 }
