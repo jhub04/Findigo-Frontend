@@ -1,0 +1,23 @@
+{
+    "Welcome": "Welcome",
+    "Loading user...": "Loading user...",
+    "Search": "Search",
+    "Map": "Map",
+    "New Listing": "New Listing",
+    "Messages": "Messages",
+    "My Profile": "My Profile",
+    "Click to clear filter": "Click to clear filter",
+    "Filter by": "Filter by",
+    "No listings found": "No listings found",
+    "Loading listings...": "Loading listings...",
+    "Error:": "Error: ",
+    "You have no listings yet.": "Du har ingen annonser enda.",
+    "Error loading user": "Feil med å laster bruker",
+    "Unauthorized!": "Uautorisert!",
+    "Current Page:": "Current Page:",
+    "Total pages:": "Total pages:",
+    "Previous": "Previous",
+    "Next": "Next",
+    "Failed to load listings by category": "Failed to load listings by category",
+    "Failed to load listings": "Failed to load listings"
+}

@@ -1,0 +1,23 @@
+{
+    "Welcome": "Velkommen",
+    "Loading user...": "Laster bruker...",
+    "Search": "Søk",
+    "Map": "Kart",
+    "New Listing": "Ny Annonse",
+    "Messages": "Meldinger",
+    "My Profile": "Min Profil",
+    "Click to clear filter": "Klikk for å fjerne filter",
+    "Filter by": "Filtrer etter",
+    "No listings found": "Ingen annonser funnet",
+    "Loading listings...": "Laster annonser...",
+    "Error:": "Feil: ",
+    "You have no listings yet.": "You have no listings yet.",
+    "Error loading user": "Error loading user",
+    "Unauthorized!": "Unauthorized!",
+    "Current Page:": "Side: ",
+    "Total pages:": "Antall sider:",
+    "Previous": "Forrige",
+    "Next": "Neste",
+    "Failed to load listings by category": "Feil med å laste annonser etter kategori",
+    "Failed to load listings": "Feil med å laste annonser"
+}
