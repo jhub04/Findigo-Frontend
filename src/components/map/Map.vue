@@ -19,7 +19,7 @@
    */
 
   import { ref, onMounted, computed, watch } from 'vue'
-  import { getAllListings } from '@/services/listingApi'
+  import { getAllListings, getFilteredListings } from '@/services/listingApi'
   import { getAllCategories } from '@/services/categoryApi'
   import type { CategoryResponse, ListingResponse } from '@/types/dto'
   import { getListingsByCategory } from '@/services/listingApi'
@@ -83,44 +83,28 @@
    */
   watch(
     () => route.query,
-    async (query) => {
+    async () => {
       try {
-        console.log('query changed', query)
         loading.value = true
         error.value = null
 
-        const q = typeof query.q === 'string' ? query.q : ''
-        const c = query.category
-        const pF = query.priceFrom ? Number(query.priceFrom) : null
-        const pT = query.priceTo ? Number(query.priceTo) : null
+        const q = typeof route.query.q === 'string' ? route.query.q : null
+        const c = route.query.category
+        const pF = route.query.priceFrom ? Number(route.query.priceFrom) : null
+        const pT = route.query.priceTo ? Number(route.query.priceTo) : null
+        const dF = route.query.dateFrom ? String(route.query.dateFrom) : null
 
-        const category = !c || Array.isArray(c) || c === 'all' ? 'all' : Number(c)
+        const categoryId = !c || Array.isArray(c) || c === 'all' ? null : Number(c)
 
-        let results: ListingResponse[] = []
-        if (category === 'all') {
-          results = await getAllListings()
-        } else {
-          try {
-            results = await getListingsByCategory(category)
-          } catch (e) {
-            results = []
-          }
-        }
+        const response = await getFilteredListings({
+          query: q,
+          categoryId,
+          fromPrice: pF,
+          toPrice: pT,
+          fromDate: dF
+        })
 
-        let filtered = q
-          ? results.filter(l => l.briefDescription.toLowerCase().includes(q.toLowerCase()))
-          : results
-
-        if (pF != null && !isNaN(pF)) {
-          filtered = filtered.filter(l => l.price >= pF)
-        }
-        if (pT != null && !isNaN(pT)) {
-          filtered = filtered.filter(l => l.price <= pT)
-        }
-        if (pF !== null && pT !== null && !isNaN(pF) && !isNaN(pT)) {
-          filtered = filtered.filter(l => l.price >= pF && l.price <= pT)
-        }
-        allListings.value = filtered
+        allListings.value = response
       } catch (err: any) {
         error.value = err.message || 'Failed to fetch listings'
       } finally {
@@ -129,6 +113,7 @@
     },
     { immediate: true }
   )
+
 
 
   /**
