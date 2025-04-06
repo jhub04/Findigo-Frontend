@@ -39,7 +39,7 @@ const logout = () => {
   <main>
     <div class="grid-container">
       <div class="mylistings" @click="router.push('/profile/listings')">
-        <h6>{{ t('Your Listings') }}</h6>
+        <h6>{{ t('Your Posted Listings') }}</h6>
         <p>{{ t('View all your posted listings') }}</p>
       </div>
       <div class="myfavorites" @click="router.push('profile/favorites')">
