@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useUserStore } from '@/stores/user.ts'
-import NavigationSearch from '@/components/search/NavigationBarSearch.vue'
+import NavigationSearch from '@/components/search/NavigationSearchBar.vue'
 import { ref, onMounted, computed } from 'vue';
 
 const userStore = useUserStore();
@@ -60,7 +60,7 @@ const isAuthenticated = computed(() => userStore.authenticated)
   color: #bfdbf7;
   font-size: 1.5rem;
   text-decoration: none;
-  transition: 
+  transition:
     transform 0.3s ease,
     color 0.3s ease,
     text-shadow 0.3s ease;

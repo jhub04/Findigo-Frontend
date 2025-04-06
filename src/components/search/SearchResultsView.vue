@@ -7,7 +7,7 @@
 
 <script setup lang="ts">
 import FilterSideBar from '@/components/search/SearchSideBar.vue'
-import SearchListings from '@/components/search/SearchListings.vue'
+import SearchListings from '@/components/search/SearchResults.vue'
 </script>
 
 <style scoped>
