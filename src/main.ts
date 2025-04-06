@@ -7,7 +7,7 @@ import router from './router'
 import VueGoogleMaps from '@fawmi/vue-google-maps'
 
 import { OhVueIcon, addIcons } from 'oh-vue-icons'
-import { MdStaroutlineRound, OiStarFill} from 'oh-vue-icons/icons';
+import { MdStaroutlineRound, OiStarFill, FaMap, IoAddCircleSharp, MdMessage, MdAccountcircle} from 'oh-vue-icons/icons';
 
 import en from '@/locales/en.json'
 import no from '@/locales/no.json'
@@ -33,7 +33,7 @@ const i18n = createI18n({
 })
 
 
-addIcons(MdStaroutlineRound, OiStarFill);
+addIcons(MdStaroutlineRound, OiStarFill, FaMap, IoAddCircleSharp, MdMessage, MdAccountcircle);
 
 const app = createApp(App)
 

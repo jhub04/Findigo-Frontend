@@ -8,11 +8,11 @@
       <NavigationSearch class="nav-search" />
 
       <div class="navbar-menu">
-        <router-link to="/map" class="nav-link">{{ $t('Map') }}</router-link>
-        <router-link to="/listing" class="nav-link">{{ $t('New Listing') }}</router-link>
-        <router-link to="/messages" class="nav-link">{{ $t('Messages') }}</router-link>
+        <router-link to="/map" class="nav-link">{{ $t('Map') }} <v-icon name="fa-map"/></router-link>
+        <router-link to="/listing" class="nav-link">{{ $t('New Listing') }} <v-icon name="io-add-circle-sharp"/></router-link>
+        <router-link to="/messages" class="nav-link">{{ $t('Messages') }} <v-icon name="md-message"/> </router-link>
         <router-link to="/profile" class="nav-link" id="profile">
-          {{ $t('My Profile') }}
+          {{ $t('My Profile') }} <v-icon name="md-accountcircle"/>
         </router-link>
       </div>
     </nav>
@@ -88,6 +88,8 @@ const isAuthenticated = computed(() => userStore.authenticated)
 }
 
 .nav-link {
+  display: inline-flex;
+  align-items: center;
   white-space: nowrap;
   text-decoration: none;
   color: white;
@@ -96,6 +98,10 @@ const isAuthenticated = computed(() => userStore.authenticated)
   border-radius: 4px;
   transition: background-color 0.3s ease, color 0.3s ease;
   position: relative;
+}
+
+.nav-link svg {
+  margin-left: 4px;
 }
 
 .nav-link:hover {
