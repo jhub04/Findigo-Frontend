@@ -1,23 +1,13 @@
 <template>
-  <div class="listing-card">
-    <img
-      :src="firstImage"
-      alt="Listing image"
-      class="listing-image"
-      @error="handleImageError"
-    />
+  <div class="listing-card" @click="goToListing">
+    <img :src="firstImage" alt="Listing image" class="listing-image" @error="handleImageError" />
     <div class="listing-info">
       <div class="content-wrapper">
         <h3>{{ listing.briefDescription }}</h3>
         <p>{{ listing.price }} NOK</p>
       </div>
-
       <div class="listing-actions">
-        <button class="go-to-listing-btn" @click.stop="goToListing">
-          {{ $t('Go to listing details') }} &rarr;
-        </button>
-
-        <div class="favorite-btn" @click="toggleFavorite">
+        <div class="favorite-btn" @click.stop="toggleFavorite">
           <v-icon
             :name="isFavorited(props.listing.id) ? 'oi-star-fill' : 'md-staroutline-round'"
             scale="2"
@@ -27,29 +17,27 @@
         </div>
       </div>
     </div>
-
   </div>
 </template>
-
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import noImage from '@/assets/no-image.jpg'
-import type { ListingResponse } from '@/types/dto.ts'
+import type { ListingResponse } from '@/types/dto'
 import { navigateToListing } from '@/utils/navigationUtil.ts'
 import { useFavorites } from '@/composables/useFavorites'
-import { useImages} from '@/composables/useImages'
+import { useImages } from '@/composables/useImages'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 
 const props = defineProps<{
-  listing: ListingResponse,
+  listing: ListingResponse
 }>()
 
-const { isFavorited, addToFavorites, removeFromFavorites } = useFavorites();
-const { firstImage, fetchFirstImageForListing } = useImages();
+const { isFavorited, addToFavorites, removeFromFavorites } = useFavorites()
+const { firstImage, fetchFirstImageForListing } = useImages()
 
 const isFavorite = computed(() => isFavorited(props.listing.id))
 
@@ -75,7 +63,6 @@ onMounted(async () => {
 })
 </script>
 
-
 <style scoped>
 .listing-card {
   border: 1px solid #ccc;
@@ -86,6 +73,12 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   height: 100%;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease;
+}
+
+.listing-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .listing-info {
@@ -100,35 +93,17 @@ onMounted(async () => {
   flex-grow: 1;
 }
 
-
 .listing-image {
   width: 100%;
   height: 200px;
   object-fit: cover;
 }
 
-
-
 .listing-actions {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   margin-top: 1rem;
-}
-
-.go-to-listing-btn {
-  background: none;
-  border: none;
-  color: #1F7A8C;
-  font-weight: bold;
-  cursor: pointer;
-  padding: 0;
-  font-size: 1rem;
-  text-decoration: none;
-}
-
-.go-to-listing-btn:hover {
-  text-decoration: underline;
 }
 
 .favorite-btn {
@@ -145,11 +120,12 @@ onMounted(async () => {
 .favorite-btn:hover {
   transform: scale(1.1);
 }
+
 .favorite-btn:focus {
   outline: none;
 }
+
 .favorite-btn:active {
   transform: scale(0.95);
 }
-
 </style>
