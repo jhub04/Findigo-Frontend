@@ -36,30 +36,18 @@
 
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import {getAllCategories} from '@/services/categoryApi.ts'
 import type { CategoryResponse } from '@/types/dto.ts'
 import router from '@/router'
 import { useRoute } from 'vue-router'
 
 const categories = ref<CategoryResponse[]>([])
-const route = useRoute()
 
-const selectedCategory = computed<"all" | number>(() => {
-  const c = route.query.category
-  if (!c || Array.isArray(c) || c === 'all') return 'all'
-  const n = Number(c)
-  return isNaN(n) ? 'all' : n
-})
+import { useSelectedCategory } from '@/composables/useSelectedCategory'
+const { selectedCategory, updateCategory } = useSelectedCategory()
 
-const selectCategory = (categoryId: number) => {
-  const currentQuery = { ...route.query }
-  currentQuery.category =
-    selectedCategory.value === categoryId ? 'all' : String(categoryId)
-
-  router.replace({ query: currentQuery })
-}
-
+const selectCategory = updateCategory
 
 onMounted(async () => {
   try {

@@ -64,8 +64,9 @@ const searchQuery = ref('')
 // All fetched categories shown in dropdown
 const categories = ref<CategoryResponse[]>([])
 
-// ID of selected category; 'all' means no filter
-const selectedCategory = ref<number | 'all'>('all')
+import { useSelectedCategory } from '@/composables/useSelectedCategory'
+const { selectedCategory } = useSelectedCategory()
+
 
 // Dynamically resize the select to match label width (for better UI alignment)
 function updateSelectWidth() {
@@ -91,16 +92,7 @@ onMounted(async () => {
 // Recalculate select width whenever a new category is selected
 watch(selectedCategory, () => nextTick(updateSelectWidth))
 
-// Watch for changes in the router's category query param
-watch(
-  () => router.currentRoute.value.query.category,
-  (newCategory) => {
-    selectedCategory.value = newCategory === 'all' || !newCategory
-      ? 'all'
-      : Number(newCategory)
-  },
-  { immediate: true }
-)
+// Update selected category when user selects a new one
 
 
 // Called when user submits the form (Enter or button)
