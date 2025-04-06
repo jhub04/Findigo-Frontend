@@ -33,7 +33,7 @@ export const editListing = async (listingId: number, data: ListingRequest): Prom
 }
 
 // Delete a listing
-export const deleteListing = async (listingId: number): Promise<string> => {
+export const deleteListingById = async (listingId: number): Promise<string> => {
   const response = await apiClient.delete<string>(`/listings/${listingId}`)
   return response.data
 }

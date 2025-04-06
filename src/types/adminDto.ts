@@ -13,7 +13,7 @@ export type Role = 'USER' | 'ADMIN';
 export interface AdminUserRequest {
   username: string;
   password: string;
-  phoneNumber: number;
+  phoneNumber: string;
   roles: Role[];
 }
 

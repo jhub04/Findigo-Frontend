@@ -1,6 +1,5 @@
 import apiClient from '@/services/apiClient.ts'
 import type { ListingResponse, MyUserRequest, UserResponse } from '@/types/dto.ts'
-import type { AdminUserRequest } from '@/types/adminDto.ts'
 
 // Get current user profile
 export const getCurrentUser = async (): Promise<UserResponse> => {

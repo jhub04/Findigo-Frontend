@@ -18,6 +18,7 @@ import AdminUserView from '@/views/admin/AdminUserView.vue'
 import authApi from '@/services/authApi'
 import MyFavoritesView from '@/views/profile/MyFavoritesView.vue'
 import EditMyProfileView from '@/views/profile/EditMyProfileView.vue'
+import EditOwnListingView from '@/views/EditOwnListingView.vue'
 
 const routes = [
   { path: '/', redirect: '/home' },
@@ -32,7 +33,7 @@ const routes = [
   { path: '/listing', component: NewListingView, name: 'NewListing' },
   { path: '/listing/:id', component: ListingView, name: 'ListingPage' },
   { path: '/my-listing/:id', component: ListingAdministratorView, name: 'OwnListingPage' },
-  { path: '/edit-my-listing/:id', component: ListingAdministratorView, name: 'OwnListingPage' },
+  { path: '/edit-my-listing/:id', component: EditOwnListingView, name: 'EditOwnListingPage' },
   { path: '/messages', component: MessagesView, name: 'Messages' },
   { path: '/messages/:userId', component: MessageThreadView, name: 'MessageThread'},
   { path: '/search', component: SearchResultsView, name: 'SearchResultsView' },
