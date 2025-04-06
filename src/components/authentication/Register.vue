@@ -84,7 +84,6 @@ const register = async () => {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #f4f4f4;
   padding: 20px;
   box-sizing: border-box;
 }
@@ -100,7 +99,6 @@ const register = async () => {
 
 h2 {
   text-align: center;
-  color: #333;
   margin-bottom: 20px;
 }
 
@@ -111,7 +109,6 @@ h2 {
 label {
   display: block;
   margin-bottom: 5px;
-  color: #555;
 }
 
 input {
