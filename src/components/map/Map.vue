@@ -22,6 +22,7 @@
   import { getAllListings, getFilteredListings } from '@/services/listingApi'
   import { getAllCategories } from '@/services/categoryApi'
   import type { CategoryResponse, ListingResponse } from '@/types/dto'
+  import { getListingsByCategory } from '@/services/listingApi'
   import noImage from '@/assets/no-image.jpg'
   import { navigateToListing } from '@/utils/navigationUtil.ts'
   import { useRoute, } from 'vue-router'
@@ -41,6 +42,7 @@
   const categories = ref<CategoryResponse[]>([])
   const loading = ref(true)
   const error = ref<string | null>(null)
+  const results = ref<ListingResponse[]>([])
 
   const props = defineProps<{
     center: { lat: number; lng: number }

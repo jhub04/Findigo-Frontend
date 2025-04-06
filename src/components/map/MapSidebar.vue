@@ -1,121 +1,125 @@
 <template>
-  <div class="sidebar">
+  <div>
+    <button
+      class="filter-toggle"
+      @click="toggleSidebar"
+      v-if="isMobile && !showSidebar"
+      aria-label="Open filters"
+    >
+      <svg viewBox="0 0 24 24" fill="currentColor" width="40" height="40">
+        <path d="M3 5h18v3H3V5zm4 7h10v3H7v-3zm4 7h2v3h-2v-3z"/>
+      </svg>
+    </button>
+
+
+
+    <div
+      class="sidebar"
+      :class="{ open: showSidebar, mobile: isMobile }"
+    >
       <SearchBox @search="onSearch" />
-    <div class = filters-container>
-      <FilterCategories/>
-      <div class = "filter-price-and-dates">
-      <FilterPrice />
-      <FilterDates />
+      <div class="filters-container">
+        <FilterCategories />
+        <div class="filter-price-and-dates">
+          <FilterPrice />
+          <FilterDates />
+        </div>
+        <button v-if="isMobile" class="close-btn" @click="toggleSidebar">Close Filters</button>
       </div>
     </div>
   </div>
 </template>
 
-<script setup lang="ts">
-/**
- * Sidebar component for filtering listings.
- * Provides a search box and category buttons.
- * Emits selected search query and category to parent view.
- */
 
-import { ref, defineEmits, onMounted } from 'vue'
-import { getAllCategories } from '@/services/categoryApi.ts'
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
 import SearchBox from '@/components/map/MapSearchBar.vue'
-import FilterSideBar  from '@/components/search/SearchSideBar.vue'
 import FilterCategories from '@/components/sidebarFilters/FilterCategories.vue'
 import FilterPrice from '@/components/sidebarFilters/FilterPrice.vue'
 import FilterDates from '@/components/sidebarFilters/FilterDates.vue'
-/**
- * Emits events to parent component:
- * - 'updateCategory': when a new category is selected
- * - 'search': when a query is entered into the search box
- */
+
+defineProps<{ navbarHeight: number }>()
+
 const emit = defineEmits(['updateCategory', 'search'])
+const onSearch = (query: string) => emit('search', query)
 
-/**
- * Emits search query to parent when triggered by SearchBox.
- * @param query The search input from the user
- */
-const onSearch = (query: string) => {
-  emit('search', query)
+const showSidebar = ref(false)
+const isMobile = ref(false)
+
+const toggleSidebar = () => {
+  showSidebar.value = !showSidebar.value
 }
 
-/**
- * Holds the currently selected category.
- * Used for active button highlighting and emitting state to parent.
- */
-const selectedCategory = ref<number | 'All'>('All')
 
-/**
- * Called when a category button is clicked.
- * Updates local selectedCategory and emits to parent.
- * @param cat The category ID or 'All'
- */
-const selectCategory = (cat: number | 'All') => {
-  selectedCategory.value = cat
-  emit('updateCategory', cat)
-}
-
-/**
- * Reactive list of categories fetched from API.
- * Used to dynamically render category filter buttons.
- */
-const categories = ref<any[]>([])
-
-/**
- * Fetch all categories on component mount.
- */
-onMounted(async () => {
-  categories.value = await getAllCategories()
+onMounted(() => {
+  const checkMobile = () => {
+    isMobile.value = window.innerWidth <= 768
+  }
+  checkMobile()
+  window.addEventListener('resize', checkMobile)
 })
 </script>
 
 <style scoped>
 .sidebar {
   position: absolute;
-  top: 0rem;
+  left: 0;
   z-index: 1000;
   background: white;
   border-radius: 0 10px 10px 10px;
   padding: 1rem;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  width: auto;
-  height: auto;
-  border: 2.5px solid #ccc;
+  width: 20vw;
+  min-width: 240px;
+  max-width: 320px;
+  transition: transform 0.3s ease;
 }
 
-.filters-container {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+.sidebar.mobile {
+  position: fixed;
+  transform: translateX(-100%);
 }
 
-.filter-price-and-dates {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+.sidebar.mobile.open {
+  transform: translateX(0);
 }
 
-
-.filters button {
-  display: inline-block;
-  padding: 10px 22px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  margin-top: 2px;
+.filter-toggle {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1100;
+  background: white;
   border: none;
-  border-radius: 4px;
-  background-color: #007bff;
-  color: #fff;
+  padding: 1rem;
+  border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
-.filters button:hover {
-  background-color: #0056b3;
+.filter-toggle:hover {
+  background-color: #e8e8e8;
+  transform: scale(1.1);
 }
 
-.filters button.active {
-  background-color: #007bff;
+
+
+
+.close-btn {
+  margin-top: 1rem;
+  background-color: #28a745;
   color: white;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 80vw;
+    max-width: none;
+  }
 }
 </style>

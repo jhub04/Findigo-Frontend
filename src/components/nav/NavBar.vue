@@ -4,30 +4,27 @@ import NavigationSearch from '@/components/search/NavigationSearchBar.vue'
 import { ref, onMounted, computed } from 'vue';
 
 const userStore = useUserStore();
-
 const isAuthenticated = computed(() => userStore.authenticated)
-
-
 </script>
 
 <template>
-    <header class="navbar-container">
-      <nav v-if="isAuthenticated" class="main-navbar">
-        <div class="navbar-brand">
-          <router-link to="/home" class="app-name">Findigo</router-link>
-        </div>
-
-        <NavigationSearch class="nav-search" />
-
-        <div class="navbar-menu">
-          <router-link to="/map" class="nav-link">Map</router-link>
-          <router-link to="/listing" class="nav-link">New Listing</router-link>
-          <router-link to="/messages" class="nav-link">Messages</router-link>
-          <router-link to="/profile" class="nav-link" id="profile">My Profile</router-link>
-        </div>
-      </nav>
-    </header>
+  <header class="navbar-container">
+    <nav v-if="isAuthenticated" class="main-navbar" id="main-navbar">
+      <div class="navbar-brand">
+        <router-link to="/home" class="app-name">Findigo</router-link>
+      </div>
+      <NavigationSearch class="nav-search" />
+      <div class="navbar-menu">
+        <router-link to="/map" class="nav-link">Map</router-link>
+        <router-link to="/listing" class="nav-link">New Listing</router-link>
+        <router-link to="/messages" class="nav-link">Messages</router-link>
+        <router-link to="/profile" class="nav-link" id="profile">My Profile</router-link>
+      </div>
+    </nav>
+  </header>
 </template>
+
+
 
 <style scoped>
 
