@@ -2,20 +2,8 @@
   <div class="filter-dates">
     <h3>Published From</h3>
     <div class="calendar-button">
-      <input
-        type="date"
-        v-model="selectedDate"
-        @change="validateDate"
-        lang="en"
-        :max="today"
-      />
-      <button
-        @click.prevent="performDateFilter"
-        :disabled="!isDateValid"
-        class="apply-button"
-      >
-        Apply
-      </button>
+      <input type="date" v-model="selectedDate" @change="validateDate" lang="en" :max="today" />
+      <button @click.prevent="performDateFilter" :disabled="!isDateValid" class="apply-button">Apply</button>
     </div>
   </div>
 </template>
@@ -24,27 +12,20 @@
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-const today = new Date().toISOString().split('T')[0] // f.eks. "2025-04-02"
+const today = new Date().toISOString().split('T')[0]
 const router = useRouter()
 const route = useRoute()
-
 const selectedDate = ref<string | null>(null)
 const isDateValid = ref(true)
 
 function validateDate() {
-  // Enkel validering, du kan forbedre denne om nødvendig
   isDateValid.value = !!selectedDate.value
 }
 
 function performDateFilter() {
   const query = { ...route.query }
-
-  if (selectedDate.value) {
-    query.dateFrom = selectedDate.value
-  } else {
-    delete query.dateFrom
-  }
-
+  if (selectedDate.value) query.dateFrom = selectedDate.value
+  else delete query.dateFrom
   router.replace({ query })
 }
 </script>
@@ -68,6 +49,7 @@ input[type="date"] {
   border: none;
   cursor: pointer;
 }
+
 .apply-button:hover {
   background-color: #0056b3;
 }
@@ -79,5 +61,18 @@ input[type="date"] {
 
 .filter-dates h3 {
   font-size: 1.03rem;
+}
+
+/* Responsivt: på små skjermer stables elementene */
+@media (max-width: 480px) {
+  .calendar-button {
+    flex-direction: column;
+  }
+  input[type="date"] {
+    width: 100%;
+  }
+  .apply-button {
+    width: 100%;
+  }
 }
 </style>
