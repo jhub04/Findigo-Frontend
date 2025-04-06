@@ -76,5 +76,9 @@
   "Seller": "Selger",
   "Username": "Brukernavn",
   "Phone number": "Telefonnummer",
-  "Send Message": "Send melding"
+  "Send Message": "Send melding",
+  "Go to listing": "Gå til annonsen",
+  "No title": "Ingen tittel",
+  "Listing image": "Annonsens bilde",
+  "Failed to fetch listings": "Kunne ikke laste annonser"
 }

@@ -75,5 +75,9 @@
   "Seller": "Seller",
   "Username": "Username",
   "Phone number": "Phone number",
-  "Send Message": "Send Message"
+  "Send Message": "Send Message",
+  "Go to listing": "Go to listing",
+  "No title": "No title",
+  "Listing image": "Listing image",
+  "Failed to fetch listings": "Failed to fetch listings"
 }
