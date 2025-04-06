@@ -107,24 +107,46 @@ const toggleFavorite = async () => {
 </template>
 
 <style scoped>
+/* Main listing page container */
+.listing-page {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Loading and error messages */
+.loading-message,
+.error-message {
+  text-align: center;
+  font-size: 1.2rem;
+  padding: 1rem;
+  color: #555;
+}
+
+/* Listing image section */
 .listing-image-wrapper {
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
+  position: relative;
   margin-bottom: 2rem;
 }
 
+/* Favorite icon */
 .favorite-icon-wrapper {
+  position: absolute;
+  top: 10px;
+  right: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.8);
   border: 1px solid #ccc;
   border-radius: 50%;
-  height: 48px;
-  width: 48px;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  z-index: 1;
 }
 
 .favorite-icon-wrapper:hover {
@@ -139,57 +161,33 @@ const toggleFavorite = async () => {
   transform: scale(1.1);
 }
 
+/* Image slideshow container */
+.image-slideshow {
+  margin-bottom: 1rem;
+}
+
+/* Listing info container */
 .listing-info-container {
   display: flex;
   gap: 2rem;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-top: 2rem;
+  flex-wrap: wrap;
 }
 
+/* Listing details section */
 .listing-details {
   flex: 2;
-}
-
-.contact-info {
-  flex: 1;
-  padding: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-}
-
-.listing-page {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 2rem;
-}
-
-.loading-message,
-.error-message {
-  text-align: center;
-  font-size: 1.2rem;
-  padding: 1rem;
-}
-
-.image-slideshow {
-  margin-bottom: 2rem;
-}
-
-.listing-info {
-  border: 1px solid #ddd;
-  padding: 1.5rem;
-  border-radius: 8px;
-  background-color: #fafafa;
 }
 
 .title {
   font-size: 1.8rem;
   margin-bottom: 0.5rem;
+  color: #333;
 }
 
 .price {
   font-size: 1.4rem;
   margin-bottom: 1rem;
+  color: #28a745;
 }
 
 .buy-button {
@@ -201,6 +199,7 @@ const toggleFavorite = async () => {
   border-radius: 4px;
   margin-bottom: 1.5rem;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .buy-button:hover {
@@ -209,6 +208,8 @@ const toggleFavorite = async () => {
 
 .description {
   margin-bottom: 1rem;
+  line-height: 1.5;
+  color: #444;
 }
 
 .location {
@@ -216,13 +217,18 @@ const toggleFavorite = async () => {
   margin-bottom: 1.5rem;
 }
 
+/* Listing attributes section */
 .listing-attributes {
-  margin-bottom: 2rem;
+  margin-top: 1rem;
+  background-color: #f9f9f9;
+  padding: 1rem;
+  border-radius: 6px;
 }
 
 .listing-attributes h2 {
   font-size: 1.2rem;
   margin-bottom: 0.5rem;
+  color: #333;
 }
 
 .listing-attributes ul {
@@ -232,18 +238,36 @@ const toggleFavorite = async () => {
 
 .listing-attributes li {
   margin-bottom: 0.4rem;
+  font-size: 0.95rem;
+  color: #666;
 }
 
+.listing-attributes h6 {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: #999;
+}
+
+/* Contact info section */
 .contact-info {
-  margin-top: 2rem;
+  flex: 1;
   padding: 1rem;
-  border: 1px solid #ccc;
+  background-color: #f7f7f7;
+  border: 1px solid #eee;
   border-radius: 8px;
+  min-width: 250px;
 }
 
 .contact-info h2 {
   margin-bottom: 0.5rem;
   font-size: 1.2rem;
+  color: #333;
+}
+
+.contact-info p {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 0.5rem;
 }
 
 .send-message-button {
@@ -253,9 +277,11 @@ const toggleFavorite = async () => {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .send-message-button:hover {
   background-color: #0056b3;
 }
+
 </style>
