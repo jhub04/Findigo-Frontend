@@ -1,4 +1,4 @@
-import type { ListingRequest } from '@/types/dto.ts'
+import type { FilterRequest, ListingRequest } from '@/types/dto.ts'
 import type { ListingResponse } from '@/types/dto.ts'
 import apiClient from '@/services/apiClient.ts'
 
@@ -43,4 +43,15 @@ export const getRecommendedListingsPage = async (pageNumber:number) => {
   const response = await apiClient.get(`/listings/recommended/${pageNumber}`);
   console.log(response.data)
   return response.data;
+}
+
+export const getFilteredListingsPage = async (filter: FilterRequest,
+                                              pageNumber: number) => {
+  const response = await apiClient.post(`/listings/all/${pageNumber}`, filter);
+  return response.data;
+}
+
+export const getFilteredListings = async (filter: FilterRequest): Promise<ListingResponse[]> => {
+  const response = await apiClient.post('/listings/all', filter)
+  return response.data
 }
