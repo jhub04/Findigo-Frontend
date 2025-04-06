@@ -17,6 +17,7 @@ import AdminDashboardView from '@/views/admin/AdminDashboardView.vue'
 import AdminUserView from '@/views/admin/AdminUserView.vue'
 import authApi from '@/services/authApi'
 import MyFavoritesView from '@/views/profile/MyFavoritesView.vue'
+import MockCheckoutView from '@/views/MockCheckoutView.vue'
 
 const routes = [
   { path: '/', redirect: '/home' },
@@ -29,6 +30,7 @@ const routes = [
   { path: '/map', component: MapView, name: 'Map' },
   { path: '/listing', component: NewListingView, name: 'NewListing' },
   { path: '/listing/:id', component: ListingView, name: 'ListingPage' },
+  { path: '/listing/:id/checkout', component: MockCheckoutView, name: 'MockCheckoutPage'},
   { path: '/my-listing/:id', component: OwnListingView, name: 'OwnListingPage' },
   { path: '/messages', component: MessagesView, name: 'Messages' },
   { path: '/messages/:userId', component: MessageThreadView, name: 'MessageThread'},
