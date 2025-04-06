@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { fetchMessageThread } from '@/services/messageApi'
+import { fetchMessageThread, sendMessage } from '@/services/messageApi'
 import { useCurrentUser } from '@/composables/useCurrentUser'
 import type { MessageResponse, MessageRequest } from '@/types/dto'
 import { ref, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { sendMessage } from '@/services/messageApi'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const route = useRoute()
 const otherUserId = Number(route.params.userId)
 
@@ -25,9 +26,6 @@ const sendMessageToUser = async () => {
 
   sending.value = true
 
-  console.log('Sending message as user:', user.value.id)
-  console.log('To user ID:', otherUserId)
-
   const messageRequest: MessageRequest = {
     fromUserId: user.value.id,
     toUserId: otherUserId,
@@ -37,7 +35,6 @@ const sendMessageToUser = async () => {
   try {
     await sendMessage(messageRequest)
     newMessageText.value = ''
-    // Refresh messages
     messages.value = await fetchMessageThread(user.value.id, otherUserId)
   } catch (e) {
     console.log('Failed to send message', e)
@@ -46,7 +43,6 @@ const sendMessageToUser = async () => {
   }
 }
 
-// Fetch messages when user is available
 watch(
   user,
   async (newUser) => {
@@ -56,7 +52,7 @@ watch(
     try {
       messages.value = await fetchMessageThread(newUser.id, otherUserId)
     } catch (e) {
-      error.value = 'Failed to fetch conversation.'
+      error.value = t('Failed to fetch conversation.')
       console.error(e)
     } finally {
       loading.value = false
@@ -67,7 +63,6 @@ watch(
 
 const formatDate = (iso: string) => new Date(iso).toLocaleString()
 
-// Computed reversed messages for correct chronological order
 const sortedMessages = computed(() =>
   [...messages.value].sort((a, b) => new Date(a.sentAt).getTime() - new Date(b.sentAt).getTime()),
 )
@@ -76,23 +71,22 @@ const canSend = computed(
   () => !!user.value && newMessageText.value.trim().length > 0 && !sending.value,
 )
 
-// Retrieve other user's username from messages
 const otherUsername = computed(() => {
   const otherUserMessage = messages.value.find((msg) => msg.fromUserId !== user.value!.id)
   return otherUserMessage
     ? otherUserMessage.fromUserId === otherUserId
       ? otherUserMessage.fromUsername
       : otherUserMessage.toUsername
-    : 'Other user'
+    : t('Other user')
 })
 </script>
 
 <template>
   <div class="thread-container">
-    <h1>Conversation with {{ otherUsername }}</h1>
+    <h1>{{ t('Conversation with') }} {{ otherUsername }}</h1>
 
-    <p v-if="userLoading || loading">Loading conversation...</p>
-    <p v-if="userError" class="error">Failed to load user data.</p>
+    <p v-if="userLoading || loading">{{ t('Loading conversation...') }}</p>
+    <p v-if="userError" class="error">{{ t('Failed to load user data') }}</p>
     <p v-if="error" class="error">{{ error }}</p>
 
     <ul v-if="!loading && sortedMessages.length">
@@ -103,7 +97,7 @@ const otherUsername = computed(() => {
         :class="{ 'other-user': msg.fromUserId !== user!.id }"
       >
         <div class="message-header">
-          <strong>{{ msg.fromUserId === user!.id ? 'You' : otherUsername }}</strong>
+          <strong>{{ msg.fromUserId === user!.id ? t('You') : otherUsername }}</strong>
           <span class="timestamp">{{ formatDate(msg.sentAt) }}</span>
         </div>
         <p>{{ msg.messageText }}</p>
@@ -114,15 +108,17 @@ const otherUsername = computed(() => {
       <textarea
         v-model="newMessageText"
         :disabled="sending"
-        placeholder="Write a message..."
+        :placeholder="t('Write a message...')"
         rows="3"
       ></textarea>
       <button @click="sendMessageToUser" :disabled="!canSend">
-        {{ sending ? 'Sending...' : 'Send' }}
+        {{ sending ? t('Sending...') : t('Send') }}
       </button>
     </div>
 
-    <p v-if="!loading && !sortedMessages.length">No messages in this conversation.</p>
+    <p v-if="!loading && !sortedMessages.length">
+      {{ t('No messages in this conversation.') }}
+    </p>
   </div>
 </template>
 
