@@ -7,10 +7,10 @@ import router from './router'
 import VueGoogleMaps from '@fawmi/vue-google-maps'
 
 import { OhVueIcon, addIcons } from 'oh-vue-icons'
-import { MdStaroutlineRound, OiStarFill} from 'oh-vue-icons/icons';
+import { MdEdit, MdStaroutlineRound, OiStarFill } from 'oh-vue-icons/icons'
 
 
-addIcons(MdStaroutlineRound, OiStarFill);
+addIcons(MdStaroutlineRound, OiStarFill, MdEdit);
 
 const app = createApp(App)
 
