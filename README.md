@@ -39,6 +39,9 @@ You can find the swagger API documentation [here] (add link to swagger docs)
 
 More ...
 
+## System Architecture
+<img width="766" alt="Screenshot 2025-04-06 at 19 17 28" src="https://github.com/user-attachments/assets/7645299b-3fe0-474c-b22d-4bb96667d6af" />
+
 ## Running the application (Uncomplete)
 NB! See [Findigo-Frontend](https://github.com/jhub04/Findigo-Frontend) for how to run the frontend
 #### Prerequisites 
