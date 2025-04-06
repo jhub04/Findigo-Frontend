@@ -1,61 +1,61 @@
-# findigo-frontend
+# E-commerce marketplace: Findigo
+Findigo is a full-stack application developed with Vue.js and Spring Boot. 
+The project was developed as the final assesment in the course IDATT2105 Fullstack-Applikasjonsutvikling
+for the spring semester of 2025 at NTNU.
 
-This template should help get you started developing with Vue 3 in Vite.
+**NB!** This repository contains the frontend source code. You can find the backend source code [here](https://github.com/jhub04/Findigo.git) 
 
-## Recommended IDE Setup
+## The team
+- Aryan Malekian
+- Scott Langum du Plessis
+- Jonathan Skomsøy Hübertz
+- Mikael Stray Frøyshov
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## Table of contents
+...
 
-## Type Support for `.vue` Imports in TS
+## Overview
+The project is a full-stack webapplication aiming to provide a user-friendly
+e-commerce platform for users to buy, sell and look at items.
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+The project utilizes the following technologies:
+- Frontend: Vue 3 with Node.js
+- Backend: Springboot V3 with Maven and Java 21
+- Database: MySQL V8 for runtime and H2 for tests
 
-## Customize configuration
+You can find the swagger API documentation [here] (add link to swagger docs)
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+## Features
+- **Secure login:** Users can securely log in, register, and update their account details
+- **Listing Creation:** Users can create listings and publish them to the marketplace
+- **Archiving:** A user can archive his own listings, so that they're not available on the public marketplace
+- **Favorite Selection:** Users can favorite listings they like or find interesting, and view all of them from the profile page 
+- **Recommendation algorithm:** Listings on the homepage are filtered based on an advanced recommendation algorithm, and can be further filtered based on category.
+- **Advanced search:** Users can search for listings and filter based on *category*, *price*, *location*, and the listing creation *date*
+- **Map View:** Users get to see listings marked on a real map and filter them with advanced search
+- **Messaging:** Users can send messages to each other to negotiate or inquire on listed items
+- **Admin functionality:** Admin users can do administrate actions such as adding, modifying, and deleting categories and listings
+- **Internationalization:** The application has support language support for English, Norwegian, Spanish, as well as Nepali and Urdu
 
-## Project Setup
+More ...
 
-```sh
-npm install
+## Running the application (Uncomplete)
+NB! See [Findigo-Frontend](https://github.com/jhub04/Findigo-Frontend) for how to run the frontend
+#### Prerequisites 
+- JDK 21
+- Maven 
+- Docker
+
+1. Clone the repository
+```bash
+git clone https://github.com/jhub04/Findigo.git
+```
+2. Navigate to the project root folder
+```bash
+cd Findigo
+```
+3. Run the springboot executable
+```bash
+mvn spring-boot:run 
 ```
 
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Run Unit Tests with [Vitest](https://vitest.dev/)
-
-```sh
-npm run test:unit
-```
-
-### Run End-to-End Tests with [Cypress](https://www.cypress.io/)
-
-```sh
-npm run test:e2e:dev
-```
-
-This runs the end-to-end tests against the Vite development server.
-It is much faster than the production build.
-
-But it's still recommended to test the production build with `test:e2e` before deploying (e.g. in CI environments):
-
-```sh
-npm run build
-npm run test:e2e
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
