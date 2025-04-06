@@ -1,6 +1,6 @@
 import type { UserLiteResponse } from "./adminDto";
 
-export interface TokenResponse {
+export interface AuthResponse {
   token: string;
 }
 
@@ -41,7 +41,7 @@ export interface ListingAttributeRequest {
 export interface UserResponse {
   id: number;
   username: string;
-  phoneNumber: number;
+  phoneNumber: string;
   listings: ListingResponse[]
 }
 
@@ -92,5 +92,18 @@ export interface FilterRequest {
   toPrice?: number | null;
   fromDate?: string | null;
 }
+
+export interface MyUserRequest {
+  username: string;
+  password: string;
+  phoneNumber: string;
+}
+
+export interface AuthRequest {
+  username: string;
+  password: string;
+}
+
+
 
 
