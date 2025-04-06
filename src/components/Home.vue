@@ -36,7 +36,7 @@ async function prevPage() {
   if (pageNumber.value > 1) {
     console.log('Getting page ' + pageNumber.value + 1)
     pageNumber.value--
-    let listingsPage = await getRecommendedListingsPage(pageNumber.value)
+    const listingsPage = await getRecommendedListingsPage(pageNumber.value)
     listings.value = listingsPage.content
   }
 }

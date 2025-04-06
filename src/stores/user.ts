@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { login, clearCookie, isAuthenticated } from '@/services/authApi.ts';
+import type { AuthRequest } from '@/types/dto.ts'
 
 export const useUserStore = defineStore("token", () => {
   const loggedInUser = ref<string | null>(sessionStorage.getItem("loggedInUser"));
@@ -12,10 +13,10 @@ export const useUserStore = defineStore("token", () => {
 
   initializeAuthStatus();
 
-  const loginAndSaveUser = async (username: string, password: string) => {
-    await login(username, password); //This can throw error
-    loggedInUser.value = username;
-    sessionStorage.setItem("loggedInUser", username);
+  const loginAndSaveUser = async (data: AuthRequest) => {
+    await login(data); //This can throw error
+    loggedInUser.value = data.username;
+    sessionStorage.setItem("loggedInUser", data.username);
     authenticated.value = await isAuthenticated();
   };
 
@@ -26,7 +27,7 @@ export const useUserStore = defineStore("token", () => {
       console.error("Error during logout:", error);
       return;
     }
-  
+
     // After logout request, redirect to login page
     window.location.href = "/login";
     authenticated.value = false;

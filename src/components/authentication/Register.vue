@@ -2,6 +2,8 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import authApi from '@/services/authApi.ts'
+import { handleApiError } from '@/utils/handleApiError.ts'
+import type { AuthRequest } from '@/types/dto.ts'
 
 const router = useRouter();
 const username = ref("");
@@ -11,17 +13,19 @@ const successMessage = ref("");
 
 const register = async () => {
   try {
-    const response = await authApi.registerUser(username.value, password.value);
+    const newUser: AuthRequest = {
+      username: username.value,
+      password: password.value
+    }
+    const response = await authApi.registerUser(newUser);
     if (response) {
       successMessage.value = "Registration successful! You can now log in.";
       setTimeout(() => {
         router.push("/home");
       }, 2000);
-    } else {
-      errorMessage.value = "Registration failed. Try again.";
     }
   } catch (error) {
-    errorMessage.value = `An error occurred: ${error}`;
+    errorMessage.value = handleApiError(error);
   }
 };
 </script>
@@ -33,22 +37,22 @@ const register = async () => {
       <form @submit.prevent="register">
         <div class="form-group">
           <label for="username">Username:</label>
-          <input 
+          <input
             id="username"
-            v-model="username" 
-            type="text" 
-            required 
+            v-model="username"
+            type="text"
+            required
             placeholder="Choose a username"
           />
         </div>
 
         <div class="form-group">
           <label for="password">Password:</label>
-          <input 
+          <input
             id="password"
-            v-model="password" 
-            type="password" 
-            required 
+            v-model="password"
+            type="password"
+            required
             placeholder="Create a strong password"
           />
         </div>
@@ -56,22 +60,22 @@ const register = async () => {
         <button type="submit" class="submit-btn">Register</button>
       </form>
 
-      <p 
-        v-if="successMessage" 
+      <p
+        v-if="successMessage"
         class="success-message"
       >
         {{ successMessage }}
       </p>
 
-      <p 
-        v-if="errorMessage" 
+      <p
+        v-if="errorMessage"
         class="error-message"
       >
         {{ errorMessage }}
       </p>
 
       <p class="login-link">
-        Already have an account? 
+        Already have an account?
         <router-link to="/login">Login here</router-link>
       </p>
     </div>
