@@ -39,12 +39,24 @@ const logout = () => {
   <main>
     <div class="grid-container">
       <div class="mylistings" @click="router.push('/profile/listings')">
-        <h6>{{ t('Your Listings') }}</h6>
+        <h6>{{ t('Your Posted Listings') }}</h6>
         <p>{{ t('View all your posted listings') }}</p>
       </div>
       <div class="myfavorites" @click="router.push('profile/favorites')">
         <h6>{{ t('Your Favorites') }}</h6>
         <p>{{ t('View all your favorite listings') }}</p>
+      </div>
+      <div class="myarchives" @click="router.push('profile/archives')">
+        <h6>{{ t('Your Archived Listings') }}</h6>
+        <p>{{ t('View all your archived listings') }}</p>
+      </div>
+      <div class="mypurchases" @click="router.push('profile/purchases')">
+        <h6>{{ t('Your Purchased Listings') }}</h6>
+        <p>{{ t('View all your previously purchased listings') }}</p>
+      </div>
+      <div class="mysold" @click="router.push('profile/sold')">
+        <h6>{{ t('Your Sold Listings') }}</h6>
+        <p>{{ t('View all your previously sold listings') }}</p>
       </div>
     </div>
     <router-view />
@@ -79,35 +91,29 @@ const logout = () => {
 }
 
 .grid-container > div {
-  background-color: white;
-}
-
-.mylistings,
-.myfavorites {
+  background-color: #fff;
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   cursor: pointer;
   text-align: center;
 }
 
-.mylistings:hover,
-.myfavorites:hover {
+.grid-container > div:hover {
   transform: translateY(-5px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-h6 {
+.grid-container h6 {
   font-size: 1.2rem;
   color: #333;
   margin-bottom: 10px;
 }
 
-p {
+.grid-container p {
   font-size: 0.95rem;
   color: #666;
 }
+
 </style>

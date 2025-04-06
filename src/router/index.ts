@@ -18,6 +18,9 @@ import AdminUserView from '@/views/admin/AdminUserView.vue'
 import authApi from '@/services/authApi'
 import MyFavoritesView from '@/views/profile/MyFavoritesView.vue'
 import MockCheckoutView from '@/views/MockCheckoutView.vue'
+import MyArchivesView from '@/views/profile/MyArchivesView.vue'
+import MyPurchasesView from '@/views/profile/MyPurchasesView.vue'
+import MySoldView from '@/views/profile/MySoldView.vue'
 
 const routes = [
   { path: '/', redirect: '/home' },
@@ -27,6 +30,9 @@ const routes = [
   { path: '/profile', component: ProfileView, name: 'Profile'},
   { path: '/profile/listings', component: MyListingsView, name: 'MyListings'},
   { path: '/profile/favorites', component: MyFavoritesView, name: 'MyFavorites'},
+  { path: '/profile/archives', component: MyArchivesView, name: 'MyArchives'},
+  { path: '/profile/purchases', component: MyPurchasesView, name: 'MyPurchases'},
+  { path: '/profile/sold', component: MySoldView, name: 'MySold'},
   { path: '/map', component: MapView, name: 'Map' },
   { path: '/listing', component: NewListingView, name: 'NewListing' },
   { path: '/listing/:id', component: ListingView, name: 'ListingPage' },
