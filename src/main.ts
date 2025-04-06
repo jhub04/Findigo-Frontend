@@ -11,6 +11,9 @@ import { MdStaroutlineRound, OiStarFill} from 'oh-vue-icons/icons';
 
 import en from '@/locales/en.json'
 import no from '@/locales/no.json'
+import es from '@/locales/es.json'
+import ne from '@/locales/ne.json'
+
 import { createI18n } from 'vue-i18n';
 
 const browserLanguage = navigator.language.split('-')[0]
@@ -20,7 +23,9 @@ const i18n = createI18n({
   fallbackLocale: "en",
   messages: {
     en,
-    no
+    no,
+    es,
+    ne
   }
 
 })
