@@ -19,5 +19,6 @@
     "Previous": "Forrige",
     "Next": "Neste",
     "Failed to load listings by category": "Feil med å laste annonser etter kategori",
-    "Failed to load listings": "Feil med å laste annonser"
+    "Failed to load listings": "Feil med å laste annonser",
+    "All": "Alle"
 }
