@@ -1,8 +1,9 @@
 <template>
   <div class="search-results">
-    <div v-if="loading" class="loading">Laster inn...</div>
+    <div v-if="loading" class="loading">Loading...</div>
     <div v-else-if="error" class="error">{{ error }}</div>
-    <div v-else-if="listings.length === 0" class="no-results">Ingen resultater</div>
+    <div v-else-if="listings.length === 0" class="no-results">No results found.</div>
+
     <div class="grid-container">
       <ListingCard
         v-for="listing in listings"
@@ -11,16 +12,22 @@
         :image-url="imageMap[listing.id] || ''"
       />
     </div>
+
+    <div class="pagination-controls" v-if="totalPages > 1">
+      <p>Page {{ pageNumber }} of {{ totalPages }}</p>
+      <button @click="prevPage" :disabled="pageNumber === 1">Previous</button>
+      <button @click="nextPage" :disabled="pageNumber === totalPages">Next</button>
+    </div>
   </div>
 </template>
 
+
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import { onMounted, ref, watch } from 'vue'
-import { getAllListings, getListingsByCategory } from '@/services/listingApi.ts'
+import { ref, watch } from 'vue'
+import { getFilteredListingsPage } from '@/services/listingApi.ts'
 import ListingCard from '@/components/ListingCard.vue'
 import type { ListingResponse } from '@/types/dto.ts'
-
 import { useImages } from '@/composables/useImages'
 import { useFavorites } from '@/composables/useFavorites'
 
@@ -28,66 +35,81 @@ const route = useRoute()
 const listings = ref<ListingResponse[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
+
+const pageNumber = ref(1)
+const totalPages = ref(1)
+
 const { firstImage, fetchFirstImageForListing } = useImages()
+const { fetchFavorites } = useFavorites()
+
 const imageMap = ref<Record<number, string>>({})
 const fetchFirstImageForListings = async (listingList: ListingResponse[]) => {
   imageMap.value = {}
-
   await Promise.all(listingList.map(async (listing) => {
     await fetchFirstImageForListing(listing)
     imageMap.value[listing.id] = firstImage.value
   }))
 }
-const { fetchFavorites } = useFavorites()
 
+const fetchFiltered = async () => {
+  loading.value = true
+  error.value = null
 
+  try {
+    const query = route.query
+    const q = typeof query.q === 'string' ? query.q : null
+    const c = query.category
+    const pF = query.priceFrom ? Number(query.priceFrom) : null
+    const pT = query.priceTo ? Number(query.priceTo) : null
+    const dF = query.dateFrom ? String(query.dateFrom) : null
 
+    const categoryId = !c || Array.isArray(c) || c === 'all' ? null : Number(c)
 
-watch(
-  () => route.query,
-  async (query) => {
-    try {
-      loading.value = true
-      error.value = null
+    const response = await getFilteredListingsPage({
+      query: q,
+      categoryId,
+      fromPrice: pF,
+      toPrice: pT,
+      fromDate: dF
+    }, pageNumber.value)
 
-      const q = typeof query.q === 'string' ? query.q : ''
-      const c = query.category
-      const pF = query.priceFrom ? Number(query.priceFrom) : null
-      const pT = query.priceTo ? Number(query.priceTo) : null
+    listings.value = response.content
+    totalPages.value = response.totalPages
 
-      const category = !c || Array.isArray(c) || c === 'all' ? 'all' : Number(c)
-      const results = category === 'all'
-        ? await getAllListings()
-        : await getListingsByCategory(category)
+    await fetchFavorites()
+    await fetchFirstImageForListings(listings.value)
 
-      let filtered = q
-        ? results.filter(l => l.briefDescription.toLowerCase().includes(q.toLowerCase()))
-        : results
+  } catch (err: any) {
+    error.value = err.message || 'Could not fetch listings'
+  } finally {
+    loading.value = false
+  }
+}
 
-      if (pF !== null && pT !== null && !isNaN(pF) && !isNaN(pT)) {
-        filtered = filtered.filter(l => l.price >= pF && l.price <= pT)
-      }
+const nextPage = async () => {
+  if (pageNumber.value < totalPages.value) {
+    pageNumber.value++
+    await fetchFiltered()
+  }
+}
 
-      await fetchFavorites()
-      listings.value = filtered
+const prevPage = async () => {
+  if (pageNumber.value > 1) {
+    pageNumber.value--
+    await fetchFiltered()
+  }
+}
 
-      await fetchFirstImageForListings(listings.value)
-
-    } catch (err: any) {
-      error.value = err.message ?? 'Kunne ikke hente annonser'
-    } finally {
-      loading.value = false
-    }
-  },
-  { immediate: true }
-)
+watch(() => route.query, async () => {
+  pageNumber.value = 1
+  await fetchFiltered()
+}, { immediate: true })
 </script>
 
 <style scoped>
 .search-results {
   padding: 2rem;
 }
-
 .grid-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -96,18 +118,30 @@ watch(
 .grid-container > * {
   margin: 0;
 }
-
-/* Hvis bredde er under 768px */
 @media (max-width: 768px) {
   .grid-container {
     grid-template-columns: repeat(2, 1fr);
   }
 }
-
-/* Eksempel: Hvis du vil ha 1 kolonne på veldig smal skjerm (under 480px) */
 @media (max-width: 480px) {
   .grid-container {
     grid-template-columns: 1fr;
   }
+}
+.pagination-controls {
+  margin-top: 2rem;
+  text-align: center;
+}
+.pagination-controls button {
+  margin: 0 10px;
+  padding: 0.5rem 1rem;
+  background-color: #e0e0e0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.pagination-controls button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 </style>

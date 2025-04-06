@@ -3,6 +3,15 @@
     <div class="categories">
       <h3>Categories</h3>
       <ul class="list-none p-0">
+        <li class="category-options">
+          <a
+            href="#"
+            @click.prevent="selectCategory('all')"
+            :class="['category-link', selectedCategory === 'all' ? 'selected-category' : '']"
+          >
+            All
+          </a>
+        </li>
         <li
           v-for="category in categories"
           :key="category.id"
@@ -13,7 +22,8 @@
             @click.prevent="selectCategory(category.id)"
             :class="[
               'category-link',
-              selectedCategory === category.id ?  'selected-category' : '']"
+              selectedCategory === category.id ? 'selected-category' : ''
+            ]"
           >
             {{ category.name }}
           </a>
@@ -22,6 +32,7 @@
     </div>
   </div>
 </template>
+
 
 
 <script setup lang="ts">

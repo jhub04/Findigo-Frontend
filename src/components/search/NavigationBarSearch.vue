@@ -91,6 +91,18 @@ onMounted(async () => {
 // Recalculate select width whenever a new category is selected
 watch(selectedCategory, () => nextTick(updateSelectWidth))
 
+// Watch for changes in the router's category query param
+watch(
+  () => router.currentRoute.value.query.category,
+  (newCategory) => {
+    selectedCategory.value = newCategory === 'all' || !newCategory
+      ? 'all'
+      : Number(newCategory)
+  },
+  { immediate: true }
+)
+
+
 // Called when user submits the form (Enter or button)
 // Navigates to SearchResultsView, passing query and category as URL params
 function performSearch() {
@@ -99,7 +111,7 @@ function performSearch() {
       name: 'SearchResultsView',
       query: {
         q: searchQuery.value.trim(),
-        category: selectedCategory.value
+        category: selectedCategory.value,
       }
     })
   }
