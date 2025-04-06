@@ -13,6 +13,7 @@ import en from '@/locales/en.json'
 import no from '@/locales/no.json'
 import es from '@/locales/es.json'
 import ne from '@/locales/ne.json'
+import ur from '@/locales/ur.json'
 
 import { createI18n } from 'vue-i18n';
 
@@ -25,7 +26,8 @@ const i18n = createI18n({
     en,
     no,
     es,
-    ne
+    ne,
+    ur
   }
 
 })
