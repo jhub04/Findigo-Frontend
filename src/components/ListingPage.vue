@@ -7,6 +7,7 @@ import ImageSlideshow from './ImageSlideshow.vue'
 import { useImages } from '@/composables/useImages'
 import { useFavorites } from '@/composables/useFavorites'
 import { useI18n } from 'vue-i18n'
+import router from '@/router'
 
 const { t } = useI18n()
 const { images, loading, error, fetchImagesForListing } = useImages()
@@ -75,7 +76,7 @@ const toggleFavorite = async () => {
             <h1 class="title">{{ listing.briefDescription }}</h1>
             <p class="price">{{ listing.price }} NOK</p>
 
-            <button class="buy-button">{{ t('Buy Now') }}</button>
+            <button class="buy-button" @click="router.push(`/listing/${listing.id}/checkout`)">{{ t('Buy Now') }}</button>
 
             <p class="description">{{ listing.fullDescription }}</p>
             <p class="location">{{ listing.postalCode }}, {{ listing.address }}</p>
