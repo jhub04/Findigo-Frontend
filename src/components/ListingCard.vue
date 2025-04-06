@@ -103,7 +103,7 @@ onMounted(async () => {
 
 .listing-image {
   width: 100%;
-  height: auto;
+  height: 200px;
   object-fit: cover;
 }
 
