@@ -14,7 +14,7 @@
 
       <div class="listing-actions">
         <button class="go-to-listing-btn" @click.stop="goToListing">
-          Go to listing details &rarr;
+          {{ $t('Go to listing details') }} &rarr;
         </button>
 
         <div class="favorite-btn" @click="toggleFavorite">
@@ -40,6 +40,9 @@ import type { ListingResponse } from '@/types/dto.ts'
 import { navigateToListing } from '@/utils/navigationUtil.ts'
 import { useFavorites } from '@/composables/useFavorites'
 import { useImages} from '@/composables/useImages'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const props = defineProps<{
   listing: ListingResponse,

@@ -20,5 +20,13 @@
     "Next": "Next",
     "Failed to load listings by category": "Failed to load listings by category",
     "Failed to load listings": "Failed to load listings",
-    "All": "All"
+    "All": "All",
+    "Go to listing details": "Go to listing details",
+    "Search for listing ...": "Search for listing ...",
+    "Categories": "Categories",
+    "Price": "Price",
+    "min": "min",
+    "max": "max",
+    "Publish from": "Publish from",
+    "Apply": "Apply"
 }

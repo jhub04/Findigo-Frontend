@@ -20,5 +20,13 @@
     "Next": "Neste",
     "Failed to load listings by category": "Feil med å laste annonser etter kategori",
     "Failed to load listings": "Feil med å laste annonser",
-    "All": "Alle"
+    "All": "Alle",
+    "Go to listing details": "Gå til annonse detaljer",
+    "Search for listing ...": "Søk etter annonse ...",
+    "Categories": "Kategorier",
+    "Price": "Pris",
+    "min" : "min",
+    "max": "maks",
+    "Publish from": "Publisert fra",
+    "Apply": "Påfør"
 }
