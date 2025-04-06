@@ -1,3 +1,21 @@
+<template>
+  <div class="slideshow-container">
+    <div class="image-wrapper">
+      <img
+        :src="currentImage"
+        class="slideshow-image"
+        @error="handleImageError"
+        alt="Image"
+      />
+      <button @click="prevImage" class="nav-button prev">&lt;</button>
+      <button @click="nextImage" class="nav-button next">&gt;</button>
+    </div>
+    <div class="controls" v-if="images.length > 1">
+      <span>{{ currentImageIndex + 1 }} / {{ images.length }}</span>
+    </div>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { handleImageError } from '@/utils/handleImageError';
 import { ref, computed } from 'vue'
@@ -28,24 +46,6 @@ const prevImage = () => {
 }
 </script>
 
-<template>
-  <div class="slideshow-container">
-    <div class="image-wrapper">
-      <img
-      :src="currentImage"
-      class="slideshow-image"
-      @error="handleImageError"
-      alt="Image"
-    />
-    </div>
-    <div class="controls" v-if="images.length > 1">
-      <button @click="prevImage" class="nav-button">&lt;</button>
-      <span>{{ currentImageIndex + 1 }} / {{ images.length }}</span>
-      <button @click="nextImage" class="nav-button">&gt;</button>
-    </div>
-  </div>
-</template>
-
 <style scoped>
 .slideshow-container {
   display: flex;
@@ -53,37 +53,58 @@ const prevImage = () => {
   align-items: center;
 }
 
+/* Fixed size container */
 .image-wrapper {
-  width: 100%;
-  max-width: 600px;
-  height: auto;
+  width: 600px;
+  height: 400px;
+  position: relative;
+  overflow: hidden;
 }
 
+/* Image fills container */
 .slideshow-image {
   width: 100%;
-  max-height: 400px;
-  object-fit: contain;
+  height: 100%;
+  object-fit: cover;
   border-radius: 8px;
   border: 1px solid #ccc;
 }
 
-.controls {
-  margin-top: 0.5rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
+/* Navigation buttons fixed inside container */
 .nav-button {
-  padding: 0.3rem 0.8rem;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
   background-color: #2563eb;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
   cursor: pointer;
+  opacity: 0.8;
+  font-size: 1.5rem;
+  line-height: 1;
+  text-align: center;
+  transition: background-color 0.2s ease;
 }
 
 .nav-button:hover {
   background-color: #1e40af;
+}
+
+.nav-button.prev {
+  left: 10px;
+}
+
+.nav-button.next {
+  right: 10px;
+}
+
+.controls {
+  margin-top: 0.5rem;
+  text-align: center;
+  font-size: 1rem;
+  color: #333;
 }
 </style>
