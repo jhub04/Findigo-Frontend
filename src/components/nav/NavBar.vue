@@ -1,36 +1,34 @@
-<script setup lang="ts">
-import { useUserStore } from '@/stores/user.ts'
-import NavigationSearch from '@/components/search/NavigationBarSearch.vue'
-import { ref, onMounted, computed } from 'vue';
-
-const userStore = useUserStore();
-
-const isAuthenticated = computed(() => userStore.authenticated)
-
-
-</script>
-
 <template>
-    <header class="navbar-container">
-      <nav v-if="isAuthenticated" class="main-navbar">
-        <div class="navbar-brand">
-          <router-link to="/home" class="app-name">Findigo</router-link>
-        </div>
+  <header class="navbar-container">
+    <nav v-if="isAuthenticated" class="main-navbar">
+      <div class="navbar-brand">
+        <router-link to="/home" class="app-name">Findigo</router-link>
+      </div>
 
-        <NavigationSearch class="nav-search" />
+      <NavigationSearch class="nav-search" />
 
-        <div class="navbar-menu">
-          <router-link to="/map" class="nav-link">Map</router-link>
-          <router-link to="/listing" class="nav-link">New Listing</router-link>
-          <router-link to="/messages" class="nav-link">Messages</router-link>
-          <router-link to="/profile" class="nav-link" id="profile">My Profile</router-link>
-        </div>
-      </nav>
-    </header>
+      <div class="navbar-menu">
+        <router-link to="/map" class="nav-link">{{ $t('Map') }}</router-link>
+        <router-link to="/listing" class="nav-link">{{ $t('New Listing') }}</router-link>
+        <router-link to="/messages" class="nav-link">{{ $t('Messages') }}</router-link>
+        <router-link to="/profile" class="nav-link" id="profile">
+          {{ $t('My Profile') }}
+        </router-link>
+      </div>
+    </nav>
+  </header>
 </template>
 
-<style scoped>
+<script setup lang="ts">
+import { computed } from 'vue'
+import { useUserStore } from '@/stores/user.ts'
+import NavigationSearch from '@/components/search/NavigationBarSearch.vue'
 
+const userStore = useUserStore()
+const isAuthenticated = computed(() => userStore.authenticated)
+</script>
+
+<style scoped>
 .navbar-container {
   position: sticky;
   top: 0;
@@ -60,9 +58,7 @@ const isAuthenticated = computed(() => userStore.authenticated)
   color: #bfdbf7;
   font-size: 1.5rem;
   text-decoration: none;
-  transition: 
-    transform 0.3s ease,
-    color 0.3s ease,
+  transition: transform 0.3s ease, color 0.3s ease,
     text-shadow 0.3s ease;
 }
 
@@ -72,12 +68,10 @@ const isAuthenticated = computed(() => userStore.authenticated)
   text-shadow: 0 2px 8px rgba(255, 255, 255, 0.3);
 }
 
-
 .navbar-brand {
   display: flex;
   align-items: center;
   padding: 0 20px;
-
 }
 
 .welcome-message {
@@ -100,9 +94,7 @@ const isAuthenticated = computed(() => userStore.authenticated)
   font-size: 0.9rem;
   padding: 8px 12px;
   border-radius: 4px;
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
   position: relative;
 }
 
@@ -111,28 +103,21 @@ const isAuthenticated = computed(() => userStore.authenticated)
   color: #333;
 }
 
-
-/* Responsive Design */
 @media (max-width: 768px) {
   .main-navbar {
     flex-direction: column;
     align-items: center;
   }
-
   .navbar-brand {
     margin-bottom: 15px;
   }
-
   .navbar-menu {
     flex-wrap: wrap;
     justify-content: center;
     gap: 10px;
   }
-
   .nav-link {
     margin: 0 5px;
   }
 }
-
-
 </style>

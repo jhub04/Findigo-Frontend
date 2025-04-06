@@ -9,10 +9,33 @@ import VueGoogleMaps from '@fawmi/vue-google-maps'
 import { OhVueIcon, addIcons } from 'oh-vue-icons'
 import { MdStaroutlineRound, OiStarFill} from 'oh-vue-icons/icons';
 
+import en from '@/locales/en.json'
+import no from '@/locales/no.json'
+import es from '@/locales/es.json'
+import ne from '@/locales/ne.json'
+
+import { createI18n } from 'vue-i18n';
+
+const browserLanguage = navigator.language.split('-')[0]
+
+const i18n = createI18n({
+  locale: browserLanguage || "no",
+  fallbackLocale: "en",
+  messages: {
+    en,
+    no,
+    es,
+    ne
+  }
+
+})
+
 
 addIcons(MdStaroutlineRound, OiStarFill);
 
 const app = createApp(App)
+
+app.use(i18n)
 
 app.component("v-icon", OhVueIcon);
 app.use(createPinia())

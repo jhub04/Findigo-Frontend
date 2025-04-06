@@ -4,11 +4,14 @@ import { useCurrentUser } from '@/composables/useCurrentUser'
 import type { MessageResponse } from '@/types/dto'
 import { ref, watch, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 const { user, isLoading: userLoading, error: userError } = useCurrentUser()
 const messages = ref<MessageResponse[]>([])
 const messagesLoading = ref(false)
 const messagesError = ref('')
+
+const { t } = useI18n();
 
 watch(
   user,
@@ -19,7 +22,7 @@ watch(
     try {
       messages.value = await fetchAllUserMessages(newUser.id)
     } catch (e) {
-      messagesError.value = 'Failed to fetch messages.'
+      messagesError.value = t('Failed to fetch messages.')
       console.error(e)
     } finally {
       messagesLoading.value = false
@@ -48,10 +51,10 @@ const openMessageThread = (message: MessageResponse) => {
 
 <template>
   <div class="inbox-container">
-    <h1>Your Messages</h1>
+    <h1>{{ $t('Your Messages') }}</h1>
 
-    <p v-if="userLoading || messagesLoading">Loading messages...</p>
-    <p v-if="userError" class="error-message">Failed to load user data.</p>
+    <p v-if="userLoading || messagesLoading">{{ $t('Loading messages...')}}</p>
+    <p v-if="userError" class="error-message">{{ $t('Failed to load user data')}}.</p>
     <p v-if="messagesError" class="error-message">{{ messagesError }}</p>
 
     <div v-if="!messagesLoading && messages.length">
@@ -74,7 +77,7 @@ const openMessageThread = (message: MessageResponse) => {
       </div>
     </div>
 
-    <p v-if="!messagesLoading && messages.length === 0">You have no messages.</p>
+    <p v-if="!messagesLoading && messages.length === 0">{{ $t('You have no messages.')}}</p>
   </div>
 </template>
 
