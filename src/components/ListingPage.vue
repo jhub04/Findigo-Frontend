@@ -6,8 +6,9 @@ import { getListingById } from '@/services/listingApi'
 import ImageSlideshow from './ImageSlideshow.vue'
 import { useImages } from '@/composables/useImages'
 import { useFavorites } from '@/composables/useFavorites'
+import { useI18n } from 'vue-i18n'
 
-
+const { t } = useI18n()
 const { images, loading, error, fetchImagesForListing } = useImages()
 const { favorites, addToFavorites, removeFromFavorites, isFavorited, fetchFavorites } =
   useFavorites()
@@ -29,9 +30,9 @@ onMounted(async () => {
     }
 
     await fetchFavorites()
-  } catch (error: any) {
+  } catch (e: any) {
     error.value = true
-    console.error(error)
+    console.error(e)
   } finally {
     loading.value = false
   }
@@ -40,10 +41,8 @@ onMounted(async () => {
 const toggleFavorite = async () => {
   if (!listing.value) return
   if (isFavorited(listing.value.id)) {
-    console.log('Removing from favorites')
     await removeFromFavorites(listing.value.id)
   } else {
-    console.log('Adding to favorites')
     await addToFavorites(listing.value.id)
   }
 }
@@ -52,8 +51,8 @@ const toggleFavorite = async () => {
 <template>
   <main>
     <div class="listing-page">
-      <div v-if="loading" class="loading-message">Loading listing...</div>
-      <div v-else-if="error" class="error-message">Could not find listing.</div>
+      <div v-if="loading" class="loading-message">{{ t('Loading listing...') }}</div>
+      <div v-else-if="error" class="error-message">{{ t('Could not find listing.') }}</div>
 
       <div v-else-if="listing" class="listing">
         <div class="listing-image-wrapper">
@@ -67,7 +66,7 @@ const toggleFavorite = async () => {
           </div>
 
           <div class="image-slideshow">
-            <ImageSlideshow :images="images"/>
+            <ImageSlideshow :images="images" />
           </div>
         </div>
 
@@ -76,28 +75,28 @@ const toggleFavorite = async () => {
             <h1 class="title">{{ listing.briefDescription }}</h1>
             <p class="price">{{ listing.price }} NOK</p>
 
-            <button class="buy-button">Buy Now</button>
+            <button class="buy-button">{{ t('Buy Now') }}</button>
 
             <p class="description">{{ listing.fullDescription }}</p>
             <p class="location">{{ listing.postalCode }}, {{ listing.address }}</p>
 
             <div class="listing-attributes" v-if="listing.attributes?.length">
-              <h2>Details</h2>
+              <h2>{{ t('Details') }}</h2>
               <ul>
                 <li v-for="(attribute, index) in listing.attributes" :key="index">
                   <strong>{{ attribute.name }}:</strong> {{ attribute.value }}
                 </li>
               </ul>
-              <h6>Created at: {{ formatDate(listing.dateCreated) }}</h6>
+              <h6>{{ t('Created at:') }} {{ formatDate(listing.dateCreated) }}</h6>
             </div>
           </div>
 
           <div class="contact-info">
-            <h2>Seller</h2>
-            <p>Username: {{ listing.user.username }}</p>
-            <p>Phone number: 416 72 162</p>
+            <h2>{{ t('Seller') }}</h2>
+            <p>{{ t('Username') }}: {{ listing.user.username }}</p>
+            <p>{{ t('Phone number') }}: 416 72 162</p>
             <router-link :to="`/messages/${listing.user.id}`">
-              <button class="send-message-button">Send Message</button>
+              <button class="send-message-button">{{ t('Send Message') }}</button>
             </router-link>
           </div>
         </div>

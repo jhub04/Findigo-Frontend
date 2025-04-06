@@ -2,7 +2,9 @@
 import { useCurrentUser } from '@/composables/useCurrentUser'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user.ts'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const { user, isLoading, error } = useCurrentUser()
 const tokenStore = useUserStore()
 const router = useRouter()
@@ -15,19 +17,21 @@ const logout = () => {
 
 <template>
   <header class="userdetails">
-    <div v-if="isLoading">Loading...</div>
+    <div v-if="isLoading">{{ t('Loading...') }}</div>
     <div v-else>
       <div v-if="user">
         <h3>{{ user.username }}</h3>
         <!-- Implement when userDto is complete-->
-        <p>User email</p>
-        <button class="logout-button" @click="logout">Log out</button>
+        <p>{{ t('User email') }}</p>
+        <button class="logout-button" @click="logout">
+          {{ t('Log out') }}
+        </button>
       </div>
       <div v-else-if="error">
-        <p>Error loading user data.</p>
+        <p>{{ t('Failed to load user data') }}</p>
       </div>
       <div v-else>
-        <p>Unauthorized</p>
+        <p>{{ t('Unauthorized!') }}</p>
       </div>
     </div>
   </header>
@@ -35,12 +39,12 @@ const logout = () => {
   <main>
     <div class="grid-container">
       <div class="mylistings" @click="router.push('/profile/listings')">
-        <h6>My Listings</h6>
-        <p>View all your posted listings</p>
+        <h6>{{ t('Your Listings') }}</h6>
+        <p>{{ t('View all your posted listings') }}</p>
       </div>
       <div class="myfavorites" @click="router.push('profile/favorites')">
-        <h6>Favorites</h6>
-        <p>View all your favorite listings</p>
+        <h6>{{ t('Your Favorites') }}</h6>
+        <p>{{ t('View all your favorite listings') }}</p>
       </div>
     </div>
     <router-view />
