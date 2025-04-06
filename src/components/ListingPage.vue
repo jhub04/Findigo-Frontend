@@ -31,7 +31,7 @@ onMounted(async () => {
 
     await fetchFavorites()
   } catch (e: any) {
-    error.value = true
+    error.value = t('Failed to load listing')
     console.error(e)
   } finally {
     loading.value = false
