@@ -1,23 +1,22 @@
 <template>
   <div class="slideshow-container">
     <div class="image-wrapper">
-      <img
-        :src="currentImage"
-        class="slideshow-image"
-        @error="handleImageError"
-        alt="Image"
-      />
-      <button @click="prevImage" class="nav-button prev">&lt;</button>
-      <button @click="nextImage" class="nav-button next">&gt;</button>
+      <img :src="currentImage" class="slideshow-image" @error="handleImageError" alt="Image" />
+      <button v-if="props.images.length > 1" @click="prevImage" class="nav-button prev">
+        &lt;
+      </button>
+      <button v-if="props.images.length > 1" @click="nextImage" class="nav-button next">
+        &gt;
+      </button>
     </div>
-    <div class="controls" v-if="images.length > 1">
-      <span>{{ currentImageIndex + 1 }} / {{ images.length }}</span>
+    <div class="controls" v-if="props.images.length > 1">
+      <span>{{ currentImageIndex + 1 }} / {{ props.images.length }}</span>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { handleImageError } from '@/utils/handleImageError';
+import { handleImageError } from '@/utils/handleImageError'
 import { ref, computed } from 'vue'
 import noImage from '@/assets/no-image.jpg'
 
