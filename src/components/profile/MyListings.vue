@@ -3,7 +3,7 @@ import { useCurrentUser } from '@/composables/useCurrentUser'
 import { onMounted, ref } from 'vue'
 import type { ListingResponse } from '@/types/dto.ts'
 import noImage from '@/assets/no-image.jpg'
-import { getMyListings } from '@/services/userApi.ts'
+import { getMyActiveListings } from '@/services/userApi.ts'
 import { navigateToListing } from '@/utils/navigationUtil.ts'
 import ListingCard from '../ListingCard.vue'
 import { useI18n } from 'vue-i18n'
@@ -20,7 +20,7 @@ const handleImageError = (event: Event) => {
 
 onMounted(async () => {
   try {
-    listings.value = await getMyListings()
+    listings.value = await getMyActiveListings()
   } catch (e: any) {
     error.value = e.message || t('Failed to load listings')
   } finally {
