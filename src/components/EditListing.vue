@@ -43,16 +43,18 @@
       <div v-if="successMessage" class="success-message">{{ successMessage }}</div>
     </transition>
   </form>
+
   <div class="edit-images">
-      <div class="image-grid">
-        <div v-for="(image, index) in images" :key="index">
-          <img class="uploaded-image" :class="{deleted: imagesToDelete.has(index)}" :src="image"/>
-          <button @click="deleteImageByIndex(index)">Delete image</button>
-        </div>
+    <div class="image-grid">
+      <div v-for="(image, index) in images" :key="index">
+        <img class="uploaded-image" :class="{deleted: imagesToDelete.has(index)}" :src="image"/>
+        <button v-if="!imagesToDelete.has(index)" @click="deleteImageByIndex(index)" class="delete-button">Delete image</button>
+        <button v-else @click="undoDelete(index)" class="undo-button">Undo delete</button>
       </div>
-      
-      <input type="file" multiple accept="image/*" @change="handleImageUpload"/>
     </div>
+
+    <input type="file" multiple accept="image/*" @change="handleImageUpload"/>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -69,8 +71,8 @@ import { useImageUpload } from '@/composables/useImageUpload'
 const route = useRoute()
 const router = useRouter()
 const id = Number(route.params.id)
-const {images, fetchImagesForListing, deleteImage} = useImages();
-const {uploadImages} = useImageUpload();
+const { images, fetchImagesForListing, deleteImage } = useImages()
+const { uploadImages } = useImageUpload()
 
 const briefDescription = ref('')
 const fullDescription = ref('')
@@ -83,14 +85,14 @@ const categories = ref<CategoryResponse[]>([])
 const errorMessage = ref<string | null>(null)
 const successMessage = ref<string | null>(null)
 const loading = ref(false)
-let listing:ListingResponse;
-const imagesToDelete = ref<Set<number>>(new Set<number>());
-const newImagesUploadedIndices = ref<Set<number>>(new Set<number>());
+let listing: ListingResponse
+const imagesToDelete = ref<Set<number>>(new Set<number>())
+const newImagesUploadedIndices = ref<Set<number>>(new Set<number>())
 
 onMounted(async () => {
   try {
     categories.value = await getAllCategories()
-    listing = await getListingById(id);
+    listing = await getListingById(id)
     await fetchImagesForListing(listing.id, listing.numberOfImages)
     briefDescription.value = listing.briefDescription
     fullDescription.value = listing.fullDescription
@@ -111,39 +113,36 @@ onMounted(async () => {
   }
 })
 
-
-const selectedCategory = computed(
-  () => categories.value.find((cat) => cat.id === selectedCategoryId.value) ?? null,
+const selectedCategory = computed(() =>
+  categories.value.find((cat) => cat.id === selectedCategoryId.value) ?? null,
 )
 
-const deleteImageByIndex = (index:number) => {
-  imagesToDelete.value.add(index);
-  console.log(imagesToDelete.value)
-  //TODO make the "deleted" image a different color.
+const deleteImageByIndex = (index: number) => {
+  imagesToDelete.value.add(index)
 }
 
-const deleteAllImages = async (imagesToBeDeleted:Set<number>) => {
-  let imagesToDeleteArray = Array.from(imagesToBeDeleted);
-  console.log("Deleting indices" + imagesToDeleteArray)
-  imagesToDeleteArray.sort().reverse(); //Sorted descending, can delete by indexes this way.
-  console.log(imagesToDeleteArray)
+const undoDelete = (index: number) => {
+  imagesToDelete.value.delete(index)
+}
+
+const deleteAllImages = async (imagesToBeDeleted: Set<number>) => {
+  let imagesToDeleteArray = Array.from(imagesToBeDeleted)
+  imagesToDeleteArray.sort().reverse()
   for (let index of imagesToDeleteArray) {
-    await deleteImage(listing.id, index);
+    await deleteImage(listing.id, index)
   }
 }
 
 const handleImageUpload = async (e: Event) => {
   const files = (e.target as HTMLInputElement).files
-  console.log(files?.length + " number of files uploading")
   if (files && files.length > 0) {
-    let numberOfImages = await uploadImages(listing.id, files);
-    await fetchImagesForListing(listing.id, numberOfImages);
-    newImagesUploadedIndices.value.add(numberOfImages - 1);//0 indexd
+    let numberOfImages = await uploadImages(listing.id, files)
+    await fetchImagesForListing(listing.id, numberOfImages)
+    newImagesUploadedIndices.value.add(numberOfImages - 1)
   }
 }
 
 const submit = async () => {
-  console.log("Submitting")
   errorMessage.value = null
   successMessage.value = null
 
@@ -173,8 +172,8 @@ const submit = async () => {
       attributes,
     }
 
-    await editListing(id, payload);
-    await deleteAllImages(imagesToDelete.value);
+    await editListing(id, payload)
+    await deleteAllImages(imagesToDelete.value)
     successMessage.value = 'Listing updated successfully!'
     router.push(`/my-listing/${id}`)
   } catch (e) {
@@ -185,10 +184,11 @@ const submit = async () => {
 }
 
 async function cancelEdit() {
-  await deleteAllImages(newImagesUploadedIndices.value);
+  await deleteAllImages(newImagesUploadedIndices.value)
   router.push(`/my-listing/${id}`)
 }
 </script>
+
 
 <style scoped>
 .form-container {
@@ -208,6 +208,33 @@ async function cancelEdit() {
     padding: 1.5rem;
   }
 }
+
+.undo-button {
+  width: 100%;
+  padding: 0.5rem;
+  background-color: #6c757d; /* Bootstrap-like gray */
+  color: white;
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 0 0 10px 10px;
+  transition: background-color 0.3s ease;
+}
+
+.undo-button:hover {
+  background-color: #5a6268;
+}
+
+.delete-button {
+  background-color: #dc3545;
+}
+
+.delete-button:hover {
+  background-color: #c82333;
+}
+
 
 h2 {
   text-align: center;
@@ -384,7 +411,6 @@ label {
 .image-grid button {
   width: 100%;
   padding: 0.5rem;
-  background-color: #dc3545;
   color: white;
   border: none;
   border-top: 1px solid #e0e0e0;
@@ -393,10 +419,6 @@ label {
   cursor: pointer;
   border-radius: 0 0 10px 10px;
   transition: background-color 0.3s ease;
-}
-
-.image-grid button:hover {
-  background-color: #c82333;
 }
 
 .deleted {
