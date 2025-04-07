@@ -3,7 +3,7 @@
     <h2>Add User</h2>
     <input v-model="username" placeholder="Username" />
     <input v-model="password" type="password" placeholder="Password" />
-    <input v-model="phoneNumber" placeholder="Phone Number" /> 
+    <input v-model="phoneNumber" placeholder="Phone Number" />
     <input v-model="roles" placeholder="Roles (comma separated, e.g., USER,ADMIN)" />
     <button @click="submit">Create</button>
   </div>
@@ -16,7 +16,7 @@ import type { Role } from '@/types/adminDto.ts'
 
 const username = ref('')
 const password = ref('')
-const phoneNumber = ref()
+const phoneNumber = ref('')
 const roles = ref('USER')
 
 const submit = async () => {
