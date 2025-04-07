@@ -345,26 +345,72 @@ label {
     opacity: 1;
   }
 }
-.deleted {
-  opacity: 0.4;
-  filter: grayscale(100%);
-  border: 2px dashed red;
+.edit-images {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background-color: #f9fafb;
   border-radius: 12px;
-  transition: 0.3s;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
 }
+
 .image-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   gap: 1rem;
-  margin-top: 1rem;
+}
+
+.image-grid div {
+  position: relative;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+
+.image-grid div:hover {
+  transform: scale(1.02);
 }
 
 .uploaded-image {
   width: 100%;
-  max-height: 150px;
+  height: 140px;
   object-fit: cover;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid #eee;
+  transition: 0.3s;
 }
+
+.image-grid button {
+  width: 100%;
+  padding: 0.5rem;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 0 0 10px 10px;
+  transition: background-color 0.3s ease;
+}
+
+.image-grid button:hover {
+  background-color: #c82333;
+}
+
+.deleted {
+  opacity: 0.3;
+  filter: grayscale(100%);
+  border: 2px dashed #dc3545;
+  border-radius: 8px;
+}
+
+input[type="file"] {
+  margin-top: 1.5rem;
+  display: block;
+  font-size: 0.95rem;
+  color: #022b3a;
+}
+
 </style>
