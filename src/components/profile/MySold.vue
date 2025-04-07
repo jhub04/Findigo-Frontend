@@ -4,6 +4,7 @@ import {ref ,onMounted} from 'vue'
 import { useCurrentUser } from '@/composables/useCurrentUser';
 import { getMySoldListings } from '@/services/userApi';
 import { useI18n } from 'vue-i18n'
+import ListingCard from '../ListingCard.vue';
 
 const { t } = useI18n()
 
