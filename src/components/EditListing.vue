@@ -46,12 +46,12 @@
   <div class="edit-images">
       <div class="image-grid">
         <div v-for="(image, index) in images" :key="index">
-          <img :class="{deleted: imagesToDelete.has(index)}" :src="image"/>
+          <img class="uploaded-image" :class="{deleted: imagesToDelete.has(index)}" :src="image"/>
           <button @click="deleteImageByIndex(index)">Delete image</button>
         </div>
       </div>
       
-      <input type="file" multiple accept="image/*"/>
+      <input type="file" multiple accept="image/*" @change="handleImageUpload"/>
     </div>
 </template>
 
@@ -85,6 +85,7 @@ const successMessage = ref<string | null>(null)
 const loading = ref(false)
 let listing:ListingResponse;
 const imagesToDelete = ref<Set<number>>(new Set<number>());
+const newImagesUploadedIndices = ref<Set<number>>(new Set<number>());
 
 onMounted(async () => {
   try {
@@ -117,16 +118,27 @@ const selectedCategory = computed(
 
 const deleteImageByIndex = (index:number) => {
   imagesToDelete.value.add(index);
-  console.log(imagesToDelete.value.has(index))
-  console.log(imagesToDelete)
+  console.log(imagesToDelete.value)
   //TODO make the "deleted" image a different color.
 }
 
-const deleteAllImages = async () => {
-  let imagesToDeleteArray = Array.from(imagesToDelete.value);
+const deleteAllImages = async (imagesToBeDeleted:Set<number>) => {
+  let imagesToDeleteArray = Array.from(imagesToBeDeleted);
+  console.log("Deleting indices" + imagesToDeleteArray)
   imagesToDeleteArray.sort().reverse(); //Sorted descending, can delete by indexes this way.
+  console.log(imagesToDeleteArray)
   for (let index of imagesToDeleteArray) {
     await deleteImage(listing.id, index);
+  }
+}
+
+const handleImageUpload = async (e: Event) => {
+  const files = (e.target as HTMLInputElement).files
+  console.log(files?.length + " number of files uploading")
+  if (files && files.length > 0) {
+    let numberOfImages = await uploadImages(listing.id, files);
+    await fetchImagesForListing(listing.id, numberOfImages);
+    newImagesUploadedIndices.value.add(numberOfImages - 1);//0 indexd
   }
 }
 
@@ -162,8 +174,9 @@ const submit = async () => {
     }
 
     await editListing(id, payload);
-    await deleteAllImages();
+    await deleteAllImages(imagesToDelete.value);
     successMessage.value = 'Listing updated successfully!'
+    router.push(`/my-listing/${id}`)
   } catch (e) {
     errorMessage.value = handleApiError(e)
   } finally {
@@ -171,7 +184,8 @@ const submit = async () => {
   }
 }
 
-function cancelEdit() {
+async function cancelEdit() {
+  await deleteAllImages(newImagesUploadedIndices.value);
   router.push(`/my-listing/${id}`)
 }
 </script>
@@ -331,6 +345,25 @@ label {
   }
 }
 .deleted {
-  border-radius: 50%;
+  opacity: 0.4;
+  filter: grayscale(100%);
+  border: 2px dashed red;
+  border-radius: 12px;
+  transition: 0.3s;
+}
+.image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.uploaded-image {
+  width: 100%;
+  max-height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
 </style>
