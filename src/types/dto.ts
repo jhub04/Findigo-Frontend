@@ -93,4 +93,11 @@ export interface FilterRequest {
   fromDate?: string | null;
 }
 
+export interface SaleResponse {
+  id: number;
+  listingId: number;
+  salePrice: number;
+  saleDate: string
+}
+
 

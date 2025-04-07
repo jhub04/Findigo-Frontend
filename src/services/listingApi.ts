@@ -1,4 +1,4 @@
-import type { FilterRequest, ListingRequest } from '@/types/dto.ts'
+import type { FilterRequest, ListingRequest, SaleResponse } from '@/types/dto.ts'
 import type { ListingResponse } from '@/types/dto.ts'
 import apiClient from '@/services/apiClient.ts'
 
@@ -54,4 +54,15 @@ export const getFilteredListingsPage = async (filter: FilterRequest,
 export const getFilteredListings = async (filter: FilterRequest): Promise<ListingResponse[]> => {
   const response = await apiClient.post('/listings/all', filter)
   return response.data
+}
+
+// Mark listings as sold
+export const markListingAsSold = async (listingId: number): Promise<SaleResponse> => {
+  const response = await apiClient.put(`/listings/sell/${listingId}`);
+  return response.data
+}
+
+// Mark listing as archived
+export const markListingAsArchived = async (listingId: number): Promise<void> => {
+  await apiClient.put(`/listings/archive/${listingId}`);
 }
