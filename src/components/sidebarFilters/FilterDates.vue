@@ -2,8 +2,7 @@
   <div class="filter-dates">
     <h3>{{ $t('Dates') }}</h3>
     <div class="dates-inputs">
-      <input type="date" v-model="startDate" :placeholder="$t('Start Date')" />
-      <input type="date" v-model="endDate" :placeholder="$t('End Date')" />
+      <input type="date" v-model="startDate" :placeholder="$t('Published From')" />
       <button class="apply-button" @click="updateDates">{{ $t('Search') }}</button>
     </div>
   </div>
@@ -17,14 +16,11 @@ const router = useRouter()
 const route = useRoute()
 
 const startDate = ref<string | null>(null)
-const endDate = ref<string | null>(null)
 
 function updateDates() {
   const query = { ...route.query }
   if (startDate.value) query.dateFrom = startDate.value
   else delete query.dateFrom
-  if (endDate.value) query.dateTo = endDate.value
-  else delete query.dateTo
   router.replace({ query })
 }
 </script>
@@ -39,16 +35,16 @@ function updateDates() {
   gap: 10px;
   margin-top: 10px;
   width: 100%;
-  flex-wrap: nowrap; /* Keep in one row on wider screens */
+  flex-wrap: nowrap;
 }
 
 .dates-inputs input[type="date"] {
-  flex: 1 1 auto; /* Let the inputs flex and shrink */
+  flex: 1 1 auto;
   min-width: 70px;
 }
 
 .apply-button {
-  flex: 0 0 auto; /* Keep button at fixed size */
+  flex: 0 0 auto;
   padding: 6px 12px;
   border-radius: 6px;
   background-color: #007bff;

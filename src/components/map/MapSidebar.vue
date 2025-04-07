@@ -48,7 +48,6 @@ const toggleSidebar = () => {
   showSidebar.value = !showSidebar.value
 }
 
-
 onMounted(() => {
   const checkMobile = () => {
     isMobile.value = window.innerWidth <= 768
@@ -100,9 +99,6 @@ onMounted(() => {
   background-color: #e8e8e8;
   transform: scale(1.1);
 }
-
-
-
 
 .close-btn {
   margin-top: 1rem;
