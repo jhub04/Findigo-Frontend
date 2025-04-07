@@ -28,29 +28,54 @@
     </div>
 
     <div v-if="listingResponse">
-      <label for="image-upload">{{ $t('Upload Images') }}</label>
-      <input type="file" id="image-upload" @change="handleImageUpload" accept="image/*" multiple />
+      <div class="image-upload-container">
+        <label for="image-upload" class="custom-file-label">
+        {{ $t('Upload Images') }}
+        <input
+          type="file"
+          id="image-upload"
+          class="custom-file-input"
+          @change="handleImageUpload"
+          accept="image/*"
+          multiple
+        />
+      </label>
+      </div>
+      
 
       <div v-if="isUploading">{{ $t('Uploading images...') }}</div>
       <div v-if="uploadError" class="error-message">{{ uploadError }}</div>
       <div v-if="loadingPreviews">{{ $t('Loading previews...') }}</div>
 
-      <div v-if="previews.length" class="image-grid">
-        <div v-for="(url, index) in previews" :key="index">
-          <img
-            :src="url"
-            :class="{ 'uploaded-image': true, deleted: deletedIndices.has(index) }"
-            alt="Uploaded preview"
-          />
-          <button type="button" @click="toggleImageDelete(index)">
-            {{ deletedIndices.has(index) ? $t('Undo Delete') : $t('Delete Image') }}
-          </button>
+      <div v-if="previews.length" class="edit-images">
+        <div class="image-grid">
+          <div v-for="(url, index) in previews" :key="index">
+            <img :src="url" class="uploaded-image" :class="{ deleted: deletedIndices.has(index) }" />
+            <button
+              v-if="!deletedIndices.has(index)"
+              type="button"
+              class="delete-button"
+              @click="toggleImageDelete(index)"
+            >
+              {{ $t('Delete Image') }}
+            </button>
+            <button
+              v-else
+              type="button"
+              class="undo-button"
+              @click="toggleImageDelete(index)"
+            >
+              {{ $t('Undo Delete') }}
+            </button>
+          </div>
         </div>
       </div>
 
-      <button v-if="previews.length" type="button" class="save-button" @click="finalizeAndGoToListing">
+      <div class="save-button-container">
+        <button v-if="previews.length" type="button" class="save-button" @click="finalizeAndGoToListing">
         {{ $t('Save and go to listing') }}
       </button>
+      </div>
     </div>
 
     <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
@@ -78,7 +103,6 @@ import type { CategoryResponse, ListingAttributeRequest, ListingRequest, Listing
 import { useImages } from '@/composables/useImages'
 
 const { deleteImage } = useImages()
-
 const { t } = useI18n()
 const router = useRouter()
 
@@ -97,7 +121,6 @@ const loading = ref(false)
 
 const { uploadImages, isUploading, uploadError } = useImageUpload()
 const { previews, fetchPreviews, loadingPreviews } = useImagePreviews()
-
 const deletedIndices = ref<Set<number>>(new Set())
 
 onMounted(async () => {
@@ -139,7 +162,7 @@ const submit = async () => {
     }
 
     const createdListing = await addListing(payload)
-    successMessage.value = t('Listing created! Upload images below.')
+    successMessage.value = t('Listing created!')
     listingResponse.value = createdListing
   } catch (e) {
     errorMessage.value = t('Something went wrong while submitting.')
@@ -176,6 +199,108 @@ const finalizeAndGoToListing = async () => {
 </script>
 
 <style scoped>
+.image-upload-container {
+  text-align: center;
+}
+
+.custom-file-label {
+  display: inline-block;
+  background-color: #1f7a8c;
+  color: white;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: background-color 0.3s;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.custom-file-label:hover {
+  background-color: #022b3a;
+}
+
+.custom-file-input {
+  display: none;
+}
+
+.save-button-container {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+.edit-images {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background-color: #f9fafb;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+}
+
+.image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 1rem;
+}
+
+.image-grid div {
+  position: relative;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+
+.image-grid div:hover {
+  transform: scale(1.02);
+}
+
+.uploaded-image {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-bottom: 1px solid #eee;
+  transition: 0.3s;
+}
+
+.image-grid button {
+  width: 100%;
+  padding: 0.5rem;
+  color: white;
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 0 0 10px 10px;
+  transition: background-color 0.3s ease;
+}
+
+.delete-button {
+  background-color: #dc3545;
+}
+
+.delete-button:hover {
+  background-color: #c82333;
+}
+
+.undo-button {
+  background-color: #6c757d;
+}
+
+.undo-button:hover {
+  background-color: #5a6268;
+}
+
+.deleted {
+  opacity: 0.3;
+  filter: grayscale(100%);
+  border: 2px dashed #dc3545;
+  border-radius: 8px;
+}
+
 .form-container {
   max-width: 600px;
   margin: 2rem auto;
@@ -228,7 +353,7 @@ button:hover {
   background-color: #1e40af;
 }
 
-.save-button {
+.save-button { 
   padding: 0.75rem;
   margin-top: 1rem;
   background-color: #1f7a8c;

@@ -34,9 +34,7 @@
         <span v-if="loading" class="spinner"></span>
         <span v-else>Save Changes</span>
       </button>
-      <button class="cancel-button" type="button" @click="cancelEdit">
-        Cancel
-      </button>
+      <button class="cancel-button" type="button" @click="cancelEdit">Cancel</button>
     </div>
 
     <transition name="fade">
@@ -47,13 +45,31 @@
   <div class="edit-images">
     <div class="image-grid">
       <div v-for="(image, index) in images" :key="index">
-        <img class="uploaded-image" :class="{deleted: imagesToDelete.has(index)}" :src="image"/>
-        <button v-if="!imagesToDelete.has(index)" @click="deleteImageByIndex(index)" class="delete-button">Delete image</button>
+        <img class="uploaded-image" :class="{ deleted: imagesToDelete.has(index) }" :src="image" />
+        <button
+          v-if="!imagesToDelete.has(index)"
+          @click="deleteImageByIndex(index)"
+          class="delete-button"
+        >
+          Delete image
+        </button>
         <button v-else @click="undoDelete(index)" class="undo-button">Undo delete</button>
       </div>
     </div>
 
-    <input type="file" multiple accept="image/*" @change="handleImageUpload"/>
+    <div class="image-upload-container">
+      <label for="image-upload" class="custom-file-label">
+        {{ $t('Upload Images') }}
+        <input
+          type="file"
+          id="image-upload"
+          class="custom-file-input"
+          @change="handleImageUpload"
+          accept="image/*"
+          multiple
+        />
+      </label>
+    </div>
   </div>
 </template>
 
@@ -63,7 +79,12 @@ import { editListing, getListingById } from '@/services/listingApi'
 import { getCoordinatesFromPostcode } from '@/utils/geoUtils'
 import { getAllCategories } from '@/services/categoryApi'
 import { useRoute, useRouter } from 'vue-router'
-import type { CategoryResponse, ListingAttributeRequest, ListingRequest, ListingResponse } from '@/types/dto'
+import type {
+  CategoryResponse,
+  ListingAttributeRequest,
+  ListingRequest,
+  ListingResponse,
+} from '@/types/dto'
 import { handleApiError } from '@/utils/handleApiError.ts'
 import { useImages } from '@/composables/useImages'
 import { useImageUpload } from '@/composables/useImageUpload'
@@ -101,8 +122,8 @@ onMounted(async () => {
     price.value = listing.price
     selectedCategoryId.value = listing.category.id
 
-    listing.attributes.forEach(attr => {
-      const matchingAttribute = selectedCategory.value?.attributes.find(a => a.name === attr.name)
+    listing.attributes.forEach((attr) => {
+      const matchingAttribute = selectedCategory.value?.attributes.find((a) => a.name === attr.name)
       if (matchingAttribute) {
         attributeInputs.value[matchingAttribute.id] = attr.value
       }
@@ -113,8 +134,8 @@ onMounted(async () => {
   }
 })
 
-const selectedCategory = computed(() =>
-  categories.value.find((cat) => cat.id === selectedCategoryId.value) ?? null,
+const selectedCategory = computed(
+  () => categories.value.find((cat) => cat.id === selectedCategoryId.value) ?? null,
 )
 
 const deleteImageByIndex = (index: number) => {
@@ -189,8 +210,32 @@ async function cancelEdit() {
 }
 </script>
 
-
 <style scoped>
+.image-upload-container {
+  text-align: center;
+}
+
+.custom-file-label {
+  display: inline-block;
+  background-color: #1f7a8c;
+  color: white;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: background-color 0.3s;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.custom-file-label:hover {
+  background-color: #022b3a;
+}
+
+.custom-file-input {
+  display: none;
+}
+
 .form-container {
   max-width: 600px;
   margin: 2rem auto;
@@ -234,7 +279,6 @@ async function cancelEdit() {
 .delete-button:hover {
   background-color: #c82333;
 }
-
 
 h2 {
   text-align: center;
@@ -427,12 +471,4 @@ label {
   border: 2px dashed #dc3545;
   border-radius: 8px;
 }
-
-input[type="file"] {
-  margin-top: 1.5rem;
-  display: block;
-  font-size: 0.95rem;
-  color: #022b3a;
-}
-
 </style>
