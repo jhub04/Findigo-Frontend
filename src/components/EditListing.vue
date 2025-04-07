@@ -1,6 +1,6 @@
 <template>
   <form @submit.prevent="submit" class="form-container">
-    <h2>Edit Listing (Admin)</h2>
+    <h2>Edit Listing</h2>
 
     <input v-model="briefDescription" placeholder="Listing title" required />
     <textarea v-model="fullDescription" placeholder="Description" required rows="5" />
@@ -25,44 +25,23 @@
       </div>
     </div>
 
-    <!--
-    <div>
-      <label for="image-upload">Upload Images</label>
-      <input type="file" id="image-upload" @change="handleImageUpload" accept="image/*" multiple />
-
-      <div v-if="isUploading">Uploading images...</div>
-      <div v-if="uploadError" class="error-message">{{ uploadError }}</div>
-      <div v-if="loadingPreviews">Loading previews...</div>
-
-      <div v-if="previews.length">
-        <h4>Uploaded Images:</h4>
-        <div class="image-grid">
-          <img
-            v-for="(url, index) in previews"
-            :key="index"
-            :src="url"
-            alt="Uploaded image"
-            class="uploaded-image"
-          />
-        </div>
-      </div>
-    </div>
-    -->
-
-    <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
+    <transition name="fade">
+      <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
+    </transition>
 
     <div class="button-group">
       <button class="save-button" type="submit" :disabled="loading">
-        {{ loading ? 'Saving...' : 'Save Changes' }}
+        <span v-if="loading" class="spinner"></span>
+        <span v-else>Save Changes</span>
       </button>
       <button class="cancel-button" type="button" @click="cancelEdit">
         Cancel
       </button>
     </div>
 
-    <div v-if="successMessage" class="success-message">
-      {{ successMessage }}
-    </div>
+    <transition name="fade">
+      <div v-if="successMessage" class="success-message">{{ successMessage }}</div>
+    </transition>
   </form>
 </template>
 
@@ -71,8 +50,6 @@ import { ref, computed, onMounted } from 'vue'
 import { editListing, getListingById } from '@/services/listingApi'
 import { getCoordinatesFromPostcode } from '@/utils/geoUtils'
 import { getAllCategories } from '@/services/categoryApi'
-import { useImageUpload } from '@/composables/useImageUpload'
-import { useImagePreviews } from '@/composables/useImagePreviews'
 import { useRoute, useRouter } from 'vue-router'
 import type { CategoryResponse, ListingAttributeRequest, ListingRequest, ListingResponse } from '@/types/dto'
 import { handleApiError } from '@/utils/handleApiError.ts'
@@ -93,9 +70,6 @@ const errorMessage = ref<string | null>(null)
 const successMessage = ref<string | null>(null)
 const loading = ref(false)
 
-const { uploadImages, isUploading, uploadError } = useImageUpload()
-const { previews, fetchPreviews, loadingPreviews } = useImagePreviews()
-
 onMounted(async () => {
   try {
     categories.value = await getAllCategories()
@@ -108,15 +82,12 @@ onMounted(async () => {
     price.value = listing.price
     selectedCategoryId.value = listing.category.id
 
-    // Fyll ut attributter
     listing.attributes.forEach(attr => {
       const matchingAttribute = selectedCategory.value?.attributes.find(a => a.name === attr.name)
       if (matchingAttribute) {
         attributeInputs.value[matchingAttribute.id] = attr.value
       }
     })
-
-    await fetchPreviews(listing.id, listing.numberOfImages)
   } catch (error) {
     console.error(error)
     errorMessage.value = 'Failed to load listing data.'
@@ -156,7 +127,7 @@ const submit = async () => {
       categoryId: selectedCategory.value.id,
       attributes,
     }
-    console.log(payload)
+
     await editListing(id, payload)
     successMessage.value = 'Listing updated successfully!'
   } catch (e) {
@@ -166,76 +137,97 @@ const submit = async () => {
   }
 }
 
-const handleImageUpload = async (event: Event) => {
-  const files = (event.target as HTMLInputElement).files
-  if (!files) return
-
-  const numUploaded = await uploadImages(id, files)
-  await fetchPreviews(id, numUploaded)
-}
-
 function cancelEdit() {
-  router.push(`/admin/listings/${id}`)
+  router.push(`/listings/${id}`)
 }
 </script>
 
 <style scoped>
-.image-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.uploaded-image {
-  width: 100%;
-  max-height: 150px;
-  object-fit: cover;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-}
-
 .form-container {
   max-width: 600px;
-  margin: 0 auto;
+  margin: 2rem auto;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.2rem;
+  padding: 2rem;
+  background-color: #e1e5f2;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 }
 
-textarea {
-  resize: vertical;
-  min-height: 3rem;
-  font-size: 1rem;
-  padding: 0.75rem;
+@media (max-width: 600px) {
+  .form-container {
+    padding: 1.5rem;
+  }
+}
+
+h2 {
+  text-align: center;
+  color: #022b3a;
+  margin-bottom: 1rem;
 }
 
 input,
 textarea,
 select {
   width: 100%;
-  padding: 0.5rem;
+  padding: 0.75rem;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 6px;
+  font-size: 1rem;
+  background-color: white;
+  transition: border-color 0.3s;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: #1f7a8c;
+  outline: none;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 4rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  margin-bottom: 0.5rem;
+  color: #022b3a;
+  font-weight: 600;
 }
 
 .button-group {
   display: flex;
   justify-content: space-between;
-  margin-top: 1.5rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.save-button,
+.cancel-button {
+  flex: 1 1 45%;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .save-button {
   background-color: #1f7a8c;
   color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
-  font-size: 0.95rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
 }
 
 .save-button:hover {
@@ -245,29 +237,63 @@ select {
 .cancel-button {
   background-color: #dc3545;
   color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
-  font-size: 0.95rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
 }
 
 .cancel-button:hover {
   background-color: #c82333;
 }
 
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 3px solid white;
+  border-top: 3px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.success-message,
+.error-message {
+  margin-top: 1rem;
+  text-align: center;
+  font-weight: 500;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
 .success-message {
-  padding: 0.5rem;
-  border-radius: 4px;
   background-color: #dcfce7;
   color: #166534;
   border: 1px solid #4ade80;
-  text-align: center;
+  padding: 0.75rem;
+  border-radius: 6px;
 }
 
 .error-message {
   color: red;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 </style>

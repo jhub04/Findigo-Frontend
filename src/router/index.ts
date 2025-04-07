@@ -42,7 +42,7 @@ const routes = [
   { path: '/my-listing/:id', component: ListingAdministratorView, name: 'OwnListingPage' },
   { path: '/edit-my-listing/:id', component: EditOwnListingView, name: 'EditOwnListingPage' },
   { path: '/listing/:id/checkout', component: MockCheckoutView, name: 'MockCheckoutPage'},
-  { path: '/my-listing/:id', component: OwnListingView, name: 'OwnListingPage' },
+  { path: '/my-listing/:id', component: ListingAdministratorView, name: 'OwnListingPage' },
   { path: '/messages', component: MessagesView, name: 'Messages' },
   { path: '/messages/:userId', component: MessageThreadView, name: 'MessageThread'},
   { path: '/search', component: SearchResultsView, name: 'SearchResultsView' },
