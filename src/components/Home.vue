@@ -1,15 +1,82 @@
+<template>
+  <div class="homepage-container">
+    <div v-if="isLoading">{{ $t('Loading user...') }}</div>
+
+    <div v-else>
+      <div v-if="user">
+        <h2>{{ $t('Welcome') }}, {{ user.username }}</h2>
+
+        <!-- Category Buttons -->
+        <div v-if="categories.length > 0" class="category-buttons">
+          <div class="button-grid">
+            <button
+              v-for="category in categories"
+              :key="category.id"
+              class="category-button"
+              @click="handleCategoryClick(category.id)"
+              :class="{ selected: selectedCategory === category.id }"
+              :aria-pressed="selectedCategory === category.id"
+              :title="selectedCategory === category.id
+                ? $t('Click to clear filter')
+                : $t('Filter by') + ' ' + category.name"
+            >
+              {{ category.name }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Listings Section -->
+        <div>
+          <div v-if="listingsLoading">{{ $t('Loading listings...') }}</div>
+          <div v-else-if="listingsError">{{ $t('Error:') }} {{ listingsError }}</div>
+          <div
+            v-else-if="
+              (selectedCategory && categoryListings?.length === 0) ||
+              (!selectedCategory && listings.length === 0)
+            "
+          >
+            {{ $t('No listings found') }}
+          </div>
+
+          <div class="listing-grid">
+            <ListingCard
+              v-for="listing in selectedCategory ? categoryListings : listings"
+              :key="listing.id"
+              :listing="listing"
+            />
+          </div>
+
+          <p v-if="listings.length === 0">{{ $t('You have no listings yet.') }}</p>
+        </div>
+      </div>
+
+      <div v-else>
+        <h2 v-if="error">{{ $t('Error loading user') }}</h2>
+        <h2 v-else>{{ $t('Unauthorized!') }}</h2>
+      </div>
+    </div>
+    <div class="paginationControls">
+      <p>
+        {{ $t('Current Page:') }} {{ pageNumber }}, {{ $t('Total pages:') }}
+        {{ totalPages }}
+      </p>
+      <button @click="prevPage" :disabled="pageNumber === 1">{{ $t('Previous') }}</button>
+      <button @click="nextPage" :disabled="pageNumber === totalPages">{{ $t('Next') }}</button>
+    </div>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useCurrentUser } from '@/composables/useCurrentUser'
 import { getAllCategories } from '@/services/categoryApi'
 import { getListingsByCategory, getRecommendedListingsPage } from '@/services/listingApi.ts'
-
+import { useFavorites } from '@/composables/useFavorites'
 import type { CategoryResponse, ListingResponse } from '@/types/dto.ts'
-import noImage from '@/assets/no-image.jpg'
-import { useImages } from '@/composables/useImages'
-import { handleImageError } from '@/utils/handleImageError'
-
 import ListingCard from '@/components/ListingCard.vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const { user, isLoading, error } = useCurrentUser()
 
@@ -19,22 +86,22 @@ const selectedCategory = ref<number | null>(null)
 const categoryListings = ref<ListingResponse[] | null>(null)
 const listingsLoading = ref(true)
 const listingsError = ref<string | null>(null)
-
 const pageNumber = ref(1)
 const totalPages = ref<number>(1)
+const {fetchFavorites} = useFavorites()
 
 async function nextPage() {
   if (pageNumber.value < totalPages.value) {
-    console.log('Getting page ' + pageNumber.value + 1)
+    console.log('Getting page ' + (pageNumber.value + 1))
     pageNumber.value++
-    let listingsPage = await getRecommendedListingsPage(pageNumber.value)
+    const listingsPage = await getRecommendedListingsPage(pageNumber.value)
     listings.value = listingsPage.content
   }
 }
 
 async function prevPage() {
   if (pageNumber.value > 1) {
-    console.log('Getting page ' + pageNumber.value + 1)
+    console.log('Getting page ' + (pageNumber.value - 1))
     pageNumber.value--
     const listingsPage = await getRecommendedListingsPage(pageNumber.value)
     listings.value = listingsPage.content
@@ -56,7 +123,8 @@ const handleCategoryClick = async (categoryId: number) => {
     const result = await getListingsByCategory(categoryId)
     categoryListings.value = result
   } catch (err: any) {
-    listingsError.value = err.message || 'Failed to load listings by category'
+    listingsError.value =
+      err.message || t('Failed to load listings by category')
     categoryListings.value = null
   } finally {
     listingsLoading.value = false
@@ -65,84 +133,18 @@ const handleCategoryClick = async (categoryId: number) => {
 
 onMounted(async () => {
   try {
-    let listingsPage = await getRecommendedListingsPage(pageNumber.value)
+    const listingsPage = await getRecommendedListingsPage(pageNumber.value)
+    await fetchFavorites()
     listings.value = listingsPage.content
     totalPages.value = listingsPage.totalPages
     categories.value = await getAllCategories()
   } catch (err: any) {
-    listingsError.value = err.message || 'Failed to load listings'
+    listingsError.value = err.message || t('Failed to load listings')
   } finally {
     listingsLoading.value = false
   }
 })
 </script>
-
-<template>
-  <div class="homepage-container">
-    <div v-if="isLoading">Loading user...</div>
-
-    <div v-else>
-      <div v-if="user">
-        <h2>Welcome, {{ user.username }}</h2>
-
-        <!-- Category Buttons -->
-        <div v-if="categories.length > 0" class="category-buttons">
-          <div class="button-grid">
-            <button
-              v-for="category in categories"
-              :key="category.id"
-              class="category-button"
-              @click="handleCategoryClick(category.id)"
-              :class="{ selected: selectedCategory === category.id }"
-              :aria-pressed="selectedCategory === category.id"
-              :title="
-                selectedCategory === category.id
-                  ? 'Click to clear filter'
-                  : 'Filter by ' + category.name
-              "
-            >
-              {{ category.name }}
-            </button>
-          </div>
-        </div>
-
-        <!-- Listings Section -->
-        <div>
-          <div v-if="listingsLoading">Loading listings...</div>
-          <div v-else-if="listingsError">Error: {{ listingsError }}</div>
-          <div
-            v-else-if="
-              (selectedCategory && categoryListings?.length === 0) ||
-              (!selectedCategory && listings.length === 0)
-            "
-          >
-            No listings found.
-          </div>
-
-          <div class="listing-grid">
-            <ListingCard
-              v-for="listing in selectedCategory ? categoryListings : listings"
-              :key="listing.id"
-              :listing="listing"
-            />
-          </div>
-
-          <p v-if="listings.length === 0">You have no listings yet.</p>
-        </div>
-      </div>
-
-      <div v-else>
-        <h2 v-if="error">Error loading user</h2>
-        <h2 v-else>Unauthorized!</h2>
-      </div>
-    </div>
-    <div class="paginationControls">
-      <p>Current Page: {{ pageNumber }}, Total pages: {{ totalPages }}</p>
-      <button @click="prevPage" :disabled="pageNumber === 1">Previous</button>
-      <button @click="nextPage" :disabled="pageNumber === totalPages">Next</button>
-    </div>
-  </div>
-</template>
 
 <style scoped>
 .homepage-container {
@@ -155,10 +157,12 @@ onMounted(async () => {
 h2 {
   margin-top: 1rem;
 }
+
 ul {
   margin-top: 1rem;
   padding-left: 1.5rem;
 }
+
 li {
   margin-bottom: 0.75rem;
 }
@@ -181,13 +185,10 @@ li {
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.9rem;
-  background-color: #f4f4f4; /* light gray for untoggled */
-  color: #022b3a; /* base text color */
-  transition:
-    background-color 0.3s ease,
-    transform 0.2s ease,
-    box-shadow 0.2s ease,
-    color 0.2s ease;
+  background-color: #f4f4f4;
+  color: #022b3a;
+  transition: background-color 0.3s ease, transform 0.2s ease,
+    box-shadow 0.2s ease, color 0.2s ease;
 }
 
 .category-button:hover {
@@ -210,5 +211,9 @@ li {
   justify-content: center;
   gap: 12px;
   margin-top: 1rem;
+}
+
+.paginationControls {
+  margin-top: 2rem;
 }
 </style>

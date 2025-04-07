@@ -12,6 +12,8 @@ const username = ref("");
 const password = ref("");
 const loginStatus = ref("");
 
+userStore.authenticated = false;
+
 const handleLoginClick = async () => {
   try {
     const user: AuthRequest = {
