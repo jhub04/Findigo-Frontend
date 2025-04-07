@@ -55,7 +55,7 @@
         <h2 v-else>{{ $t('Unauthorized!') }}</h2>
       </div>
     </div>
-    <div class="paginationControls">
+    <div v-if="totalPages > 1" class="paginationControls">
       <p>
         {{ $t('Current Page:') }} {{ pageNumber }}, {{ $t('Total pages:') }}
         {{ totalPages }}
