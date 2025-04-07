@@ -65,6 +65,7 @@
       <button @click="nextPage" :disabled="pageNumber === totalPages">{{ $t('Next') }}</button>
     </div>
   </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -231,4 +232,5 @@ onMounted(async () => {
 .paginationControls {
   margin-top: 2rem;
 }
+
 </style>

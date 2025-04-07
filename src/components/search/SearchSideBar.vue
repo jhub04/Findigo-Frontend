@@ -21,7 +21,7 @@
 
     <div class="sidebar" :class="{ mobile: isMobile, open: showSidebar }" :style="sidebarStyle">
       <template v-if="isMobile">
-        <SearchBar @search="onSearch" />
+        <SearchBar/>
       </template>
       <FilterCategories />
       <div class="filter-price-date">

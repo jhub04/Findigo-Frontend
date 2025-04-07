@@ -129,6 +129,7 @@
       grid-template-columns: repeat(2, 1fr);
       max-width: 650px;
       margin: 0 auto;
+      margin-right: 85px;
     }
   }
   .pagination-controls {
