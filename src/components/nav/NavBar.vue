@@ -105,17 +105,23 @@ onMounted(() => {
 
 .main-navbar {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
   max-width: 1200px;
   margin: 0 auto;
   padding: 15px 20px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+}
+
+.main-navbar::-webkit-scrollbar {
+  display: none;
 }
 
 .navbar-brand {
   display: flex;
   align-items: center;
   padding: 0 20px;
+  flex-shrink: 0;
 }
 
 .app-name {
@@ -124,6 +130,7 @@ onMounted(() => {
   font-size: 1.5rem;
   text-decoration: none;
   transition: transform 0.3s ease, color 0.3s ease, text-shadow 0.3s ease;
+  white-space: nowrap;
 }
 
 .app-name:hover {
@@ -134,35 +141,42 @@ onMounted(() => {
 
 .navbar-menu {
   display: flex;
+  flex: 1 1 auto;
+  flex-wrap: nowrap;
   align-items: center;
-  flex-grow: 1;
-  width: 100%;
+  justify-content: space-between;
+  min-width: 0;
 }
 
 .nav-search-container {
-  flex: 1;
-  max-width: 500px;
-  min-width: 250px;
-  margin: 0 20px;
+  flex: 1 1 0;
+  min-width: 100px;
+  margin: 0 10px;
 }
 
 .navbar-links {
   display: flex;
-  align-items: center;
-  gap: 15px;
+  flex: 1 1 0;
+  justify-content: flex-end;
+  flex-wrap: nowrap;
+  gap: 10px;
+  min-width: 0;
   white-space: nowrap;
 }
 
 .nav-link {
-  display: inline-flex;
+  flex: 1 1 auto;
+  display: flex;
   align-items: center;
+  justify-content: center;
   white-space: nowrap;
   text-decoration: none;
   color: white;
-  font-size: 0.9rem;
-  padding: 8px 12px;
+  font-size: 0.85rem;
+  padding: 6px 10px;
   border-radius: 4px;
   transition: background-color 0.3s ease, color 0.3s ease;
+  min-width: 0;
 }
 
 .nav-link svg {
@@ -177,94 +191,102 @@ onMounted(() => {
 .navbar-desktop {
   display: flex;
   width: 100%;
+  flex-wrap: nowrap;
 }
 
-/* Mobile styles */
-@media (max-width: 768px) {
-  .navbar-desktop {
-    display: none;
-  }
-
-  .navbar-mobile {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    padding: 10px 20px;
-  }
-
-  .hamburger {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    margin: 0;
-    color: white;
-  }
-
-  .hamburger svg {
-    width: 24px;
-    height: 24px;
-  }
-
-  .mobile-menu {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 0 20px 10px;
-    background-color: #022B3A;
-  }
-
-  .mobile-search-container {
-    width: 100%;
-    margin-bottom: 10px;
-  }
+/* ✅ MOBILVISNING */
+.navbar-mobile {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  width: 100%;
+  padding: 10px 20px;
+  column-gap: 12px;
 }
 
+.navbar-mobile .hamburger {
+  justify-self: start;
+}
+
+.navbar-mobile .navbar-brand {
+  justify-self: start;
+}
+
+.navbar-mobile .nav-link#profile {
+  justify-self: end;
+  white-space: nowrap;
+  margin-right: 28px;
+}
+
+.hamburger {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  color: white;
+}
+
+.hamburger svg {
+  width: 24px;
+  height: 24px;
+}
+
+.mobile-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 20px 10px;
+  background-color: #022B3A;
+}
+
+.mobile-search-container {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+/* Responsive fine-tuning */
 @media (max-width: 992px) and (min-width: 769px) {
   .nav-search-container {
     max-width: 350px;
   }
+}
 
-  @media (min-width: 1200px) {
-    .main-navbar {
-      padding: 15px 40px;
-    }
-
-    .navbar-links {
-      gap: 20px;
-    }
-
-    .nav-search-container {
-      max-width: 600px;
-    }
+@media (min-width: 1200px) {
+  .main-navbar {
+    padding: 15px 40px;
   }
-  @media (min-width: 993px) and (max-width: 1399px) {
-    .navbar-links {
-      gap: 10px;
-    }
-    .nav-link {
-      font-size: 0.85rem;
-      padding: 6px 8px;
-    }
-  }
-  @media (max-width: 1024px) and (min-width: 769px) {
-    .nav-search-container {
-      max-width: 300px;
-      margin: 0 10px;
-    }
 
-    .navbar-links {
-      gap: 8px;
-    }
+  .navbar-links {
+    gap: 20px;
   }
+
+  .nav-search-container {
+    max-width: 600px;
+  }
+}
+
+@media (min-width: 993px) and (max-width: 1399px) {
   .navbar-links {
     gap: 10px;
   }
 
   .nav-link {
-    padding: 6px 8px;
     font-size: 0.85rem;
+    padding: 6px 8px;
+  }
+}
+
+@media (max-width: 1024px) and (min-width: 769px) {
+  .nav-search-container {
+    max-width: 300px;
+    margin: 0 10px;
+  }
+
+  .navbar-links {
+    gap: 8px;
   }
 }
 </style>
+
+

@@ -31,7 +31,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import SearchBox from '@/components/map/MapSearchBar.vue'
+import SearchBox from '@/components/search/SearchBar.vue'
 import FilterCategories from '@/components/sidebarFilters/FilterCategories.vue'
 import FilterPrice from '@/components/sidebarFilters/FilterPrice.vue'
 import FilterDates from '@/components/sidebarFilters/FilterDates.vue'
