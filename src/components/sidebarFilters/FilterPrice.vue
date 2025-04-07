@@ -45,10 +45,13 @@ function updatePrice() {
   display: flex;
   gap: 10px;
   margin-top: 10px;
+  width: 100%;
+  flex-wrap: nowrap; /* Prevent wrapping until mobile breakpoint */
 }
 
 input[type="number"] {
-  width: 90px;
+  flex: 1 1 auto;      /* Allow inputs to shrink */
+  min-width: 70px;      /* Set a minimum width */
   appearance: textfield;
   -moz-appearance: textfield;
 }
@@ -60,6 +63,7 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 .apply-button {
+  flex: 0 0 auto;      /* Button doesn't shrink */
   padding: 6px 12px;
   border-radius: 6px;
   background-color: #007bff;
@@ -77,9 +81,7 @@ input[type="number"]::-webkit-inner-spin-button {
   .price-inputs {
     flex-direction: column;
   }
-  input[type="number"] {
-    width: 100%;
-  }
+  input[type="number"],
   .apply-button {
     width: 100%;
   }

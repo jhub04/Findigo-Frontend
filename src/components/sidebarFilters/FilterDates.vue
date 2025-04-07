@@ -1,59 +1,54 @@
 <template>
   <div class="filter-dates">
-    <h3>{{ $t('Publish from') }}</h3>
-    <div class="calendar-button">
-      <input
-        type="date"
-        v-model="selectedDate"
-        @change="validateDate"
-        lang="en"
-        :max="today"
-      />
-      <button
-        @click.prevent="performDateFilter"
-        :disabled="!isDateValid"
-        class="apply-button"
-      >
-        {{ $t('Apply') }}
-      </button>
+    <h3>{{ $t('Dates') }}</h3>
+    <div class="dates-inputs">
+      <input type="date" v-model="startDate" :placeholder="$t('Start Date')" />
+      <input type="date" v-model="endDate" :placeholder="$t('End Date')" />
+      <button class="apply-button" @click="updateDates">{{ $t('Search') }}</button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
-const today = new Date().toISOString().split('T')[0]
 const router = useRouter()
 const route = useRoute()
-const selectedDate = ref<string | null>(null)
-const isDateValid = ref(true)
 
-function validateDate() {
-  isDateValid.value = !!selectedDate.value
-}
+const startDate = ref<string | null>(null)
+const endDate = ref<string | null>(null)
 
-function performDateFilter() {
+function updateDates() {
   const query = { ...route.query }
-  if (selectedDate.value) query.dateFrom = selectedDate.value
+  if (startDate.value) query.dateFrom = startDate.value
   else delete query.dateFrom
+  if (endDate.value) query.dateTo = endDate.value
+  else delete query.dateTo
   router.replace({ query })
 }
 </script>
 
 <style scoped>
-.calendar-button {
+.filter-dates h3 {
+  font-size: 1.03rem;
+}
+
+.dates-inputs {
   display: flex;
   gap: 10px;
   margin-top: 10px;
+  width: 100%;
+  flex-wrap: nowrap; /* Keep in one row on wider screens */
 }
 
-input[type="date"] {
-  width: 140px;
+.dates-inputs input[type="date"] {
+  flex: 1 1 auto; /* Let the inputs flex and shrink */
+  min-width: 70px;
 }
 
 .apply-button {
+  flex: 0 0 auto; /* Keep button at fixed size */
   padding: 6px 12px;
   border-radius: 6px;
   background-color: #007bff;
@@ -61,27 +56,17 @@ input[type="date"] {
   border: none;
   cursor: pointer;
 }
+
 .apply-button:hover {
   background-color: #0056b3;
 }
 
-.apply-button:disabled {
-  background-color: #aaa;
-  cursor: not-allowed;
-}
-
-.filter-dates h3 {
-  font-size: 1.03rem;
-}
-
-/* Responsivt: på små skjermer stables elementene */
+/* Responsive: stack in a column on small screens */
 @media (max-width: 480px) {
-  .calendar-button {
+  .dates-inputs {
     flex-direction: column;
   }
-  input[type="date"] {
-    width: 100%;
-  }
+  .dates-inputs input[type="date"],
   .apply-button {
     width: 100%;
   }
