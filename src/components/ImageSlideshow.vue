@@ -52,7 +52,7 @@ const prevImage = () => {
   align-items: center;
 }
 
-/* Fixed size container */
+/* Desktop: Fastsatt størrelse */
 .image-wrapper {
   width: 600px;
   height: 400px;
@@ -60,16 +60,30 @@ const prevImage = () => {
   overflow: hidden;
 }
 
-/* Image fills container */
+/* Mobil: Bruker padding for å opprettholde 3:2-forholdet */
+@media (max-width: 768px) {
+  .image-wrapper {
+    width: 100%;
+    height: 0;
+    padding-bottom: 66.66%; /* 400/600 * 100% */
+    position: relative;
+  }
+}
+
+/* Bildet fyller containeren – absolutt posisjonert for å fylle padding-området */
 .slideshow-image {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   border-radius: 8px;
   border: 1px solid #ccc;
+  display: block;
 }
 
-/* Navigation buttons fixed inside container */
+/* Navigasjonsknapper */
 .nav-button {
   position: absolute;
   top: 50%;
@@ -98,6 +112,15 @@ const prevImage = () => {
 
 .nav-button.next {
   right: 10px;
+}
+
+/* Mindre knapper på mobil */
+@media (max-width: 768px) {
+  .nav-button {
+    width: 30px;
+    height: 30px;
+    font-size: 1.2rem;
+  }
 }
 
 .controls {

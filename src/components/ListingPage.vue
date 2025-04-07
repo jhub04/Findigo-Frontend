@@ -113,9 +113,15 @@ const toggleFavorite = async () => {
 </template>
 
 <style scoped>
+/* Global box-sizing */
+* {
+  box-sizing: border-box;
+}
+
 /* Main listing page container */
 .listing-page {
   max-width: 900px;
+  width: 90%;
   margin: 2rem auto;
   padding: 2rem;
   background-color: #fff;
@@ -288,6 +294,48 @@ const toggleFavorite = async () => {
 
 .send-message-button:hover {
   background-color: #0056b3;
+}
+
+/* Responsiv design for mobile */
+@media (max-width: 768px) {
+  .listing-page {
+    padding: 1rem;
+    width: 95%;
+  }
+
+  .listing-info-container {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .contact-info {
+    min-width: auto;
+    width: 100%;
+    margin-top: 1rem;
+  }
+
+  .title {
+    font-size: 1.6rem;
+  }
+
+  .price {
+    font-size: 1.2rem;
+  }
+
+}
+
+.image-slideshow {
+  width: 100%;
+  overflow: hidden;
+}
+
+.listing-image-wrapper {
+  width: 100%;
+}
+.image-slideshow img {
+  max-width: 100%;
+  height: auto;
+  display: block;
 }
 
 </style>
