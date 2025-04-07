@@ -27,6 +27,8 @@ const errorMessage = ref('')
 
 const saleResponse = ref<SaleResponse | null>(null)
 
+const formatDate = (iso: string) => new Date(iso).toLocaleString()
+
 // Simulate a purchase API call
 const submitPurchase = async () => {
   // Basic validation
@@ -139,7 +141,7 @@ const goHome = () => {
       <p>{{ t('Purchase successful!') }}</p>
       <div v-if="saleResponse">
         <p> {{ t('Sale Price') }}: {{ saleResponse.salePrice }}</p>
-        <p> {{ t('Sale Date') }}: {{ saleResponse.saleDate }}</p>
+        <p> {{ t('Sale Date') }}: {{ formatDate(saleResponse.saleDate) }}</p>
       </div>
 
       <button @click="goHome">{{ t('Return Home') }}</button>
