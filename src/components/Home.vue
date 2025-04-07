@@ -1,7 +1,6 @@
 <template>
   <div class="homepage-container">
     <div v-if="isLoading">{{ $t('Loading user...') }}</div>
-
     <div v-else>
       <div v-if="user">
         <h2>{{ $t('Welcome') }}, {{ user.username }}</h2>
@@ -39,22 +38,24 @@
           </div>
 
           <div class="listing-grid">
+            <!-- Legg class="listing-card" på hvert ListingCard -->
             <ListingCard
               v-for="listing in selectedCategory ? categoryListings : listings"
               :key="listing.id"
               :listing="listing"
+              class="listing-card"
             />
           </div>
 
           <p v-if="listings.length === 0">{{ $t('You have no listings yet.') }}</p>
         </div>
       </div>
-
       <div v-else>
         <h2 v-if="error">{{ $t('Error loading user') }}</h2>
         <h2 v-else>{{ $t('Unauthorized!') }}</h2>
       </div>
     </div>
+
     <div class="paginationControls">
       <p>
         {{ $t('Current Page:') }} {{ pageNumber }}, {{ $t('Total pages:') }}
@@ -77,7 +78,6 @@ import ListingCard from '@/components/ListingCard.vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
-
 const { user, isLoading, error } = useCurrentUser()
 
 const listings = ref<ListingResponse[]>([])
@@ -88,11 +88,10 @@ const listingsLoading = ref(true)
 const listingsError = ref<string | null>(null)
 const pageNumber = ref(1)
 const totalPages = ref<number>(1)
-const {fetchFavorites} = useFavorites()
+const { fetchFavorites } = useFavorites()
 
 async function nextPage() {
   if (pageNumber.value < totalPages.value) {
-    console.log('Getting page ' + (pageNumber.value + 1))
     pageNumber.value++
     const listingsPage = await getRecommendedListingsPage(pageNumber.value)
     listings.value = listingsPage.content
@@ -101,7 +100,6 @@ async function nextPage() {
 
 async function prevPage() {
   if (pageNumber.value > 1) {
-    console.log('Getting page ' + (pageNumber.value - 1))
     pageNumber.value--
     const listingsPage = await getRecommendedListingsPage(pageNumber.value)
     listings.value = listingsPage.content
@@ -114,17 +112,14 @@ const handleCategoryClick = async (categoryId: number) => {
     categoryListings.value = null
     return
   }
-
   selectedCategory.value = categoryId
   listingsLoading.value = true
   listingsError.value = null
-
   try {
     const result = await getListingsByCategory(categoryId)
     categoryListings.value = result
   } catch (err: any) {
-    listingsError.value =
-      err.message || t('Failed to load listings by category')
+    listingsError.value = err.message || t('Failed to load listings by category')
     categoryListings.value = null
   } finally {
     listingsLoading.value = false
@@ -154,30 +149,52 @@ onMounted(async () => {
   text-align: center;
 }
 
-h2 {
-  margin-top: 1rem;
-}
-
-ul {
-  margin-top: 1rem;
-  padding-left: 1.5rem;
-}
-
-li {
-  margin-bottom: 0.75rem;
-}
-
-.category-buttons {
+/*
+   listing-grid:
+   - 3 kolonner fra 992px og opp
+   - 2 kolonner under 992px (aldri 1 kolonne)
+*/
+.listing-grid {
+  display: grid;
+  gap: 1rem;
   margin-top: 2rem;
 }
 
-.category-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 1rem;
+/* Fra 992px og opp: 3 kolonner. Sentrer ved å gi maks bredde. */
+@media (min-width: 992px) {
+  .listing-grid {
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 900px;  /* juster til ønsket bredde per kolonne */
+    margin: 0 auto;
+  }
 }
 
+/* Under 992px: 2 kolonner uansett hvor smalt. */
+@media (max-width: 991px) {
+  .listing-grid {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 650px; /* litt mindre totalbredde, men du kan justere */
+    margin: 0 auto;
+  }
+}
+
+/* Eventuelt kan du la .listing-card ha en minbredde
+   om du er redd for at de blir *for* smale.
+   .listing-card { min-width: 220px; }
+   men da vil gridet muligens få scrollbar i stedet.
+*/
+
+/* Kategori-knapper, paginering, etc. */
+.category-buttons {
+  margin-top: 2rem;
+}
+.button-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 1rem;
+}
 .category-button {
   border: none;
   outline: none;
@@ -188,29 +205,19 @@ li {
   background-color: #f4f4f4;
   color: #022b3a;
   transition: background-color 0.3s ease, transform 0.2s ease,
-    box-shadow 0.2s ease, color 0.2s ease;
+  box-shadow 0.2s ease, color 0.2s ease;
 }
-
 .category-button:hover {
   background-color: #022b3a;
   color: white;
   transform: scale(1.05);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
-
 .category-button.selected {
   background-color: #022b3a;
   color: white;
   font-weight: bold;
   box-shadow: inset 0 0 0 2px white;
-}
-
-.button-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 12px;
-  margin-top: 1rem;
 }
 
 .paginationControls {
