@@ -15,13 +15,12 @@
         <div class="skeleton-line"></div>
       </div>
     </div>
-
     <div class="listing-container" v-else-if="listing">
       <h1>Manage Listing</h1>
 
       <div class="listing-header">
         <div class="listing-info">
-          <span class="status">Active</span>
+          <span class="status" :class="statusColorClass">{{ listing.listingStatus }}</span>
           <span class="date">{{ listing.dateCreated.slice(0, 10) }}</span>
           <h2>{{ listing.briefDescription }}</h2>
           <p class="price">{{ listing.price }} kr</p>
@@ -30,15 +29,28 @@
       </div>
 
       <div class="actions">
-        <button @click="editListing">
-          Edit Listing
-        </button>
-        <button @click="viewListing">
-          View Listing
-        </button>
-        <button class="delete-button" @click="openConfirmPopup">
-          Delete Listing
-        </button>
+        <!-- Only show this if listing is SOLD -->
+        <button v-if="listing.listingStatus === 'SOLD'" @click="viewListing">View Listing</button>
+
+        <!-- Show these if NOT sold -->
+        <template v-else>
+          <button @click="editListing">Edit Listing</button>
+          <button @click="viewListing">View Listing</button>
+          <button class="delete-button" @click="openConfirmPopup">Delete Listing</button>
+
+          <button @click="toggleArchiveStatus" class="archive-button" :disabled="loading">
+            {{ listing.listingStatus === 'ARCHIVED' ? 'Publish' : 'Archive' }}
+          </button>
+
+          <button
+            v-if="listing.listingStatus === 'ACTIVE'" 
+            @click="markAsSold"
+            class="sold-button"
+            :disabled="isMarkAsSoldDisabled || loading"
+          >
+            Mark as Sold
+          </button>
+        </template>
       </div>
 
       <div class="stats">
@@ -50,10 +62,8 @@
         </ul>
       </div>
     </div>
-
     <p v-else class="loading-text">Loading listing...</p>
 
-    <!-- Confirmation Popup -->
     <div v-if="showConfirmPopup" class="confirm-overlay">
       <div class="confirm-box">
         <h3>Confirm Deletion</h3>
@@ -68,10 +78,15 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { ListingResponse } from '@/types/dto.ts'
 import { getListingById, deleteListingById } from '@/services/listingApi.ts'
+import {
+  markListingAsArchived,
+  markListingAsActive,
+  markListingAsSold,
+} from '@/services/listingApi'
 
 const route = useRoute()
 const router = useRouter()
@@ -80,6 +95,10 @@ const showConfirmPopup = ref(false)
 const loading = ref(true)
 
 const listingId = Number(route.params.id)
+
+const isMarkAsSoldDisabled = computed(() => {
+  return listing.value?.listingStatus !== 'ACTIVE' ||loading.value
+})
 
 onMounted(async () => {
   try {
@@ -115,6 +134,53 @@ async function deleteListing() {
     showConfirmPopup.value = false
   }
 }
+
+async function toggleArchiveStatus() {
+  if (!listing.value) return
+  loading.value = true
+
+  try {
+    if (listing.value.listingStatus == 'ARCHIVED') {
+      await markListingAsActive(listingId)
+      listing.value.listingStatus = 'ACTIVE'
+    } else {
+      await markListingAsArchived(listingId)
+      listing.value.listingStatus = 'ARCHIVED'
+    }
+  } catch (error) {
+    console.error(error)
+  } finally {
+    loading.value = false
+  }
+}
+
+async function markAsSold() {
+  if (!listing.value) return
+  loading.value = true
+
+  try {
+    await markListingAsSold(listingId)
+    listing.value.listingStatus = 'SOLD'
+  } catch (error) {
+    console.error(error)
+  } finally {
+    loading.value = false
+  }
+}
+
+const statusColorClass = computed(() => {
+  if (!listing.value) return ''
+  switch (listing.value.listingStatus) {
+    case 'SOLD':
+      return 'status-sold'
+    case 'ARCHIVED':
+      return 'status-archived'
+    case 'ACTIVE':
+      return 'status-active'
+    default:
+      return ''
+  }
+})
 </script>
 
 <style scoped>
@@ -126,6 +192,37 @@ async function deleteListing() {
   background-color: #e1e5f2;
   border-radius: 12px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.archive-button {
+  background-color: #ffa500;
+}
+
+.archive-button:hover {
+  background-color: #cc8400;
+}
+
+.sold-button {
+  background-color: #4caf50;
+}
+
+.sold-button:hover {
+  background-color: #388e3c;
+}
+
+.status-sold {
+  background-color: #f8d7da;
+  color: #842029;
+}
+
+.status-archived {
+  background-color: #fff3cd;
+  color: #664d03;
+}
+
+.status-active {
+  background-color: #d4f4dd;
+  color: #166534;
 }
 
 @media (max-width: 600px) {
@@ -152,12 +249,10 @@ h1 {
 }
 
 .status {
-  background-color: #d4f4dd;
   padding: 0.3rem 0.6rem;
   border-radius: 4px;
   font-size: 0.9rem;
   width: fit-content;
-  color: #166534;
   font-weight: 600;
 }
 
@@ -287,7 +382,8 @@ h1 {
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
