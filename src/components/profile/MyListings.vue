@@ -3,10 +3,12 @@ import { useCurrentUser } from '@/composables/useCurrentUser'
 import { onMounted, ref } from 'vue'
 import type { ListingResponse } from '@/types/dto.ts'
 import noImage from '@/assets/no-image.jpg'
-import { getMyListings } from '@/services/userApi.ts'
+import { getMyActiveListings } from '@/services/userApi.ts'
 import { navigateToListing } from '@/utils/navigationUtil.ts'
 import ListingCard from '../ListingCard.vue'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const { user, isLoading, error } = useCurrentUser()
 const listings = ref<ListingResponse[]>([])
 const loading = ref(true)
@@ -18,9 +20,9 @@ const handleImageError = (event: Event) => {
 
 onMounted(async () => {
   try {
-    listings.value = await getMyListings()
+    listings.value = await getMyActiveListings()
   } catch (e: any) {
-    error.value = e.message || 'Failed to fetch listings'
+    error.value = e.message || t('Failed to load listings')
   } finally {
     loading.value = false
   }
@@ -29,32 +31,33 @@ onMounted(async () => {
 
 <template>
   <header class="userdetails">
-    <div v-if="isLoading">Loading...</div>
+    <div v-if="isLoading">{{ t('Loading...') }}</div>
     <div v-else>
       <div v-if="user">
         <h3>{{ user.username }}</h3>
         <!-- Implement when userDto is complete-->
-        <p>User email</p>
+        <p>{{ t('User email') }}</p>
       </div>
       <div v-else-if="error">
-        <p>Error loading user data.</p>
+        <p>{{ t('Failed to load user data') }}</p>
       </div>
       <div v-else>
-        <p>Unauthorized</p>
+        <p>{{ t('Unauthorized!') }}</p>
       </div>
     </div>
   </header>
   <main>
     <div class="mylistings-container">
-      <h4>My Listings</h4>
-      <div v-if="loading">Loading listings...</div>
-      <div v-else-if="error">Error: {{ error }}</div>
+      <h4>{{ t('Your Listings') }}</h4>
+
+      <div v-if="loading">{{ t('Loading listings...') }}</div>
+      <div v-else-if="error">{{ t('Error:') }} {{ error }}</div>
 
       <div class="listing-grid">
         <ListingCard v-for="listing in listings" :key="listing.id" :listing="listing" />
       </div>
 
-      <p v-if="listings.length === 0">You have no listings yet.</p>
+      <p v-if="listings.length === 0">{{ t('You have no listings yet.') }}</p>
     </div>
   </main>
 </template>

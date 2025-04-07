@@ -1,10 +1,18 @@
 <template>
   <div class="filter-price">
-    <h3>Price</h3>
+    <h3> {{ $t('Price')}}</h3>
     <div class="price-inputs">
-      <input type="number" placeholder="Min" v-model.number="min" />
-      <input type="number" placeholder="Max" v-model.number="max" />
-      <button class="apply-button" @click="updatePrice">Search</button>
+      <input
+        type="number"
+        :placeholder="$t('min')"
+        v-model.number="min"
+      />
+      <input
+        type="number"
+        :placeholder="$t('max')"
+        v-model.number="max"
+      />
+      <button class="apply-button" @click="updatePrice">{{ $t('Search') }}</button>
     </div>
   </div>
 </template>

@@ -4,26 +4,17 @@
     <span ref="categoryWidthRef" class="invisible-text">
       {{
         selectedCategory === 'all'
-          ? 'All'
+          ? $t('All')
           : categories.find(cat => cat.id === selectedCategory)?.name || ''
       }}
     </span>
 
     <!-- Main search form -->
     <form class="search-form" @submit.prevent="performSearch">
-
       <!-- Dropdown category selector -->
-      <select
-        ref="selectRef"
-        v-model="selectedCategory"
-        class="search-category"
-      >
-        <option :value="'all'">All</option>
-        <option
-          v-for="cat in categories"
-          :key="cat.id"
-          :value="cat.id"
-        >
+      <select ref="selectRef" v-model="selectedCategory" class="search-category">
+        <option :value="'all'">{{ $t('All') }}</option>
+        <option v-for="cat in categories" :key="cat.id" :value="cat.id">
           {{ cat.name }}
         </option>
       </select>
@@ -32,7 +23,7 @@
       <input
         v-model="searchQuery"
         type="text"
-        placeholder="Search..."
+        :placeholder="$t('Search')"
         name="findigo-search"
         autocomplete="off"
       />
@@ -46,37 +37,32 @@
 </template>
 
 <script setup lang="ts">
+import { ref, nextTick, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { nextTick, onMounted, ref, watch } from 'vue'
-import { getAllCategories } from '@/services/categoryApi.ts'
+import { getAllCategories } from '@/services/categoryApi'
 import type { CategoryResponse } from '@/types/dto.ts'
+import { useSelectedCategory } from '@/composables/useSelectedCategory'
+import { useI18n } from 'vue-i18n'
 
-// Used to calculate the width of the category <select> to avoid layout shift
+const { t } = useI18n()
+
 const categoryWidthRef = ref<HTMLElement | null>(null)
 const selectRef = ref<HTMLElement | null>(null)
 
-// Programmatic navigation
 const router = useRouter()
 
-// Search input state
 const searchQuery = ref('')
 
-// All fetched categories shown in dropdown
 const categories = ref<CategoryResponse[]>([])
-
-import { useSelectedCategory } from '@/composables/useSelectedCategory'
 const { selectedCategory } = useSelectedCategory()
 
-
-// Dynamically resize the select to match label width (for better UI alignment)
 function updateSelectWidth() {
   if (categoryWidthRef.value && selectRef.value) {
-    const width = categoryWidthRef.value.offsetWidth + 40 // + buffer for padding
+    const width = categoryWidthRef.value.offsetWidth + 40 
     selectRef.value.style.width = `${width}px`
   }
 }
 
-// Fetch category list on mount and resize select accordingly
 onMounted(async () => {
   try {
     const fetched = await getAllCategories()
@@ -84,19 +70,15 @@ onMounted(async () => {
   } catch (err) {
     console.error('Failed to load categories', err)
   } finally {
-    // Resize dropdown to fit content text
+    // Resize dropdown to fit content text after next tick
     await nextTick(updateSelectWidth)
   }
 })
 
-// Recalculate select width whenever a new category is selected
+// Recalculate select width whenever the selected category changes
 watch(selectedCategory, () => nextTick(updateSelectWidth))
 
-// Update selected category when user selects a new one
-
-
-// Called when user submits the form (Enter or button)
-// Navigates to SearchResultsView, passing query and category as URL params
+// Perform search when form is submitted
 function performSearch() {
   if (searchQuery.value.trim()) {
     router.push({
@@ -104,7 +86,7 @@ function performSearch() {
       query: {
         q: searchQuery.value.trim(),
         category: selectedCategory.value,
-      }
+      },
     })
   }
 }

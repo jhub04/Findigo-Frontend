@@ -1,7 +1,7 @@
 <template>
   <div class="filter-container">
     <div class="categories">
-      <h3>Categories</h3>
+      <h3>{{ $t('Categories')}}</h3>
       <ul class="list-none p-0">
         <li class="category-options">
           <a

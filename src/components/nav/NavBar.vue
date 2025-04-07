@@ -1,30 +1,44 @@
 <script setup lang="ts">
 import { useUserStore } from '@/stores/user.ts'
-import NavigationSearch from '@/components/search/NavigationSearchBar.vue'
+import NavigationSearch from '@/components/search/NavigationBarSearch.vue'
 import { ref, onMounted, computed } from 'vue';
 
 const userStore = useUserStore();
+
 const isAuthenticated = computed(() => userStore.authenticated)
+
+
 </script>
 
 <template>
   <header class="navbar-container">
-    <nav v-if="isAuthenticated" class="main-navbar" id="main-navbar">
+    <nav v-if="isAuthenticated" class="main-navbar">
       <div class="navbar-brand">
         <router-link to="/home" class="app-name">Findigo</router-link>
       </div>
+
       <NavigationSearch class="nav-search" />
+
       <div class="navbar-menu">
-        <router-link to="/map" class="nav-link">Map</router-link>
-        <router-link to="/listing" class="nav-link">New Listing</router-link>
-        <router-link to="/messages" class="nav-link">Messages</router-link>
-        <router-link to="/profile" class="nav-link" id="profile">My Profile</router-link>
+        <router-link to="/map" class="nav-link">{{ $t('Map') }} <v-icon name="fa-map"/></router-link>
+        <router-link to="/listing" class="nav-link">{{ $t('New Listing') }} <v-icon name="io-add-circle-sharp"/></router-link>
+        <router-link to="/messages" class="nav-link">{{ $t('Messages') }} <v-icon name="md-message"/> </router-link>
+        <router-link to="/profile" class="nav-link" id="profile">
+          {{ $t('My Profile') }} <v-icon name="md-accountcircle"/>
+        </router-link>
       </div>
     </nav>
   </header>
 </template>
 
+<script setup lang="ts">
+import { computed } from 'vue'
+import { useUserStore } from '@/stores/user.ts'
+import NavigationSearch from '@/components/search/NavigationBarSearch.vue'
 
+const userStore = useUserStore()
+const isAuthenticated = computed(() => userStore.authenticated)
+</script>
 
 <style scoped>
 
@@ -91,16 +105,20 @@ const isAuthenticated = computed(() => userStore.authenticated)
 }
 
 .nav-link {
+  display: inline-flex;
+  align-items: center;
   white-space: nowrap;
   text-decoration: none;
   color: white;
   font-size: 0.9rem;
   padding: 8px 12px;
   border-radius: 4px;
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
   position: relative;
+}
+
+.nav-link svg {
+  margin-left: 4px;
 }
 
 .nav-link:hover {
@@ -108,8 +126,6 @@ const isAuthenticated = computed(() => userStore.authenticated)
   color: #333;
 }
 
-
-/* Responsive Design */
 @media (max-width: 768px) {
   .main-navbar {
     flex-direction: column;

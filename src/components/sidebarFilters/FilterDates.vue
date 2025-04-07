@@ -1,9 +1,21 @@
 <template>
   <div class="filter-dates">
-    <h3>Published From</h3>
+    <h3>{{ $t('Publish from') }}</h3>
     <div class="calendar-button">
-      <input type="date" v-model="selectedDate" @change="validateDate" lang="en" :max="today" />
-      <button @click.prevent="performDateFilter" :disabled="!isDateValid" class="apply-button">Apply</button>
+      <input
+        type="date"
+        v-model="selectedDate"
+        @change="validateDate"
+        lang="en"
+        :max="today"
+      />
+      <button
+        @click.prevent="performDateFilter"
+        :disabled="!isDateValid"
+        class="apply-button"
+      >
+        {{ $t('Apply') }}
+      </button>
     </div>
   </div>
 </template>
@@ -49,7 +61,6 @@ input[type="date"] {
   border: none;
   cursor: pointer;
 }
-
 .apply-button:hover {
   background-color: #0056b3;
 }
