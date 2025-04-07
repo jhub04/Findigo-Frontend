@@ -106,4 +106,11 @@ export interface AuthRequest {
 
 
 
+export interface SaleResponse {
+  id: number;
+  listingId: number;
+  salePrice: number;
+  saleDate: string
+}
+
 
