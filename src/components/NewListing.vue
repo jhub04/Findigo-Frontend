@@ -188,6 +188,7 @@ select {
   padding: 0.5rem;
   border: 1px solid #ccc;
   border-radius: 4px;
+  box-sizing: border-box;
 }
 
 button {

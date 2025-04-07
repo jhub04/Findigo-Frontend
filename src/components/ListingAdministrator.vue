@@ -189,7 +189,7 @@ const statusColorClass = computed(() => {
   max-width: 600px;
   margin: 2rem auto;
   padding: 2rem;
-  background-color: #e1e5f2;
+  background-color: white;
   border-radius: 12px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 }
@@ -249,7 +249,7 @@ h1 {
 }
 
 .status {
-  padding: 0.3rem 0.6rem;
+  padding: 0.6rem;
   border-radius: 4px;
   font-size: 0.9rem;
   width: fit-content;

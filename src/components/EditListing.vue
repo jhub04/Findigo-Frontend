@@ -198,7 +198,7 @@ async function cancelEdit() {
   flex-direction: column;
   gap: 1.2rem;
   padding: 2rem;
-  background-color: #e1e5f2;
+  background-color: white;
   border-radius: 12px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 }
@@ -223,6 +223,7 @@ select {
   border: 1px solid #ccc;
   border-radius: 6px;
   font-size: 1rem;
+  box-sizing: border-box;
   background-color: white;
   transition: border-color 0.3s;
 }
