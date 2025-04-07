@@ -1,6 +1,6 @@
 <template>
   <div class='temporary'>
-    <FilterSideBar/>
+    <FilterSideBar navbar-height=""/>
     <SearchListings/>
   </div>
 </template>
@@ -15,6 +15,12 @@ import SearchListings from '@/components/search/SearchResults.vue'
   display: flex;
   flex-direction: row;
   gap: 1px;
+}
+
+@media (max-width: 768px) {
+  .temporary {
+    flex-direction: column;
+  }
 }
 </style>
 
