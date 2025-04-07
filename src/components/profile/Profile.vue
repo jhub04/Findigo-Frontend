@@ -50,10 +50,6 @@ const logout = () => {
         <h6>{{ t('Your Archived Listings') }}</h6>
         <p>{{ t('View all your archived listings') }}</p>
       </div>
-      <div class="mypurchases" @click="router.push('profile/purchases')">
-        <h6>{{ t('Your Purchased Listings') }}</h6>
-        <p>{{ t('View all your previously purchased listings') }}</p>
-      </div>
       <div class="mysold" @click="router.push('profile/sold')">
         <h6>{{ t('Your Sold Listings') }}</h6>
         <p>{{ t('View all your previously sold listings') }}</p>
@@ -83,7 +79,7 @@ const logout = () => {
 
 .grid-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(2, 1fr); /* Force 2 columns */
   gap: 20px;
   padding: 30px 20px;
   max-width: 1000px;
@@ -116,4 +112,10 @@ const logout = () => {
   color: #666;
 }
 
+/* Optional: Responsive adjustments if needed */
+@media (max-width: 768px) {
+  .grid-container {
+    grid-template-columns: 1fr; /* Stack into a single column on small screens */
+  }
+}
 </style>

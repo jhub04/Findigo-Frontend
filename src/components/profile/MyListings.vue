@@ -13,11 +13,6 @@ const { user, isLoading, error } = useCurrentUser()
 const listings = ref<ListingResponse[]>([])
 const loading = ref(true)
 
-const handleImageError = (event: Event) => {
-  const target = event.target as HTMLImageElement
-  target.src = noImage
-}
-
 onMounted(async () => {
   try {
     listings.value = await getMyActiveListings()
