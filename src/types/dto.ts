@@ -1,6 +1,6 @@
 import type { UserLiteResponse } from "./adminDto";
 
-export interface TokenResponse {
+export interface AuthResponse {
   token: string;
 }
 
@@ -31,6 +31,7 @@ export interface ListingResponse {
   category: CategoryResponse;
   user: UserLiteResponse;
   attributes: ListingAttributeResponse[];
+  listingStatus: ListingStatus;
 }
 
 export interface ListingAttributeRequest {
@@ -41,7 +42,7 @@ export interface ListingAttributeRequest {
 export interface UserResponse {
   id: number;
   username: string;
-  phoneNumber: number;
+  phoneNumber: string;
   listings: ListingResponse[]
 }
 
@@ -93,4 +94,23 @@ export interface FilterRequest {
   fromDate?: string | null;
 }
 
+export interface MyUserRequest {
+  username: string;
+  password: string;
+  phoneNumber: string;
+}
+
+export interface AuthRequest {
+  username: string;
+  password: string;
+}
+
+export interface SaleResponse {
+  id: number;
+  listingId: number;
+  salePrice: number;
+  saleDate: string
+}
+
+export type ListingStatus = 'ACTIVE' | 'ARCHIVED' | 'SOLD'
 

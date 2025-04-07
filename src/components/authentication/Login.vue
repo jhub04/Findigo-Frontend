@@ -2,6 +2,8 @@
 import { ref } from "vue";
 import { useUserStore } from '@/stores/user'
 import { useRouter } from "vue-router";
+import { handleApiError } from '@/utils/handleApiError.ts'
+import type { AuthRequest } from '@/types/dto.ts'
 
 const userStore = useUserStore();
 const router = useRouter();
@@ -14,11 +16,14 @@ userStore.authenticated = false;
 
 const handleLoginClick = async () => {
   try {
-    await userStore.loginAndSaveUser(username.value, password.value);
+    const user: AuthRequest = {
+      username: username.value,
+      password: password.value
+    }
+    await userStore.loginAndSaveUser(user);
     await router.push("/home");
   } catch(error) {
-    //Couldnt log in
-    loginStatus.value = "Login failed!";
+    loginStatus.value = handleApiError(error)
   }
 };
 </script>
@@ -30,22 +35,22 @@ const handleLoginClick = async () => {
       <form @submit.prevent="handleLoginClick">
         <div class="form-group">
           <label for="username">Username:</label>
-          <input 
+          <input
             id="username"
-            v-model="username" 
-            type="text" 
-            required 
+            v-model="username"
+            type="text"
+            required
             placeholder="Enter your username"
           />
         </div>
 
         <div class="form-group">
           <label for="password">Password:</label>
-          <input 
+          <input
             id="password"
-            v-model="password" 
-            type="password" 
-            required 
+            v-model="password"
+            type="password"
+            required
             placeholder="Enter your password"
           />
         </div>
@@ -56,7 +61,7 @@ const handleLoginClick = async () => {
       <p v-if="loginStatus" class="error-message">{{ loginStatus }}</p>
 
       <p class="register-link">
-        Don't have an account? 
+        Don't have an account?
         <router-link to="/register">Register here</router-link>
       </p>
     </div>

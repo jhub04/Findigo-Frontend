@@ -1,22 +1,20 @@
 import apiClient from '@/services/apiClient.ts'
+import type { AuthRequest } from '@/types/dto.ts'
+import { handleApiError } from '@/utils/handleApiError.ts'
 
-// Registrerer en ny bruker i backend
-export const registerUser = async (username: string, password: string) => {
-  //try catch kun i controller
+export const registerUser = async (data: AuthRequest) => {
   try {
-    const response = await apiClient.post(`/auth/register`, { username, password }, {
-      headers: { Authorization: "" },
-    });
-    return response.data; // Returnerer brukerdata ved suksess
+    const response = await apiClient.post(`/auth/register`, data);
+    return response.data;
   } catch (error) {
     console.error("Registration failed", error);
     return null;
   }
 };
 
-export const login = async (username: string, password: string) => {
+export const login = async (data: AuthRequest) => {
   try {
-    await apiClient.post<String>("/auth/login", { username, password });
+    await apiClient.post<string>("/auth/login", data);
     //Hvis ikke noe returneres og bare 200 OK er login successfull og jwt lagres som cookie, ikke tilgjengleoig fra JS
   } catch (error) {
     //Hvis creds er feil
@@ -31,7 +29,7 @@ export const isAuthenticated = async () => {
     response = await apiClient.get("/auth/auth-status");
     return response.data.authenticated === true;
   } catch (error) {
-    //Not valid jwt token in cookie
+    handleApiError(error)
     return false;
   }
 }

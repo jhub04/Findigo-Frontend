@@ -10,7 +10,7 @@ import MyListingsView from '@/views/MyListingsView.vue'
 import MessageThreadView from '@/views/MessageThreadView.vue'
 import SearchResultsView from '@/components/search/SearchResultsView.vue'
 import ListingView from '@/views/ListingView.vue'
-import OwnListingView from '@/views/OwnListingView.vue'
+import ListingAdministratorView from '@/views/ListingAdministratorView.vue'
 import AdminCategoryView from '@/views/admin/AdminCategoryView.vue'
 import AdminAttributeView from '@/views/admin/AdminAttributeView.vue'
 import AdminDashboardView from '@/views/admin/AdminDashboardView.vue'
@@ -19,8 +19,9 @@ import authApi from '@/services/authApi'
 import MyFavoritesView from '@/views/profile/MyFavoritesView.vue'
 import MockCheckoutView from '@/views/MockCheckoutView.vue'
 import MyArchivesView from '@/views/profile/MyArchivesView.vue'
-import MyPurchasesView from '@/views/profile/MyPurchasesView.vue'
 import MySoldView from '@/views/profile/MySoldView.vue'
+import EditMyProfileView from '@/views/profile/EditMyProfileView.vue'
+import EditOwnListingView from '@/views/EditOwnListingView.vue'
 
 const routes = [
   { path: '/', redirect: '/home' },
@@ -30,14 +31,16 @@ const routes = [
   { path: '/profile', component: ProfileView, name: 'Profile'},
   { path: '/profile/listings', component: MyListingsView, name: 'MyListings'},
   { path: '/profile/favorites', component: MyFavoritesView, name: 'MyFavorites'},
+  { path: '/profile/edit', component: EditMyProfileView, name: 'EditMyProfile'},
   { path: '/profile/archives', component: MyArchivesView, name: 'MyArchives'},
-  { path: '/profile/purchases', component: MyPurchasesView, name: 'MyPurchases'},
   { path: '/profile/sold', component: MySoldView, name: 'MySold'},
   { path: '/map', component: MapView, name: 'Map' },
   { path: '/listing', component: NewListingView, name: 'NewListing' },
   { path: '/listing/:id', component: ListingView, name: 'ListingPage' },
+  { path: '/my-listing/:id', component: ListingAdministratorView, name: 'OwnListingPage' },
+  { path: '/edit-my-listing/:id', component: EditOwnListingView, name: 'EditOwnListingPage' },
   { path: '/listing/:id/checkout', component: MockCheckoutView, name: 'MockCheckoutPage'},
-  { path: '/my-listing/:id', component: OwnListingView, name: 'OwnListingPage' },
+  { path: '/my-listing/:id', component: ListingAdministratorView, name: 'OwnListingPage' },
   { path: '/messages', component: MessagesView, name: 'Messages' },
   { path: '/messages/:userId', component: MessageThreadView, name: 'MessageThread'},
   { path: '/search', component: SearchResultsView, name: 'SearchResultsView' },

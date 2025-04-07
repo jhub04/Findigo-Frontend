@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { markListingAsSold } from '@/services/listingApi'
+import type { SaleResponse } from '@/types/dto'
+import { handleApiError } from '@/utils/handleApiError'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter, useRoute } from 'vue-router'
@@ -22,8 +25,12 @@ const isProcessing = ref(false)
 const purchaseSuccess = ref(false)
 const errorMessage = ref('')
 
+const saleResponse = ref<SaleResponse | null>(null)
+
+const formatDate = (iso: string) => new Date(iso).toLocaleString()
+
 // Simulate a purchase API call
-const submitPurchase = () => {
+const submitPurchase = async () => {
   // Basic validation
   if (
     !fullName.value ||
@@ -39,11 +46,15 @@ const submitPurchase = () => {
   errorMessage.value = ''
   isProcessing.value = true
 
-  // Simulate an API delay
-  setTimeout(() => {
-    isProcessing.value = false
-    purchaseSuccess.value = true
-  }, 2000)
+  try {
+    const response = await markListingAsSold(listingId);
+    saleResponse.value = response;
+    purchaseSuccess.value = true;
+  } catch (error) {
+    errorMessage.value = handleApiError(error)
+  } finally {
+    isProcessing.value = false;
+  }
 }
 
 const goHome = () => {
@@ -128,6 +139,11 @@ const goHome = () => {
 
     <div v-else class="success-message">
       <p>{{ t('Purchase successful!') }}</p>
+      <div v-if="saleResponse">
+        <p> {{ t('Sale Price') }}: {{ saleResponse.salePrice }}</p>
+        <p> {{ t('Sale Date') }}: {{ formatDate(saleResponse.saleDate) }}</p>
+      </div>
+
       <button @click="goHome">{{ t('Return Home') }}</button>
     </div>
   </main>

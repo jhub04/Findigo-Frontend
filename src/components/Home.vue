@@ -38,7 +38,6 @@
           </div>
 
           <div class="listing-grid">
-            <!-- Legg class="listing-card" på hvert ListingCard -->
             <ListingCard
               v-for="listing in selectedCategory ? categoryListings : listings"
               :key="listing.id"
@@ -57,6 +56,7 @@
     </div>
 
     <div class="paginationControls">
+    <div v-if="totalPages > 1" class="paginationControls">
       <p>
         {{ $t('Current Page:') }} {{ pageNumber }}, {{ $t('Total pages:') }}
         {{ totalPages }}
@@ -78,6 +78,7 @@ import ListingCard from '@/components/ListingCard.vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
+
 const { user, isLoading, error } = useCurrentUser()
 
 const listings = ref<ListingResponse[]>([])
@@ -92,6 +93,7 @@ const { fetchFavorites } = useFavorites()
 
 async function nextPage() {
   if (pageNumber.value < totalPages.value) {
+    console.log('Getting page ' + (pageNumber.value + 1))
     pageNumber.value++
     const listingsPage = await getRecommendedListingsPage(pageNumber.value)
     listings.value = listingsPage.content
@@ -100,6 +102,7 @@ async function nextPage() {
 
 async function prevPage() {
   if (pageNumber.value > 1) {
+    console.log('Getting page ' + (pageNumber.value - 1))
     pageNumber.value--
     const listingsPage = await getRecommendedListingsPage(pageNumber.value)
     listings.value = listingsPage.content
@@ -112,9 +115,11 @@ const handleCategoryClick = async (categoryId: number) => {
     categoryListings.value = null
     return
   }
+
   selectedCategory.value = categoryId
   listingsLoading.value = true
   listingsError.value = null
+
   try {
     const result = await getListingsByCategory(categoryId)
     categoryListings.value = result
@@ -195,6 +200,7 @@ onMounted(async () => {
   gap: 12px;
   margin-top: 1rem;
 }
+
 .category-button {
   border: none;
   outline: none;
@@ -207,12 +213,14 @@ onMounted(async () => {
   transition: background-color 0.3s ease, transform 0.2s ease,
   box-shadow 0.2s ease, color 0.2s ease;
 }
+
 .category-button:hover {
   background-color: #022b3a;
   color: white;
   transform: scale(1.05);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
+
 .category-button.selected {
   background-color: #022b3a;
   color: white;

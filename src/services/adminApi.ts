@@ -1,5 +1,5 @@
 import type { AttributeResponse, CategoryResponse, ListingResponse, UserResponse } from '@/types/dto.ts'
-import type { AttributeRequest, CategoryRequest, UserLiteResponse, UserRequest } from '@/types/adminDto.ts'
+import type { AttributeRequest, CategoryRequest, UserLiteResponse, AdminUserRequest } from '@/types/adminDto.ts'
 import apiClient from '@/services/apiClient.ts'
 
 export const addCategory = async(data: CategoryRequest): Promise<CategoryResponse> => {
@@ -27,12 +27,12 @@ export const getUserListings = async (userId: number): Promise<ListingResponse[]
   return response.data;
 };
 
-export const addUser = async (data: UserRequest): Promise<UserLiteResponse> => {
+export const addUser = async (data: AdminUserRequest): Promise<UserLiteResponse> => {
   const response = await apiClient.post<UserLiteResponse>('/admin/users', data);
   return response.data;
 };
 
-export const editUser = async (userId: number, data: UserRequest): Promise<string> => {
+export const editUser = async (userId: number, data: AdminUserRequest): Promise<string> => {
   const response = await apiClient.put<string>(`/admin/users/${userId}`, data);
   return response.data;
 };

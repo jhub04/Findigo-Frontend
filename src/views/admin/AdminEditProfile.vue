@@ -2,5 +2,7 @@
 </script>
 
 <template>
-    <p>mypurchases</p>
+  <div>
+
+  </div>
 </template>

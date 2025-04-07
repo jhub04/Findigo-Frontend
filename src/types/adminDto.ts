@@ -10,15 +10,15 @@ export interface AttributeRequest {
 
 export type Role = 'USER' | 'ADMIN';
 
-export interface UserRequest {
+export interface AdminUserRequest {
   username: string;
   password: string;
-  phoneNumber: number;
+  phoneNumber: string;
   roles: Role[];
 }
 
 export interface UserLiteResponse {
   id: number;
   username: string;
-  phoneNumber: number;
+  phoneNumber: string;
 }

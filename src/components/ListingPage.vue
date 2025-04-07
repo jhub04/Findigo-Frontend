@@ -8,6 +8,8 @@ import { useImages } from '@/composables/useImages'
 import { useFavorites } from '@/composables/useFavorites'
 import { useI18n } from 'vue-i18n'
 import router from '@/router'
+import { otherUsername } from '@/composables/useMessageThread'
+
 
 const { t } = useI18n()
 const { images, loading, error, fetchImagesForListing } = useImages()
@@ -19,6 +21,12 @@ const id = Number(route.params.id)
 const listing = ref<ListingResponse | null>(null)
 
 const formatDate = (iso: string) => new Date(iso).toLocaleString()
+
+const sendMessage = () => {
+  if (!listing.value) return;
+  otherUsername.value = listing.value.user.username
+  router.push(`/messages/${listing.value.user.id}`)
+}
 
 onMounted(async () => {
   try {
@@ -96,9 +104,7 @@ const toggleFavorite = async () => {
             <h2>{{ t('Seller') }}</h2>
             <p>{{ t('Username') }}: {{ listing.user.username }}</p>
             <p v-if="listing.user.phoneNumber">{{ t('Phone number') }}: {{ listing.user.phoneNumber }}</p>
-            <router-link :to="`/messages/${listing.user.id}`">
-              <button class="send-message-button">{{ t('Send Message') }}</button>
-            </router-link>
+            <button class="send-message-button" @click="sendMessage">{{ $t('Send Message')}} </button>
           </div>
         </div>
       </div>
