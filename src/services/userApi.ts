@@ -14,9 +14,21 @@ export const editMyProfile = async (data: UserRequest): Promise<string> => {
   return response.data
 }
 
-// Get listings of the current user
+// Get active listings of the current user
 export const getMyActiveListings = async (): Promise<ListingResponse[]> => {
   const response = await apiClient.get<ListingResponse[]>('/users/me/activeListings')
+  return response.data
+}
+
+// Get archived listings of the current user
+export const getMyArchivedListings = async (): Promise<ListingResponse[]> => {
+  const response = await apiClient.get<ListingResponse[]>('/users/me/archivedListings')
+  return response.data
+}
+
+// Get sold listings of the current user
+export const getMySoldListings = async (): Promise<ListingResponse[]> => {
+  const response = await apiClient.get<ListingResponse[]>('/users/me/soldListings')
   return response.data
 }
 
