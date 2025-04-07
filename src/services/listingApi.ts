@@ -66,3 +66,8 @@ export const markListingAsSold = async (listingId: number): Promise<SaleResponse
 export const markListingAsArchived = async (listingId: number): Promise<void> => {
   await apiClient.put(`/listings/archive/${listingId}`);
 }
+
+// Mark listing as active 
+export const markListingAsActive = async (listingId: number): Promise<void> => {
+  await apiClient.put(`/listings/activate/${listingId}`);
+}
