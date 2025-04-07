@@ -1,7 +1,7 @@
 // useImages.ts
 import { ref } from 'vue'
 import noImage from '@/assets/no-image.jpg'
-import { getImageByIndex } from '@/services/imageApi'
+import { deleteImageByIndex, getImageByIndex } from '@/services/imageApi'
 import type { ListingResponse } from '@/types/dto.ts'
 
 export function useImages() {
@@ -45,6 +45,11 @@ export function useImages() {
     loading.value = false
   }
 
+  const deleteImage = async (listingId:number, index:number) => {
+    const numberImages = await deleteImageByIndex(listingId, index);
+    return numberImages;
+  }
+
   return {
     images,
     firstImage,
@@ -52,5 +57,6 @@ export function useImages() {
     error,
     fetchImagesForListing,
     fetchFirstImageForListing,
+    deleteImage,
   }
 }

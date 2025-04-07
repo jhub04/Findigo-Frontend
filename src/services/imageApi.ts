@@ -16,3 +16,8 @@ export const getImageByIndex = async (listingId: number, imageIndex:number) => {
   });
   return response.data
 };
+
+export const deleteImageByIndex = async(listingId:number, imageIndex:number):Promise<number> => {
+  const response = await apiClient.delete(`/images/delete/${listingId}/${imageIndex}`);
+  return response.data;
+}
