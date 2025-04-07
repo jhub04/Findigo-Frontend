@@ -11,8 +11,6 @@
       </svg>
     </button>
 
-
-
     <div
       class="sidebar"
       :class="{ open: showSidebar, mobile: isMobile }"

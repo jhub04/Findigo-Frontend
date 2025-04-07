@@ -1,18 +1,6 @@
-<script setup lang="ts">
-import { useUserStore } from '@/stores/user.ts'
-import NavigationSearch from '@/components/search/NavigationBarSearch.vue'
-import { ref, onMounted, computed } from 'vue';
-
-const userStore = useUserStore();
-
-const isAuthenticated = computed(() => userStore.authenticated)
-
-
-</script>
-
 <template>
   <header class="navbar-container">
-    <nav v-if="isAuthenticated" class="main-navbar">
+    <nav v-if="isAuthenticated" class="main-navbar" id="main-navbar">
       <div class="navbar-brand">
         <router-link to="/home" class="app-name">Findigo</router-link>
       </div>
@@ -34,7 +22,7 @@ const isAuthenticated = computed(() => userStore.authenticated)
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useUserStore } from '@/stores/user.ts'
-import NavigationSearch from '@/components/search/NavigationBarSearch.vue'
+import NavigationSearch from '@/components/search/NavigationSearchBar.vue'
 
 const userStore = useUserStore()
 const isAuthenticated = computed(() => userStore.authenticated)
