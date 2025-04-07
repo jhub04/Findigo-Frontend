@@ -3,5 +3,7 @@ import AdminUser from '@/components/admin/AdminUser.vue'
 </script>
 
 <template>
-  <AdminUser />
+  <div>
+
+  </div>
 </template>

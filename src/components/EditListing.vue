@@ -138,7 +138,7 @@ const submit = async () => {
 }
 
 function cancelEdit() {
-  router.push(`/listings/${id}`)
+  router.push(`/my-listing/${id}`)
 }
 </script>
 
