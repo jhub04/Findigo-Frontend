@@ -43,6 +43,16 @@
       <div v-if="successMessage" class="success-message">{{ successMessage }}</div>
     </transition>
   </form>
+  <div class="edit-images">
+      <div class="image-grid">
+        <div v-for="(image, index) in images" :key="index">
+          <img :class="{deleted: imagesToDelete.has(index)}" :src="image"/>
+          <button @click="deleteImageByIndex(index)">Delete image</button>
+        </div>
+      </div>
+      
+      <input type="file" multiple accept="image/*"/>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -53,10 +63,14 @@ import { getAllCategories } from '@/services/categoryApi'
 import { useRoute, useRouter } from 'vue-router'
 import type { CategoryResponse, ListingAttributeRequest, ListingRequest, ListingResponse } from '@/types/dto'
 import { handleApiError } from '@/utils/handleApiError.ts'
+import { useImages } from '@/composables/useImages'
+import { useImageUpload } from '@/composables/useImageUpload'
 
 const route = useRoute()
 const router = useRouter()
 const id = Number(route.params.id)
+const {images, fetchImagesForListing, deleteImage} = useImages();
+const {uploadImages} = useImageUpload();
 
 const briefDescription = ref('')
 const fullDescription = ref('')
@@ -69,12 +83,14 @@ const categories = ref<CategoryResponse[]>([])
 const errorMessage = ref<string | null>(null)
 const successMessage = ref<string | null>(null)
 const loading = ref(false)
+let listing:ListingResponse;
+const imagesToDelete = ref<Set<number>>(new Set<number>());
 
 onMounted(async () => {
   try {
     categories.value = await getAllCategories()
-
-    const listing: ListingResponse = await getListingById(id)
+    listing = await getListingById(id);
+    await fetchImagesForListing(listing.id, listing.numberOfImages)
     briefDescription.value = listing.briefDescription
     fullDescription.value = listing.fullDescription
     postNumber.value = listing.postalCode
@@ -94,11 +110,28 @@ onMounted(async () => {
   }
 })
 
+
 const selectedCategory = computed(
   () => categories.value.find((cat) => cat.id === selectedCategoryId.value) ?? null,
 )
 
+const deleteImageByIndex = (index:number) => {
+  imagesToDelete.value.add(index);
+  console.log(imagesToDelete.value.has(index))
+  console.log(imagesToDelete)
+  //TODO make the "deleted" image a different color.
+}
+
+const deleteAllImages = async () => {
+  let imagesToDeleteArray = Array.from(imagesToDelete.value);
+  imagesToDeleteArray.sort().reverse(); //Sorted descending, can delete by indexes this way.
+  for (let index of imagesToDeleteArray) {
+    await deleteImage(listing.id, index);
+  }
+}
+
 const submit = async () => {
+  console.log("Submitting")
   errorMessage.value = null
   successMessage.value = null
 
@@ -128,7 +161,8 @@ const submit = async () => {
       attributes,
     }
 
-    await editListing(id, payload)
+    await editListing(id, payload);
+    await deleteAllImages();
     successMessage.value = 'Listing updated successfully!'
   } catch (e) {
     errorMessage.value = handleApiError(e)
@@ -295,5 +329,8 @@ label {
   to {
     opacity: 1;
   }
+}
+.deleted {
+  border-radius: 50%;
 }
 </style>
