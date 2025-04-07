@@ -1,6 +1,5 @@
 <template>
   <div class="search-container">
-    <!-- Input for search query -->
     <input
       v-model="searchQuery"
       type="text"
@@ -8,8 +7,6 @@
       class="search-input"
       @keyup.enter="performSearch"
     />
-
-    <!-- Icon that also triggers the search manually when clicked -->
     <div class="search-icon" @click="performSearch">
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -41,36 +38,38 @@ const searchQuery = ref('')
 const performSearch = () => {
   const trimmed = searchQuery.value.trim()
   const newQuery = { ...route.query }
-
   if (trimmed) newQuery.q = trimmed
   else delete newQuery.q
-
   router.replace({ query: newQuery })
 }
 </script>
 
 <style scoped>
 .search-container {
+  --input-padding-right: 2.5rem;
   position: relative;
-  width: 88.3%;
-  margin: 10px 0px;
+  width: 100%;
+  margin: 10px 0;
+  box-sizing: border-box;
 }
 
 .search-input {
-  width: 93%;
+  width: 100%;
   padding: 0.6rem;
-  padding-right: 2.5rem; /* Make space for search icon */
+  padding-right: var(--input-padding-right);
   font-size: 1rem;
   display: block;
   border-radius: 5px;
+  box-sizing: border-box;
 }
 
 .search-icon {
   position: absolute;
-  right: -23px;
+  right: calc(var(--input-padding-right) / 2);
   top: 50%;
   transform: translateY(-50%);
   color: #666;
   cursor: pointer;
 }
 </style>
+

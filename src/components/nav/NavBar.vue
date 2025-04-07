@@ -1,31 +1,95 @@
 <template>
   <header class="navbar-container">
-    <nav v-if="isAuthenticated" class="main-navbar">
-      <div class="navbar-brand">
-        <router-link to="/home" class="app-name">Findigo</router-link>
-      </div>
-
-      <NavigationSearch class="nav-search" />
-
-      <div class="navbar-menu">
-        <router-link to="/map" class="nav-link">{{ $t('Map') }} <v-icon name="fa-map"/></router-link>
-        <router-link to="/listing" class="nav-link">{{ $t('New Listing') }} <v-icon name="io-add-circle-sharp"/></router-link>
-        <router-link to="/messages" class="nav-link">{{ $t('Messages') }} <v-icon name="md-message"/> </router-link>
+    <nav v-if="isAuthenticated" class="main-navbar" id="main-navbar">
+      <!-- Mobilvisning -->
+      <div class="navbar-mobile" v-if="isMobile">
+        <button class="hamburger" @click="toggleMenu">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+        <div class="navbar-brand">
+          <router-link to="/home" class="app-name">Findigo</router-link>
+        </div>
         <router-link to="/profile" class="nav-link" id="profile">
-          {{ $t('My Profile') }} <v-icon name="md-accountcircle"/>
+          {{ $t('My Profile') }} <v-icon name="md-accountcircle" />
         </router-link>
       </div>
+
+      <!-- Desktopvisning -->
+      <div class="navbar-desktop" v-else>
+        <div class="navbar-brand">
+          <router-link to="/home" class="app-name">Findigo</router-link>
+        </div>
+        <div class="navbar-menu">
+          <div class="nav-search-container">
+            <NavigationSearch/>
+          </div>
+          <div class="navbar-links">
+            <router-link to="/map" class="nav-link">
+              {{ $t('Map') }} <v-icon name="fa-map"/>
+            </router-link>
+            <router-link to="/listing" class="nav-link">
+              {{ $t('New Listing') }} <v-icon name="io-add-circle-sharp"/>
+            </router-link>
+            <router-link to="/messages" class="nav-link">
+              {{ $t('Messages') }} <v-icon name="md-message"/>
+            </router-link>
+            <router-link to="/profile" class="nav-link" id="profile">
+              {{ $t('My Profile') }} <v-icon name="md-accountcircle"/>
+            </router-link>
+          </div>
+        </div>
+      </div>
     </nav>
+
+    <!-- Utvidet mobilmeny -->
+    <div v-if="isAuthenticated && isMobile && menuOpen" class="mobile-menu">
+      <div class="mobile-search-container">
+        <NavigationSearch/>
+      </div>
+      <router-link to="/map" class="nav-link" @click="closeMenu">
+        {{ $t('Map') }} <v-icon name="fa-map" />
+      </router-link>
+      <router-link to="/listing" class="nav-link" @click="closeMenu">
+        {{ $t('New Listing') }} <v-icon name="io-add-circle-sharp" />
+      </router-link>
+      <router-link to="/messages" class="nav-link" @click="closeMenu">
+        {{ $t('Messages') }} <v-icon name="md-message" />
+      </router-link>
+      <router-link to="/profile" class="nav-link" @click="closeMenu">
+        {{ $t('My Profile') }} <v-icon name="md-accountcircle" />
+      </router-link>
+    </div>
   </header>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useUserStore } from '@/stores/user.ts'
-import NavigationSearch from '@/components/search/NavigationBarSearch.vue'
+import NavigationSearch from '@/components/search/NavigationSearchBar.vue'
 
 const userStore = useUserStore()
 const isAuthenticated = computed(() => userStore.authenticated)
+
+const menuOpen = ref(false)
+const isMobile = ref(false)
+
+const toggleMenu = () => {
+  menuOpen.value = !menuOpen.value
+}
+
+const closeMenu = () => {
+  menuOpen.value = false
+}
+
+onMounted(() => {
+  const checkMobile = () => {
+    isMobile.value = window.innerWidth <= 768
+  }
+  checkMobile()
+  window.addEventListener('resize', checkMobile)
+})
 </script>
 
 <style scoped>
@@ -41,16 +105,23 @@ const isAuthenticated = computed(() => userStore.authenticated)
 
 .main-navbar {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
   max-width: 1200px;
   margin: 0 auto;
-  flex-wrap: nowrap;
   padding: 15px 20px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
 }
 
-.nav-search {
-  margin: 0 20px;
+.main-navbar::-webkit-scrollbar {
+  display: none;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  flex-shrink: 0;
 }
 
 .app-name {
@@ -58,8 +129,8 @@ const isAuthenticated = computed(() => userStore.authenticated)
   color: #bfdbf7;
   font-size: 1.5rem;
   text-decoration: none;
-  transition: transform 0.3s ease, color 0.3s ease,
-    text-shadow 0.3s ease;
+  transition: transform 0.3s ease, color 0.3s ease, text-shadow 0.3s ease;
+  white-space: nowrap;
 }
 
 .app-name:hover {
@@ -68,36 +139,44 @@ const isAuthenticated = computed(() => userStore.authenticated)
   text-shadow: 0 2px 8px rgba(255, 255, 255, 0.3);
 }
 
-.navbar-brand {
-  display: flex;
-  align-items: center;
-  padding: 0 20px;
-}
-
-.welcome-message {
-  font-weight: bold;
-  color: #333;
-  margin-right: 20px;
-  font-size: 1rem;
-}
-
 .navbar-menu {
   display: flex;
+  flex: 1 1 auto;
+  flex-wrap: nowrap;
   align-items: center;
-  gap: 15px;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.nav-search-container {
+  flex: 1 1 0;
+  min-width: 100px;
+  margin: 0 10px;
+}
+
+.navbar-links {
+  display: flex;
+  flex: 1 1 0;
+  justify-content: flex-end;
+  flex-wrap: nowrap;
+  gap: 10px;
+  min-width: 0;
+  white-space: nowrap;
 }
 
 .nav-link {
-  display: inline-flex;
+  flex: 1 1 auto;
+  display: flex;
   align-items: center;
+  justify-content: center;
   white-space: nowrap;
   text-decoration: none;
   color: white;
-  font-size: 0.9rem;
-  padding: 8px 12px;
+  font-size: 0.85rem;
+  padding: 6px 10px;
   border-radius: 4px;
   transition: background-color 0.3s ease, color 0.3s ease;
-  position: relative;
+  min-width: 0;
 }
 
 .nav-link svg {
@@ -109,21 +188,105 @@ const isAuthenticated = computed(() => userStore.authenticated)
   color: #333;
 }
 
-@media (max-width: 768px) {
+.navbar-desktop {
+  display: flex;
+  width: 100%;
+  flex-wrap: nowrap;
+}
+
+/* ✅ MOBILVISNING */
+.navbar-mobile {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  width: 100%;
+  padding: 10px 20px;
+  column-gap: 12px;
+}
+
+.navbar-mobile .hamburger {
+  justify-self: start;
+}
+
+.navbar-mobile .navbar-brand {
+  justify-self: start;
+}
+
+.navbar-mobile .nav-link#profile {
+  justify-self: end;
+  white-space: nowrap;
+  margin-right: 28px;
+}
+
+.hamburger {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  color: white;
+}
+
+.hamburger svg {
+  width: 24px;
+  height: 24px;
+}
+
+.mobile-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 20px 10px;
+  background-color: #022B3A;
+}
+
+.mobile-search-container {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+/* Responsive fine-tuning */
+@media (max-width: 992px) and (min-width: 769px) {
+  .nav-search-container {
+    max-width: 350px;
+  }
+}
+
+@media (min-width: 1200px) {
   .main-navbar {
-    flex-direction: column;
-    align-items: center;
+    padding: 15px 40px;
   }
-  .navbar-brand {
-    margin-bottom: 15px;
+
+  .navbar-links {
+    gap: 20px;
   }
-  .navbar-menu {
-    flex-wrap: wrap;
-    justify-content: center;
+
+  .nav-search-container {
+    max-width: 600px;
+  }
+}
+
+@media (min-width: 993px) and (max-width: 1399px) {
+  .navbar-links {
     gap: 10px;
   }
+
   .nav-link {
-    margin: 0 5px;
+    font-size: 0.85rem;
+    padding: 6px 8px;
+  }
+}
+
+@media (max-width: 1024px) and (min-width: 769px) {
+  .nav-search-container {
+    max-width: 300px;
+    margin: 0 10px;
+  }
+
+  .navbar-links {
+    gap: 8px;
   }
 }
 </style>
+
+

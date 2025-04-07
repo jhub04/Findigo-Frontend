@@ -1,7 +1,6 @@
 <template>
   <div class="homepage-container">
     <div v-if="isLoading">{{ $t('Loading user...') }}</div>
-
     <div v-else>
       <div v-if="user">
         <h2>{{ $t('Welcome') }}, {{ user.username }}</h2>
@@ -43,18 +42,20 @@
               v-for="listing in selectedCategory ? categoryListings : listings"
               :key="listing.id"
               :listing="listing"
+              class="listing-card"
             />
           </div>
 
           <p v-if="listings.length === 0">{{ $t('You have no listings yet.') }}</p>
         </div>
       </div>
-
       <div v-else>
         <h2 v-if="error">{{ $t('Error loading user') }}</h2>
         <h2 v-else>{{ $t('Unauthorized!') }}</h2>
       </div>
     </div>
+
+    <div class="paginationControls">
     <div v-if="totalPages > 1" class="paginationControls">
       <p>
         {{ $t('Current Page:') }} {{ pageNumber }}, {{ $t('Total pages:') }}
@@ -63,6 +64,7 @@
       <button @click="prevPage" :disabled="pageNumber === 1">{{ $t('Previous') }}</button>
       <button @click="nextPage" :disabled="pageNumber === totalPages">{{ $t('Next') }}</button>
     </div>
+  </div>
   </div>
 </template>
 
@@ -88,7 +90,7 @@ const listingsLoading = ref(true)
 const listingsError = ref<string | null>(null)
 const pageNumber = ref(1)
 const totalPages = ref<number>(1)
-const {fetchFavorites} = useFavorites()
+const { fetchFavorites } = useFavorites()
 
 async function nextPage() {
   if (pageNumber.value < totalPages.value) {
@@ -123,8 +125,7 @@ const handleCategoryClick = async (categoryId: number) => {
     const result = await getListingsByCategory(categoryId)
     categoryListings.value = result
   } catch (err: any) {
-    listingsError.value =
-      err.message || t('Failed to load listings by category')
+    listingsError.value = err.message || t('Failed to load listings by category')
     categoryListings.value = null
   } finally {
     listingsLoading.value = false
@@ -154,27 +155,50 @@ onMounted(async () => {
   text-align: center;
 }
 
-h2 {
-  margin-top: 1rem;
-}
-
-ul {
-  margin-top: 1rem;
-  padding-left: 1.5rem;
-}
-
-li {
-  margin-bottom: 0.75rem;
-}
-
-.category-buttons {
+/*
+   listing-grid:
+   - 3 kolonner fra 992px og opp
+   - 2 kolonner under 992px (aldri 1 kolonne)
+*/
+.listing-grid {
+  display: grid;
+  gap: 1rem;
   margin-top: 2rem;
 }
 
-.category-grid {
+/* Fra 992px og opp: 3 kolonner. Sentrer ved å gi maks bredde. */
+@media (min-width: 992px) {
+  .listing-grid {
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 900px;  /* juster til ønsket bredde per kolonne */
+    margin: 0 auto;
+  }
+}
+
+/* Under 992px: 2 kolonner uansett hvor smalt. */
+@media (max-width: 991px) {
+  .listing-grid {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 650px; /* litt mindre totalbredde, men du kan justere */
+    margin: 0 auto;
+  }
+}
+
+/* Eventuelt kan du la .listing-card ha en minbredde
+   om du er redd for at de blir *for* smale.
+   .listing-card { min-width: 220px; }
+   men da vil gridet muligens få scrollbar i stedet.
+*/
+
+/* Kategori-knapper, paginering, etc. */
+.category-buttons {
+  margin-top: 2rem;
+}
+.button-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  justify-content: center;
+  gap: 12px;
   margin-top: 1rem;
 }
 
@@ -188,7 +212,7 @@ li {
   background-color: #f4f4f4;
   color: #022b3a;
   transition: background-color 0.3s ease, transform 0.2s ease,
-    box-shadow 0.2s ease, color 0.2s ease;
+  box-shadow 0.2s ease, color 0.2s ease;
 }
 
 .category-button:hover {
@@ -205,15 +229,8 @@ li {
   box-shadow: inset 0 0 0 2px white;
 }
 
-.button-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 12px;
-  margin-top: 1rem;
-}
-
 .paginationControls {
   margin-top: 2rem;
 }
+
 </style>
