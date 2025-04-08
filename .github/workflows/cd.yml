@@ -6,24 +6,33 @@ on:
 
 jobs:
   deploy:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Set up Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
+    - name: Set up Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+    
+    - name: Copy .env file before build
+      run: cp /home/student/secrets/findigo-frontend.env .env
+      working-directory: /home/student/actions-runner-frontend/_work/Findigo-Frontend/Findigo-Frontend
 
-      - name: Install dependencies
-        run: npm install
+    - name: Install dependencies
+      run: npm install
+      working-directory: /home/student/actions-runner-frontend/_work/Findigo-Frontend/Findigo-Frontend
 
-      - name: Build frontend
-        run: npm run build
 
-      - name: Copy built files to nginx directory
-        run: |
-          rm -rf /var/www/html/*
-          cp -r dist/* /var/www/html/
+    - name: Build frontend
+      run: npm run build
+      working-directory: /home/student/actions-runner-frontend/_work/Findigo-Frontend/Findigo-Frontend
+
+
+    - name: Deploy to Nginx
+      run: |
+        sudo rm -rf /var/www/html/*
+        sudo cp -r dist/* /var/www/html/
+      working-directory: /home/student/actions-runner-frontend/_work/Findigo-Frontend/Findigo-Frontend
