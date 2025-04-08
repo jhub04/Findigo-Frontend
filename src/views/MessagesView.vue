@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import Messages from '@/components/messages/Messages.vue';
 </script>
 
 <template>
-    <p>This is the MessagesView component</p>
+    <Messages></Messages>
 </template>

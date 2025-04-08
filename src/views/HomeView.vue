@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import Home from '@/components/Home.vue';
 </script>
 
 <template>
-    <p>This is the homeview</p>
+  <Home></Home>
 </template>
