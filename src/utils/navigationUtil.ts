@@ -3,7 +3,7 @@ import { useUserStore } from '@/stores/user.ts'
 
 
 export const navigateToListing = async (listing: ListingResponse) => {
-  const currentUsername = useUserStore().loggedInUser;
+  const currentUsername = useUserStore().currentUser?.username;
   const isOwner = currentUsername === listing.user.username;
   const listingId = listing.id;
 

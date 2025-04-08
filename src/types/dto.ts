@@ -1,4 +1,4 @@
-import type { UserLiteResponse } from "./adminDto";
+import type { Role, UserLiteResponse } from './adminDto'
 
 export interface AuthResponse {
   token: string;
@@ -42,7 +42,8 @@ export interface UserResponse {
   id: number;
   username: string;
   phoneNumber: string;
-  listings: ListingResponse[]
+  listings: ListingResponse[];
+  roles: Role[];
 }
 
 export interface CategoryResponse {
@@ -103,8 +104,6 @@ export interface AuthRequest {
   username: string;
   password: string;
 }
-
-
 
 export interface SaleResponse {
   id: number;

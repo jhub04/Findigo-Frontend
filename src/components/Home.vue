@@ -5,6 +5,7 @@
     <div v-else>
       <div v-if="user">
         <h2>{{ $t('Welcome') }}, {{ user.username }}</h2>
+        <p v-if="user.roles.includes('ROLE_ADMIN')">You have admin claim</p>
 
         <!-- Category Buttons -->
         <div v-if="categories.length > 0" class="category-buttons">

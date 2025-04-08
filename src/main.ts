@@ -16,6 +16,7 @@ import ne from '@/locales/ne.json'
 import ur from '@/locales/ur.json'
 
 import { createI18n } from 'vue-i18n';
+import { useUserStore } from '@/stores/user.ts'
 
 addIcons(MdStaroutlineRound, OiStarFill, MdEdit);
 const browserLanguage = navigator.language.split('-')[0]
@@ -42,6 +43,8 @@ app.use(i18n)
 
 app.component("v-icon", OhVueIcon);
 app.use(createPinia())
+const userStore = useUserStore();
+await userStore.initializeAuthStatus();
 app.use(router)
 app.use(VueGoogleMaps, {
   load: {

@@ -8,11 +8,16 @@
       <NavigationSearch class="nav-search" />
 
       <div class="navbar-menu">
-        <router-link to="/map" class="nav-link">{{ $t('Map') }} <v-icon name="fa-map"/></router-link>
-        <router-link to="/listing" class="nav-link">{{ $t('New Listing') }} <v-icon name="io-add-circle-sharp"/></router-link>
-        <router-link to="/messages" class="nav-link">{{ $t('Messages') }} <v-icon name="md-message"/> </router-link>
+        <router-link to="/map" class="nav-link">{{ $t('Map') }} <v-icon name="fa-map" /></router-link>
+        <router-link to="/listing" class="nav-link">{{ $t('New Listing') }} <v-icon name="io-add-circle-sharp" /></router-link>
+        <router-link to="/messages" class="nav-link">{{ $t('Messages') }} <v-icon name="md-message" /></router-link>
         <router-link to="/profile" class="nav-link" id="profile">
-          {{ $t('My Profile') }} <v-icon name="md-accountcircle"/>
+          {{ $t('My Profile') }} <v-icon name="md-accountcircle" />
+        </router-link>
+
+        <!-- Admin knapp, vises kun for admin -->
+        <router-link v-if="isAdmin" to="/admin" class="nav-link">
+          {{ $t('Admin') }} <v-icon name="md-adminpanelsettings" />
         </router-link>
       </div>
     </nav>
@@ -25,10 +30,13 @@ import { useUserStore } from '@/stores/user.ts'
 import NavigationSearch from '@/components/search/NavigationBarSearch.vue'
 
 const userStore = useUserStore()
+
 const isAuthenticated = computed(() => userStore.authenticated)
+const isAdmin = computed(() => userStore.isAdmin())
 </script>
 
 <style scoped>
+/* Din CSS er allerede bra, beholder den uendret */
 .navbar-container {
   position: sticky;
   top: 0;
@@ -59,7 +67,7 @@ const isAuthenticated = computed(() => userStore.authenticated)
   font-size: 1.5rem;
   text-decoration: none;
   transition: transform 0.3s ease, color 0.3s ease,
-    text-shadow 0.3s ease;
+  text-shadow 0.3s ease;
 }
 
 .app-name:hover {

@@ -22,6 +22,8 @@ import MyArchivesView from '@/views/profile/MyArchivesView.vue'
 import MySoldView from '@/views/profile/MySoldView.vue'
 import EditMyProfileView from '@/views/profile/EditMyProfileView.vue'
 import EditOwnListingView from '@/views/EditOwnListingView.vue'
+import { useUserStore } from '@/stores/user.ts'
+import { getCurrentUser } from '@/services/userApi.ts'
 
 const routes = [
   { path: '/', redirect: '/home' },
@@ -56,17 +58,24 @@ const router = createRouter({
 })
 
 
-router.beforeEach(async (to) => {
-  const isAuth = await authApi.isAuthenticated();
-  // If the user is not logged in and tries to access a protected page → redirect to log in.
-  if (to.name !== 'Login' && to.name !== 'Register' && !isAuth) {
+router.beforeEach((to) => {
+  const userStore = useUserStore();
+  console.log('Auth status:', userStore.authenticated);
+
+  if (!userStore.authenticated && to.name !== 'Login' && to.name !== 'Register') {
     return { name: 'Login' };
   }
 
-  // If the user is logged in and tries to access the login page → redirect to "/home".
-  if (to.name === 'Login' && isAuth) { //AUthstatus should be true/false
+  if (to.name === 'Login' && userStore.authenticated) {
     return { name: 'Home' };
   }
+
+  if (to.path.startsWith('/admin')) {
+    if (!userStore.isAdmin) {
+      return { name: 'Home' };
+    }
+  }
 });
+
 
 export default router
