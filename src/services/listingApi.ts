@@ -20,6 +20,11 @@ export const getListingsByCategory = async (categoryId: number): Promise<Listing
   return response.data
 }
 
+export const getListingsByCategoryPaginated = async (categoryId: number, page: number = 1) => {
+  const response = await apiClient.get(`/listings/category/${categoryId}/${page}`);
+  return response.data; // Assumes { content: ListingResponse[], totalPages: number }
+}
+
 // Get a specific listing by ID
 export const getListingById = async (id: number): Promise<ListingResponse> => {
   const response = await apiClient.get<ListingResponse>(`/listings/${id}`)
