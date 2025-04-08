@@ -25,8 +25,7 @@ const logout = () => {
     <div v-else>
       <div v-if="user">
         <h3>{{ user.username }}</h3>
-        <!-- Implement when userDto is complete-->
-        <p>{{ t('User email') }}</p>
+        
         <button class="logout-button" @click="logout">Log out</button>
         <button class="edit-button" @click="navigateToProfile">To profile</button>
       </div>
