@@ -98,6 +98,7 @@ async function nextPage() {
     pageNumber.value++
     const listingsPage = await getRecommendedListingsPage(pageNumber.value)
     listings.value = listingsPage.content
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }
 
@@ -107,6 +108,7 @@ async function prevPage() {
     pageNumber.value--
     const listingsPage = await getRecommendedListingsPage(pageNumber.value)
     listings.value = listingsPage.content
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }
 
