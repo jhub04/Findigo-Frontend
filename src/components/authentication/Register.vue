@@ -39,6 +39,7 @@ const register = async () => {
           <label for="username">Username:</label>
           <input
             id="username"
+            name="username"
             v-model="username"
             type="text"
             required
@@ -50,6 +51,7 @@ const register = async () => {
           <label for="password">Password:</label>
           <input
             id="password"
+            name="password"
             v-model="password"
             type="password"
             required

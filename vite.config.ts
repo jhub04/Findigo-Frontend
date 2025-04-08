@@ -4,9 +4,21 @@ import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import path from 'path'
+import istanbul from 'vite-plugin-istanbul'
 
 export default defineConfig({
-  plugins: [vue(), vueJsx(), vueDevTools()],
+  plugins: [
+    vue(),
+    vueJsx(),
+    vueDevTools(),
+    istanbul({
+      include: 'src/**/*',
+      exclude: ['node_modules', 'cypress'],
+      extension: ['.ts', '.vue'],
+      cypress: true,
+      requireEnv: false
+    }),
+  ],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
@@ -26,4 +38,4 @@ export default defineConfig({
   build: {
     sourcemap: true
   }
-})
+});
