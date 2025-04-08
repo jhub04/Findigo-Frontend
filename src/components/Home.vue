@@ -55,7 +55,7 @@
       </div>
     </div>
 
-    <div v-if="selectedCategory && categoryTotalPages > 1" class="paginationControls">
+    <div v-if="selectedCategory && categoryTotalPages > 1" class="pagination-controls">
       <p>
         {{ $t('Current Page:') }} {{ categoryPage }}, {{ $t('Total pages:') }} {{ categoryTotalPages }}
       </p>
@@ -63,7 +63,7 @@
       <button @click="nextCategoryPage" :disabled="categoryPage === categoryTotalPages">{{ $t('Next') }}</button>
     </div>
 
-    <div v-else-if="!selectedCategory && totalPages > 1" class="paginationControls">
+    <div v-else-if="!selectedCategory && totalPages > 1" class="pagination-controls">
       <p>
         {{ $t('Current Page:') }} {{ pageNumber }}, {{ $t('Total pages:') }} {{ totalPages }}
       </p>
@@ -262,5 +262,22 @@ onMounted(async () => {
 .paginationControls {
   margin-top: 2rem;
 }
+
+.pagination-controls {
+    margin-top: 2rem;
+    text-align: center;
+  }
+  .pagination-controls button {
+    margin: 0 10px;
+    padding: 0.5rem 1rem;
+    background-color: #e0e0e0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .pagination-controls button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
 
 </style>
