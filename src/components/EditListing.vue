@@ -34,15 +34,43 @@
         <span v-if="loading" class="spinner"></span>
         <span v-else>Save Changes</span>
       </button>
-      <button class="cancel-button" type="button" @click="cancelEdit">
-        Cancel
-      </button>
+      <button class="cancel-button" type="button" @click="cancelEdit">Cancel</button>
     </div>
 
     <transition name="fade">
       <div v-if="successMessage" class="success-message">{{ successMessage }}</div>
     </transition>
   </form>
+
+  <div class="edit-images">
+    <div class="image-grid">
+      <div v-for="(image, index) in images" :key="index">
+        <img class="uploaded-image" :class="{ deleted: imagesToDelete.has(index) }" :src="image" />
+        <button
+          v-if="!imagesToDelete.has(index)"
+          @click="deleteImageByIndex(index)"
+          class="delete-button"
+        >
+          Delete image
+        </button>
+        <button v-else @click="undoDelete(index)" class="undo-button">Undo delete</button>
+      </div>
+    </div>
+
+    <div class="image-upload-container">
+      <label for="image-upload" class="custom-file-label">
+        {{ $t('Upload Images') }}
+        <input
+          type="file"
+          id="image-upload"
+          class="custom-file-input"
+          @change="handleImageUpload"
+          accept="image/*"
+          multiple
+        />
+      </label>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -51,12 +79,21 @@ import { editListing, getListingById } from '@/services/listingApi'
 import { getCoordinatesFromPostcode } from '@/utils/geoUtils'
 import { getAllCategories } from '@/services/categoryApi'
 import { useRoute, useRouter } from 'vue-router'
-import type { CategoryResponse, ListingAttributeRequest, ListingRequest, ListingResponse } from '@/types/dto'
+import type {
+  CategoryResponse,
+  ListingAttributeRequest,
+  ListingRequest,
+  ListingResponse,
+} from '@/types/dto'
 import { handleApiError } from '@/utils/handleApiError.ts'
+import { useImages } from '@/composables/useImages'
+import { useImageUpload } from '@/composables/useImageUpload'
 
 const route = useRoute()
 const router = useRouter()
 const id = Number(route.params.id)
+const { images, fetchImagesForListing, deleteImage } = useImages()
+const { uploadImages } = useImageUpload()
 
 const briefDescription = ref('')
 const fullDescription = ref('')
@@ -69,12 +106,15 @@ const categories = ref<CategoryResponse[]>([])
 const errorMessage = ref<string | null>(null)
 const successMessage = ref<string | null>(null)
 const loading = ref(false)
+let listing: ListingResponse
+const imagesToDelete = ref<Set<number>>(new Set<number>())
+const newImagesUploadedIndices = ref<Set<number>>(new Set<number>())
 
 onMounted(async () => {
   try {
     categories.value = await getAllCategories()
-
-    const listing: ListingResponse = await getListingById(id)
+    listing = await getListingById(id)
+    await fetchImagesForListing(listing.id, listing.numberOfImages)
     briefDescription.value = listing.briefDescription
     fullDescription.value = listing.fullDescription
     postNumber.value = listing.postalCode
@@ -82,8 +122,8 @@ onMounted(async () => {
     price.value = listing.price
     selectedCategoryId.value = listing.category.id
 
-    listing.attributes.forEach(attr => {
-      const matchingAttribute = selectedCategory.value?.attributes.find(a => a.name === attr.name)
+    listing.attributes.forEach((attr) => {
+      const matchingAttribute = selectedCategory.value?.attributes.find((a) => a.name === attr.name)
       if (matchingAttribute) {
         attributeInputs.value[matchingAttribute.id] = attr.value
       }
@@ -97,6 +137,31 @@ onMounted(async () => {
 const selectedCategory = computed(
   () => categories.value.find((cat) => cat.id === selectedCategoryId.value) ?? null,
 )
+
+const deleteImageByIndex = (index: number) => {
+  imagesToDelete.value.add(index)
+}
+
+const undoDelete = (index: number) => {
+  imagesToDelete.value.delete(index)
+}
+
+const deleteAllImages = async (imagesToBeDeleted: Set<number>) => {
+  let imagesToDeleteArray = Array.from(imagesToBeDeleted)
+  imagesToDeleteArray.sort().reverse()
+  for (let index of imagesToDeleteArray) {
+    await deleteImage(listing.id, index)
+  }
+}
+
+const handleImageUpload = async (e: Event) => {
+  const files = (e.target as HTMLInputElement).files
+  if (files && files.length > 0) {
+    let numberOfImages = await uploadImages(listing.id, files)
+    await fetchImagesForListing(listing.id, numberOfImages)
+    newImagesUploadedIndices.value.add(numberOfImages - 1)
+  }
+}
 
 const submit = async () => {
   errorMessage.value = null
@@ -129,7 +194,9 @@ const submit = async () => {
     }
 
     await editListing(id, payload)
+    await deleteAllImages(imagesToDelete.value)
     successMessage.value = 'Listing updated successfully!'
+    router.push(`/my-listing/${id}`)
   } catch (e) {
     errorMessage.value = handleApiError(e)
   } finally {
@@ -137,12 +204,38 @@ const submit = async () => {
   }
 }
 
-function cancelEdit() {
+async function cancelEdit() {
+  await deleteAllImages(newImagesUploadedIndices.value)
   router.push(`/my-listing/${id}`)
 }
 </script>
 
 <style scoped>
+.image-upload-container {
+  text-align: center;
+}
+
+.custom-file-label {
+  display: inline-block;
+  background-color: #1f7a8c;
+  color: white;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: background-color 0.3s;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.custom-file-label:hover {
+  background-color: #022b3a;
+}
+
+.custom-file-input {
+  display: none;
+}
+
 .form-container {
   max-width: 600px;
   margin: 2rem auto;
@@ -150,7 +243,7 @@ function cancelEdit() {
   flex-direction: column;
   gap: 1.2rem;
   padding: 2rem;
-  background-color: #e1e5f2;
+  background-color: white;
   border-radius: 12px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 }
@@ -159,6 +252,32 @@ function cancelEdit() {
   .form-container {
     padding: 1.5rem;
   }
+}
+
+.undo-button {
+  width: 100%;
+  padding: 0.5rem;
+  background-color: #6c757d; /* Bootstrap-like gray */
+  color: white;
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 0 0 10px 10px;
+  transition: background-color 0.3s ease;
+}
+
+.undo-button:hover {
+  background-color: #5a6268;
+}
+
+.delete-button {
+  background-color: #dc3545;
+}
+
+.delete-button:hover {
+  background-color: #c82333;
 }
 
 h2 {
@@ -175,6 +294,7 @@ select {
   border: 1px solid #ccc;
   border-radius: 6px;
   font-size: 1rem;
+  box-sizing: border-box;
   background-color: white;
   transition: border-color 0.3s;
 }
@@ -295,5 +415,60 @@ label {
   to {
     opacity: 1;
   }
+}
+.edit-images {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background-color: #f9fafb;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+}
+
+.image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 1rem;
+}
+
+.image-grid div {
+  position: relative;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+
+.image-grid div:hover {
+  transform: scale(1.02);
+}
+
+.uploaded-image {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-bottom: 1px solid #eee;
+  transition: 0.3s;
+}
+
+.image-grid button {
+  width: 100%;
+  padding: 0.5rem;
+  color: white;
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 0 0 10px 10px;
+  transition: background-color 0.3s ease;
+}
+
+.deleted {
+  opacity: 0.3;
+  filter: grayscale(100%);
+  border: 2px dashed #dc3545;
+  border-radius: 8px;
 }
 </style>

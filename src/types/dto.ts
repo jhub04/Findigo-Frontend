@@ -31,6 +31,7 @@ export interface ListingResponse {
   category: CategoryResponse;
   user: UserLiteResponse;
   attributes: ListingAttributeResponse[];
+  listingStatus: ListingStatus;
 }
 
 export interface ListingAttributeRequest {
@@ -112,4 +113,5 @@ export interface SaleResponse {
   saleDate: string
 }
 
+export type ListingStatus = 'ACTIVE' | 'ARCHIVED' | 'SOLD'
 

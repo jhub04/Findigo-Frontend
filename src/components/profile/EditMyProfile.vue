@@ -145,7 +145,7 @@ function goBack() {
   max-width: 450px;
   margin: 2rem auto;
   padding: 2rem;
-  background-color: #e1e5f2; /* Lavender */
+  background-color: white; /* Lavender */
   border-radius: 12px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 }

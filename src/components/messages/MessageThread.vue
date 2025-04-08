@@ -5,6 +5,7 @@ import type { MessageResponse, MessageRequest } from '@/types/dto'
 import { ref, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { otherUsername } from '@/composables/useMessageThread'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -71,19 +72,22 @@ const canSend = computed(
   () => !!user.value && newMessageText.value.trim().length > 0 && !sending.value,
 )
 
-const otherUsername = computed(() => {
-  const otherUserMessage = messages.value.find((msg) => msg.fromUserId !== user.value!.id)
-  return otherUserMessage
-    ? otherUserMessage.fromUserId === otherUserId
-      ? otherUserMessage.fromUsername
-      : otherUserMessage.toUsername
-    : t('Other user')
+const getOtherUsername = computed(() => {
+  if (otherUsername.value) return otherUsername.value;
+  
+  const msg = messages.value.find(
+    (m) => m.fromUserId !== user.value?.id
+  ) ?? messages.value[0]
+
+  return msg?.fromUserId === user.value?.id
+    ? msg?.toUsername
+    : msg?.fromUsername ?? t('Other user')
 })
 </script>
 
 <template>
   <div class="thread-container">
-    <h1>{{ t('Conversation with') }} {{ otherUsername }}</h1>
+    <h1>{{ t('Conversation with') }} {{ getOtherUsername }}</h1>
 
     <p v-if="userLoading || loading">{{ t('Loading conversation...') }}</p>
     <p v-if="userError" class="error">{{ t('Failed to load user data') }}</p>
@@ -97,7 +101,7 @@ const otherUsername = computed(() => {
         :class="{ 'other-user': msg.fromUserId !== user!.id }"
       >
         <div class="message-header">
-          <strong>{{ msg.fromUserId === user!.id ? t('You') : otherUsername }}</strong>
+          <strong>{{ msg.fromUserId === user!.id ? t('You') : getOtherUsername }}</strong>
           <span class="timestamp">{{ formatDate(msg.sentAt) }}</span>
         </div>
         <p>{{ msg.messageText }}</p>

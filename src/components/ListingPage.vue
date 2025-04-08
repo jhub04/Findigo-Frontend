@@ -8,6 +8,8 @@ import { useImages } from '@/composables/useImages'
 import { useFavorites } from '@/composables/useFavorites'
 import { useI18n } from 'vue-i18n'
 import router from '@/router'
+import { otherUsername } from '@/composables/useMessageThread'
+
 
 const { t } = useI18n()
 const { images, loading, error, fetchImagesForListing } = useImages()
@@ -19,6 +21,12 @@ const id = Number(route.params.id)
 const listing = ref<ListingResponse | null>(null)
 
 const formatDate = (iso: string) => new Date(iso).toLocaleString()
+
+const sendMessage = () => {
+  if (!listing.value) return;
+  otherUsername.value = listing.value.user.username
+  router.push(`/messages/${listing.value.user.id}`)
+}
 
 onMounted(async () => {
   try {
@@ -96,9 +104,7 @@ const toggleFavorite = async () => {
             <h2>{{ t('Seller') }}</h2>
             <p>{{ t('Username') }}: {{ listing.user.username }}</p>
             <p v-if="listing.user.phoneNumber">{{ t('Phone number') }}: {{ listing.user.phoneNumber }}</p>
-            <router-link :to="`/messages/${listing.user.id}`">
-              <button class="send-message-button">{{ t('Send Message') }}</button>
-            </router-link>
+            <button class="send-message-button" @click="sendMessage">{{ $t('Send Message')}} </button>
           </div>
         </div>
       </div>
@@ -107,9 +113,15 @@ const toggleFavorite = async () => {
 </template>
 
 <style scoped>
+/* Global box-sizing */
+* {
+  box-sizing: border-box;
+}
+
 /* Main listing page container */
 .listing-page {
   max-width: 900px;
+  width: 90%;
   margin: 2rem auto;
   padding: 2rem;
   background-color: #fff;
@@ -282,6 +294,48 @@ const toggleFavorite = async () => {
 
 .send-message-button:hover {
   background-color: #0056b3;
+}
+
+/* Responsiv design for mobile */
+@media (max-width: 768px) {
+  .listing-page {
+    padding: 1rem;
+    width: 95%;
+  }
+
+  .listing-info-container {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .contact-info {
+    min-width: auto;
+    width: 100%;
+    margin-top: 1rem;
+  }
+
+  .title {
+    font-size: 1.6rem;
+  }
+
+  .price {
+    font-size: 1.2rem;
+  }
+
+}
+
+.image-slideshow {
+  width: 100%;
+  overflow: hidden;
+}
+
+.listing-image-wrapper {
+  width: 100%;
+}
+.image-slideshow img {
+  max-width: 100%;
+  height: auto;
+  display: block;
 }
 
 </style>
