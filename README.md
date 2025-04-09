@@ -37,8 +37,6 @@ The project utilizes the following technologies:
 - Backend: Springboot V3 with Maven and Java 21
 - Database: MySQL V8 for runtime and H2 for tests
 
-You can find the swagger API documentation [here] (add link to swagger docs)
-
 ## Features
 - **Secure login:** Users can securely log in, register, and update their account details
 - **Listing Creation:** Users can create listings and publish them to the marketplace
@@ -85,6 +83,8 @@ Before compiling the frontend development environment make sure that the backend
    ```bash
    npm run dev
    ```
+
+You can find the swagger API documentation [here] (add link to swagger docs)
 
 ### Admin user credentials (use on login)
 - Username: admin
