@@ -119,10 +119,6 @@ const getOtherUsername = computed(() => {
         {{ sending ? t('Sending...') : t('Send') }}
       </button>
     </div>
-
-    <p v-if="!loading && !sortedMessages.length">
-      {{ t('No messages in this conversation.') }}
-    </p>
   </div>
 </template>
 

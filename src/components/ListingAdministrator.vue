@@ -52,15 +52,6 @@
           </button>
         </template>
       </div>
-
-      <div class="stats">
-        <h3>Statistics</h3>
-        <ul>
-          <li>Views: <strong>0</strong></li>
-          <li>Favorites: <strong>0</strong></li>
-          <li>Messages: <strong>0</strong></li>
-        </ul>
-      </div>
     </div>
     <p v-else class="loading-text">Loading listing...</p>
 
