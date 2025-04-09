@@ -8,7 +8,7 @@ export const registerUser = async (data: AuthRequest) => {
     return response.data;
   } catch (error) {
     console.error("Registration failed", error);
-    return null;
+    throw error;
   }
 };
 

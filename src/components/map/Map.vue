@@ -5,21 +5,27 @@
         v-for="listing in uniqueListings"
         :key="`${listing.latitude}-${listing.longitude}`"
         :position="{ lat: listing.latitude, lng: listing.longitude }"
+        data-testid="map-marker"
         @click="onMarkerClick(listing.latitude, listing.longitude)"
       />
     </GMapMap>
   </div>
+  <div v-if="error" data-testid="error-box">{{ error }}</div>
+
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { getAllListings, getFilteredListings, getListingsByCategory } from '@/services/listingApi'
+import { getAllListings, getFilteredListings } from '@/services/listingApi'
 import { getAllCategories } from '@/services/categoryApi'
 import noImage from '@/assets/no-image.jpg'
 import { navigateToListing } from '@/utils/navigationUtil'
 import type { CategoryResponse, ListingResponse } from '@/types/dto'
 import { useI18n } from 'vue-i18n'
+import { useImages } from '@/composables/useImages'
+
+const { firstImage, fetchFirstImageForListing } = useImages()
 
 const { t } = useI18n()
 const route = useRoute()
@@ -95,7 +101,7 @@ function onMarkerClick(lat: number, lng: number) {
 
   let index = 0
 
-  const updateInfoWindow = () => {
+  const updateInfoWindow = async () => {
     const listing = group[index]
     const content = document.createElement('div')
     content.style.cssText = `
@@ -115,10 +121,11 @@ function onMarkerClick(lat: number, lng: number) {
       font-weight: 600;
       line-height: 1.2;
     `
-    content.appendChild(title)
+    content.appendChild(title);
 
-    const img = document.createElement('img')
-    img.src = noImage
+    const img = document.createElement('img');
+    await fetchFirstImageForListing(listing);
+    img.src = firstImage.value
     img.alt = t('Listing image')
     img.style.cssText = `
       width: 100%;

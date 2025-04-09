@@ -31,42 +31,45 @@ const handleLoginClick = async () => {
 <template>
   <div class="login-container">
     <div class="login-card">
-      <h2>Login</h2>
+      <h2>{{ $t("Login") }}</h2>
       <form @submit.prevent="handleLoginClick">
         <div class="form-group">
-          <label for="username">Username:</label>
+          <label for="username">{{ $t("Username:") }}</label>
           <input
             id="username"
+            name="username"
             v-model="username"
             type="text"
             required
-            placeholder="Enter your username"
+            :placeholder="$t('Enter your username')"
           />
         </div>
 
         <div class="form-group">
-          <label for="password">Password:</label>
+          <label for="password">{{ $t("Password:") }}</label>
           <input
             id="password"
+            name="password"
             v-model="password"
             type="password"
             required
-            placeholder="Enter your password"
+            :placeholder="$t('Enter your password')"
           />
         </div>
 
-        <button type="submit" class="submit-btn">Login</button>
+        <button type="submit" class="submit-btn">{{ $t("Login") }}</button>
       </form>
 
       <p v-if="loginStatus" class="error-message">{{ loginStatus }}</p>
 
       <p class="register-link">
-        Don't have an account?
-        <router-link to="/register">Register here</router-link>
+        {{ $t("Don't have an account?") }}
+        <router-link to="/register">{{ $t("Register here") }}</router-link>
       </p>
     </div>
   </div>
 </template>
+
 
 <style scoped>
 .login-container {

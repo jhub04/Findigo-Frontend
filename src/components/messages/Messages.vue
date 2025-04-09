@@ -2,9 +2,10 @@
 import { fetchAllUserMessages } from '@/services/messageApi'
 import { useCurrentUser } from '@/composables/useCurrentUser'
 import type { MessageResponse } from '@/types/dto'
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { otherUsername } from '@/composables/useMessageThread'
 
 const { user, isLoading: userLoading, error: userError } = useCurrentUser()
 const messages = ref<MessageResponse[]>([])
@@ -30,6 +31,10 @@ watch(
   },
   { immediate: true },
 )
+
+onBeforeUnmount(() => {
+  otherUsername.value = null
+})
 
 const formatDate = (dateStr: string) => new Date(dateStr).toLocaleString()
 

@@ -1,7 +1,7 @@
 <template>
   <div class="edit-profile-container">
     <div class="header">
-      <h2>My Profile</h2>
+      <h2>{{t("My Profile")}}</h2>
       <div class="icon-group">
         <v-icon name="md-arrowback" class="back-icon" @click="goBack" />
         <v-icon name="md-edit" class="edit-icon" @click="toggleEdit" />
@@ -10,7 +10,7 @@
 
     <form v-if="currentUser" @submit.prevent="submitForm">
       <div class="form-group">
-        <label for="username">Username</label>
+        <label for="username">{{$t("Username")}}</label>
         <input
           id="username"
           v-model="form.username"
@@ -21,7 +21,7 @@
       </div>
 
       <div class="form-group">
-        <label for="password">Password</label>
+        <label for="password">{{ t("Password")}}</label>
         <input
           id="password"
           v-model="form.password"
@@ -33,7 +33,7 @@
       </div>
 
       <div class="form-group">
-        <label for="phoneNumber">Phone Number</label>
+        <label for="phoneNumber">{{t("Phone Number")}}</label>
         <input
           id="phoneNumber"
           v-model.number="form.phoneNumber"
@@ -72,7 +72,9 @@ import { useRouter } from 'vue-router'
 import { editMyProfile, getCurrentUser } from '@/services/userApi'
 import { handleApiError } from '@/utils/handleApiError.ts'
 import type { UserResponse } from '@/types/dto.ts'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const router = useRouter()
 
 const form = ref({
@@ -114,11 +116,12 @@ async function submitForm() {
 
   try {
     await editMyProfile(form.value)
+    alert("Profile updated successfully")
     successMessage.value = 'Profile updated successfully!'
     isEditing.value = false
+    router.push("/profile");
   } catch (error: any) {
-    handleApiError(error)
-    errorMessage.value = 'Something went wrong. Please try again.'
+    errorMessage.value = handleApiError(error);
   } finally {
     loading.value = false
   }
@@ -128,7 +131,6 @@ function cancelEdit() {
   if (currentUser.value) {
     form.value.username = currentUser.value.username
     form.value.phoneNumber = currentUser.value.phoneNumber
-    form.value.password = ''
   }
   successMessage.value = ''
   errorMessage.value = ''
@@ -143,7 +145,7 @@ function goBack() {
 <style scoped>
 .edit-profile-container {
   max-width: 450px;
-  margin: 2rem auto;
+  margin: auto;
   padding: 2rem;
   background-color: white; /* Lavender */
   border-radius: 12px;
@@ -201,6 +203,7 @@ label {
 input {
   width: 100%;
   padding: 0.75rem;
+  padding-right: 0;
   border: 1px solid #bfd8f7; /* Columbia blue */
   border-radius: 6px;
   font-size: 1rem;

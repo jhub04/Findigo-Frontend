@@ -70,7 +70,7 @@ const goHome = () => {
       <form @submit.prevent="submitPurchase" class="checkout-form">
         <div class="form-group">
           <label for="fullName">{{ t('Full Name') }}</label>
-          <input type="text" id="fullName" v-model="fullName" placeholder="John Doe" required />
+          <input type="text" id="fullName" v-model="fullName" placeholder="John Doe" />
         </div>
 
         <div class="form-group">
@@ -80,7 +80,7 @@ const goHome = () => {
             id="phoneNumber"
             v-model="phoneNumber"
             placeholder="+47 46213162"
-            required
+
           />
         </div>
 
@@ -91,18 +91,18 @@ const goHome = () => {
             id="visaCardNumber"
             v-model="visaCardNumber"
             placeholder="xxxx xxxx xxxx xxxx"
-            required
+
           />
         </div>
 
         <div class="form-group inline">
           <div>
             <label for="expiryDate">{{ t('Expiry Date') }}</label>
-            <input type="text" id="expiryDate" v-model="expiryDate" placeholder="MM/YY" required />
+            <input type="text" id="expiryDate" v-model="expiryDate" placeholder="MM/YY" />
           </div>
           <div>
             <label for="cvv">{{ t('CVV') }}</label>
-            <input type="text" id="cvv" v-model="cvv" placeholder="123" required />
+            <input type="text" id="cvv" v-model="cvv" placeholder="123" />
           </div>
         </div>
 
@@ -113,7 +113,6 @@ const goHome = () => {
             id="deliveryAddress"
             v-model="deliveryAddress"
             placeholder="123 Main St"
-            required
           />
         </div>
 

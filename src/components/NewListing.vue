@@ -101,6 +101,7 @@ import { useImagePreviews } from '@/composables/useImagePreviews'
 import { useRouter } from 'vue-router'
 import type { CategoryResponse, ListingAttributeRequest, ListingRequest, ListingResponse } from '@/types/dto'
 import { useImages } from '@/composables/useImages'
+import { handleApiError } from '@/utils/handleApiError'
 
 const { deleteImage } = useImages()
 const { t } = useI18n()
@@ -165,7 +166,7 @@ const submit = async () => {
     successMessage.value = t('Listing created!')
     listingResponse.value = createdListing
   } catch (e) {
-    errorMessage.value = t('Something went wrong while submitting.')
+    errorMessage.value = handleApiError(e)
     console.error(e)
   } finally {
     loading.value = false
