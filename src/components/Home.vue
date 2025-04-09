@@ -32,6 +32,7 @@
       <div>
         <div v-if="listingsLoading">{{ $t('Loading listings...') }}</div>
         <div v-else-if="listingsError">{{ $t('Error:') }} {{ handleApiError(listingsError) }}</div>
+
         <div
           v-else-if="
             (selectedCategory && categoryListings?.length === 0) ||
@@ -102,6 +103,7 @@ const totalPages = ref<number>(1)
 const categoryPage = ref(1)
 const categoryTotalPages = ref(1)
 const { fetchFavorites } = useFavorites()
+
 
 const userStore = useUserStore();
 
@@ -186,9 +188,11 @@ const handleCategoryClick = async (categoryId: number) => {
 
 onMounted(async () => {
   await fetchListings()
+
   if (userStore.authenticated) {
     await fetchFavorites()
   }
+
   categories.value = await getAllCategories()
 })
 
