@@ -55,16 +55,21 @@
       </div>
     </div>
 
-    <div class="paginationControls">
-    <div v-if="totalPages > 1" class="paginationControls">
+    <div v-if="selectedCategory && categoryTotalPages > 1" class="pagination-controls">
       <p>
-        {{ $t('Current Page:') }} {{ pageNumber }}, {{ $t('Total pages:') }}
-        {{ totalPages }}
+        {{ $t('Current Page:') }} {{ categoryPage }}, {{ $t('Total pages:') }} {{ categoryTotalPages }}
+      </p>
+      <button @click="prevCategoryPage" :disabled="categoryPage === 1">{{ $t('Previous') }}</button>
+      <button @click="nextCategoryPage" :disabled="categoryPage === categoryTotalPages">{{ $t('Next') }}</button>
+    </div>
+
+    <div v-else-if="!selectedCategory && totalPages > 1" class="pagination-controls">
+      <p>
+        {{ $t('Current Page:') }} {{ pageNumber }}, {{ $t('Total pages:') }} {{ totalPages }}
       </p>
       <button @click="prevPage" :disabled="pageNumber === 1">{{ $t('Previous') }}</button>
       <button @click="nextPage" :disabled="pageNumber === totalPages">{{ $t('Next') }}</button>
     </div>
-  </div>
   </div>
 </template>
 
@@ -72,7 +77,7 @@
 import { ref, onMounted } from 'vue'
 import { useCurrentUser } from '@/composables/useCurrentUser'
 import { getAllCategories } from '@/services/categoryApi'
-import { getListingsByCategory, getRecommendedListingsPage } from '@/services/listingApi.ts'
+import { getListingsByCategory, getRecommendedListingsPage,getListingsByCategoryPaginated } from '@/services/listingApi.ts'
 import { useFavorites } from '@/composables/useFavorites'
 import type { CategoryResponse, ListingResponse } from '@/types/dto.ts'
 import ListingCard from '@/components/ListingCard.vue'
@@ -90,7 +95,40 @@ const listingsLoading = ref(true)
 const listingsError = ref<string | null>(null)
 const pageNumber = ref(1)
 const totalPages = ref<number>(1)
+const categoryPage = ref(1)
+const categoryTotalPages = ref(1)
 const { fetchFavorites } = useFavorites()
+
+const loadCategoryListings = async () => {
+  if (!selectedCategory.value) return
+  listingsLoading.value = true
+  listingsError.value = null
+
+  try {
+    const page = await getListingsByCategoryPaginated(selectedCategory.value, categoryPage.value)
+    categoryListings.value = page.content
+    categoryTotalPages.value = page.totalPages
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (err: any) {
+    listingsError.value = err.message || t('Failed to load listings by category')
+    categoryListings.value = []
+  } finally {
+    listingsLoading.value = false
+  }
+}
+async function nextCategoryPage() {
+  if (categoryPage.value < categoryTotalPages.value) {
+    categoryPage.value++
+    await loadCategoryListings()
+  }
+}
+
+async function prevCategoryPage() {
+  if (categoryPage.value > 1) {
+    categoryPage.value--
+    await loadCategoryListings()
+  }
+}
 
 async function nextPage() {
   if (pageNumber.value < totalPages.value) {
@@ -98,6 +136,7 @@ async function nextPage() {
     pageNumber.value++
     const listingsPage = await getRecommendedListingsPage(pageNumber.value)
     listings.value = listingsPage.content
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }
 
@@ -107,6 +146,7 @@ async function prevPage() {
     pageNumber.value--
     const listingsPage = await getRecommendedListingsPage(pageNumber.value)
     listings.value = listingsPage.content
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }
 
@@ -118,18 +158,8 @@ const handleCategoryClick = async (categoryId: number) => {
   }
 
   selectedCategory.value = categoryId
-  listingsLoading.value = true
-  listingsError.value = null
-
-  try {
-    const result = await getListingsByCategory(categoryId)
-    categoryListings.value = result
-  } catch (err: any) {
-    listingsError.value = err.message || t('Failed to load listings by category')
-    categoryListings.value = null
-  } finally {
-    listingsLoading.value = false
-  }
+  categoryPage.value = 1
+  await loadCategoryListings()
 }
 
 onMounted(async () => {
@@ -232,5 +262,22 @@ onMounted(async () => {
 .paginationControls {
   margin-top: 2rem;
 }
+
+.pagination-controls {
+    margin-top: 2rem;
+    text-align: center;
+  }
+  .pagination-controls button {
+    margin: 0 10px;
+    padding: 0.5rem 1rem;
+    background-color: #e0e0e0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .pagination-controls button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
 
 </style>

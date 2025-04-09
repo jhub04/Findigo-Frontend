@@ -31,7 +31,6 @@ onMounted(async () => {
       <div v-if="user">
         <h3>{{ user.username }}</h3>
         <!-- Implement when userDto is complete-->
-        <p>{{ t('User email') }}</p>
       </div>
       <div v-else-if="error">
         <p>{{ t('Failed to load user data') }}</p>

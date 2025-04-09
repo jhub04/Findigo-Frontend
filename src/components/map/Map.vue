@@ -23,6 +23,9 @@ import noImage from '@/assets/no-image.jpg'
 import { navigateToListing } from '@/utils/navigationUtil'
 import type { CategoryResponse, ListingResponse } from '@/types/dto'
 import { useI18n } from 'vue-i18n'
+import { useImages } from '@/composables/useImages'
+
+const { firstImage, fetchFirstImageForListing } = useImages()
 
 const { t } = useI18n()
 const route = useRoute()
@@ -98,7 +101,7 @@ function onMarkerClick(lat: number, lng: number) {
 
   let index = 0
 
-  const updateInfoWindow = () => {
+  const updateInfoWindow = async () => {
     const listing = group[index]
     const content = document.createElement('div')
     content.style.cssText = `
@@ -121,7 +124,8 @@ function onMarkerClick(lat: number, lng: number) {
     content.appendChild(title)
 
     const img = document.createElement('img')
-    img.src = noImage
+    await fetchFirstImageForListing(listing);
+    img.src = firstImage.value
     img.alt = t('Listing image')
     img.style.cssText = `
       width: 100%;
