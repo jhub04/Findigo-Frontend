@@ -38,8 +38,7 @@ import FilterDates from '@/components/sidebarFilters/FilterDates.vue'
 
 defineProps<{ navbarHeight: number }>()
 
-const emit = defineEmits(['updateCategory', 'search'])
-const onSearch = (query: string) => emit('search', query)
+
 
 const showSidebar = ref(false)
 const isMobile = ref(false)

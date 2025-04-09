@@ -5,16 +5,19 @@
         v-for="listing in uniqueListings"
         :key="`${listing.latitude}-${listing.longitude}`"
         :position="{ lat: listing.latitude, lng: listing.longitude }"
+        data-testid="map-marker"
         @click="onMarkerClick(listing.latitude, listing.longitude)"
       />
     </GMapMap>
   </div>
+  <div v-if="error" data-testid="error-box">{{ error }}</div>
+
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { getAllListings, getFilteredListings, getListingsByCategory } from '@/services/listingApi'
+import { getAllListings, getFilteredListings } from '@/services/listingApi'
 import { getAllCategories } from '@/services/categoryApi'
 import noImage from '@/assets/no-image.jpg'
 import { navigateToListing } from '@/utils/navigationUtil'

@@ -28,6 +28,8 @@ export default defineConfig({
     include: ['fast-deep-equal'],
   },
   server: {
+    host: '127.0.0.1',
+    port: 5173,
     fs: {
       allow: [
         path.resolve(__dirname, 'src'),
@@ -35,6 +37,7 @@ export default defineConfig({
       ],
     },
   },
+
   build: {
     sourcemap: true
   }
