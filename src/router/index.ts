@@ -23,7 +23,6 @@ import MySoldView from '@/views/profile/MySoldView.vue'
 import EditMyProfileView from '@/views/profile/EditMyProfileView.vue'
 import EditOwnListingView from '@/views/EditOwnListingView.vue'
 import { useUserStore } from '@/stores/user.ts'
-import { getCurrentUser } from '@/services/userApi.ts'
 
 const routes = [
   { path: '/', redirect: '/home' },

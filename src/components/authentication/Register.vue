@@ -24,7 +24,7 @@ const register = async () => {
     if (response) {
       successMessage.value = t("Registration successful! You can now log in.");
       setTimeout(() => {
-        router.push("/home");
+        router.push("/loginu");
       }, 1000);
     }
   } catch (error) {
@@ -41,7 +41,7 @@ const register = async () => {
       <h2>Register</h2>
       <form @submit.prevent="register">
         <div class="form-group">
-          <label for="username">{{$t("Username:")}}</label>
+          <label for="username">Username:</label>
           <input
             id="username"
             name="username"
@@ -49,19 +49,19 @@ const register = async () => {
             type="text"
             required
             placeholder=
-            '{{ $t("Choose a username") }}'
+            "Choose a username"
           />
         </div>
 
         <div class="form-group">
-          <label for="password">{{$t("Password:")}}</label>
+          <label for="password">Password:</label>
           <input
             id="password"
             name="password"
             v-model="password"
             type="password"
             required
-            placeholder='{{ $t("Create a strong password") }}'
+            placeholder='Create a strong password'
           />
         </div>
 
