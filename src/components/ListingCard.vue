@@ -7,17 +7,23 @@
         <p>{{ listing.price }} NOK</p>
       </div>
       <div class="listing-actions">
-        <div class="favorite-btn" @click.stop="toggleFavorite">
+        <div
+          class="favorite-btn"
+          :class="{ disabled: !userStore.authenticated }"
+          @click.stop="userStore.authenticated && toggleFavorite()"
+          :title="!userStore.authenticated ? 'Log in to your account to add to favorites' : ''"
+        >
           <v-icon
             :name="isFavorited(props.listing.id) ? 'oi-star-fill' : 'md-staroutline-round'"
             scale="2"
             fill="gold"
             class="favorite-icon"
           />
+          <span v-if="!userStore.authenticated" class="favorite-hint">Log in to save</span>
+        </div>
         </div>
       </div>
     </div>
-  </div>
 </template>
 
 <script setup lang="ts">

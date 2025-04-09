@@ -35,12 +35,21 @@
             <router-link to="/map" class="nav-link">
               {{ $t('Map') }} <v-icon name="fa-map"/>
             </router-link>
-            <router-link v-if="isAuthenticated" to="/listing" class="nav-link">
-              {{ $t('New Listing') }} <v-icon name="io-add-circle-sharp"/>
-            </router-link>
-            <router-link v-if="isAuthenticated" to="/messages" class="nav-link">
-              {{ $t('Messages') }} <v-icon name="md-message"/>
-            </router-link>
+            <div
+              class="nav-link"
+              :class="{ disabled: !isAuthenticated }"
+              @click="handleClick('/listing')"
+            >
+              {{ $t('New Listing') }} <v-icon name="io-add-circle-sharp" />
+            </div>
+
+            <div
+              class="nav-link"
+              :class="{ disabled: !isAuthenticated }"
+              @click="handleClick('/messages')"
+            >
+              {{ $t('Messages') }} <v-icon name="md-message" />
+            </div>
 
             <router-link
               :to="isAuthenticated ? '/profile' : '/login'"
@@ -89,6 +98,17 @@
 import { ref, onMounted, computed } from 'vue'
 import { useUserStore } from '@/stores/user.ts'
 import NavigationSearch from '@/components/search/NavigationSearchBar.vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const handleClick = (path: string) => {
+  if (isAuthenticated.value) {
+    router.push(path)
+  } else {
+    router.push('/login')
+  }
+}
 
 const userStore = useUserStore()
 
@@ -116,6 +136,12 @@ onMounted(() => {
 </script>
 
 <style scoped>
+
+.disabled {
+  opacity: 0.5;
+  cursor: pointer;
+}
+
 .navbar-container {
   position: sticky;
   top: 0;
@@ -200,6 +226,7 @@ onMounted(() => {
   border-radius: 4px;
   transition: background-color 0.3s ease, color 0.3s ease;
   min-width: 0;
+  cursor: pointer;
 }
 
 .nav-link svg {
