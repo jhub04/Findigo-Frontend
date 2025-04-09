@@ -22,13 +22,14 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import noImage from '@/assets/no-image.jpg'
 import type { ListingResponse } from '@/types/dto'
 import { navigateToListing } from '@/utils/navigationUtil.ts'
 import { useFavorites } from '@/composables/useFavorites'
 import { useImages } from '@/composables/useImages'
 import { useI18n } from 'vue-i18n'
+import { useUserStore } from '@/stores/user.ts'
 
 const { t } = useI18n()
 
@@ -40,8 +41,20 @@ const { isFavorited, addToFavorites, removeFromFavorites } = useFavorites()
 const { firstImage, fetchFirstImageForListing } = useImages()
 
 const isFavorite = computed(() => isFavorited(props.listing.id))
+const userStore = useUserStore();
+const router = useRouter();
+const route = useRoute()
+
+function redirectToLogin() {
+  router.push({ name: 'Login', query: { redirect: route.fullPath } })
+}
 
 async function toggleFavorite() {
+  if (!userStore.authenticated) {
+    redirectToLogin();
+    return
+  }
+
   if (isFavorite.value) {
     await removeFromFavorites(props.listing.id)
   } else {

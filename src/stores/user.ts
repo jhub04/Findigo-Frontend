@@ -31,7 +31,6 @@ export const useUserStore = defineStore("token", () => {
       return;
     }
 
-    window.location.href = "/login";
     authenticated.value = false;
     currentUser.value = null;
   };

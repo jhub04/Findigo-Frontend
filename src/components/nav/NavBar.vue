@@ -1,6 +1,6 @@
 <template>
   <header class="navbar-container">
-    <nav v-if="isAuthenticated" class="main-navbar" id="main-navbar">
+    <nav class="main-navbar" id="main-navbar">
       <!-- Mobilvisning -->
       <div class="navbar-mobile" v-if="isMobile">
         <button class="hamburger" @click="toggleMenu">
@@ -11,9 +11,15 @@
         <div class="navbar-brand">
           <router-link to="/home" class="app-name">Findigo</router-link>
         </div>
-        <router-link to="/profile" class="nav-link" id="profile">
-          {{ $t('My Profile') }} <v-icon name="md-accountcircle" />
+        <router-link
+          :to="isAuthenticated ? '/profile' : '/login'"
+          class="nav-link"
+          id="profile"
+        >
+          {{ isAuthenticated ? $t('My Profile') : $t('Log in') }}
+          <v-icon name="md-accountcircle" />
         </router-link>
+
       </div>
 
       <!-- Desktopvisning -->
@@ -29,14 +35,25 @@
             <router-link to="/map" class="nav-link">
               {{ $t('Map') }} <v-icon name="fa-map"/>
             </router-link>
-            <router-link to="/listing" class="nav-link">
+            <router-link v-if="isAuthenticated" to="/listing" class="nav-link">
               {{ $t('New Listing') }} <v-icon name="io-add-circle-sharp"/>
             </router-link>
-            <router-link to="/messages" class="nav-link">
+            <router-link v-if="isAuthenticated" to="/messages" class="nav-link">
               {{ $t('Messages') }} <v-icon name="md-message"/>
             </router-link>
-            <router-link to="/profile" class="nav-link" id="profile">
-              {{ $t('My Profile') }} <v-icon name="md-accountcircle"/>
+
+            <router-link
+              :to="isAuthenticated ? '/profile' : '/login'"
+              class="nav-link"
+              id="profile"
+            >
+              {{ isAuthenticated ? $t('My Profile') : $t('Log in') }}
+              <v-icon name="md-accountcircle" />
+            </router-link>
+
+            <!-- ✅ Admin knapp desktop -->
+            <router-link v-if="isAdmin" to="/admin" class="nav-link">
+              {{ $t('Admin') }} <v-icon name="md-adminpanelsettings" />
             </router-link>
           </div>
         </div>
@@ -51,14 +68,18 @@
       <router-link to="/map" class="nav-link" @click="closeMenu">
         {{ $t('Map') }} <v-icon name="fa-map" />
       </router-link>
-      <router-link to="/listing" class="nav-link" @click="closeMenu">
+      <router-link v-if="isAuthenticated" to="/listing" class="nav-link" @click="closeMenu">
         {{ $t('New Listing') }} <v-icon name="io-add-circle-sharp" />
       </router-link>
-      <router-link to="/messages" class="nav-link" @click="closeMenu">
+      <router-link v-if="isAuthenticated" to="/messages" class="nav-link" @click="closeMenu">
         {{ $t('Messages') }} <v-icon name="md-message" />
       </router-link>
+
       <router-link to="/profile" class="nav-link" @click="closeMenu">
         {{ $t('My Profile') }} <v-icon name="md-accountcircle" />
+      </router-link>
+      <router-link v-if="isAdmin" to="/admin" class="nav-link" @click="closeMenu">
+        {{ $t('Admin') }} <v-icon name="md-adminpanelsettings" />
       </router-link>
     </div>
   </header>
@@ -70,7 +91,9 @@ import { useUserStore } from '@/stores/user.ts'
 import NavigationSearch from '@/components/search/NavigationSearchBar.vue'
 
 const userStore = useUserStore()
-const isAuthenticated = computed(() => userStore.authenticated)
+
+const isAuthenticated = computed<boolean>(() => userStore.authenticated)
+const isAdmin = computed(() => userStore.isAdmin())
 
 const menuOpen = ref(false)
 const isMobile = ref(false)
@@ -288,5 +311,3 @@ onMounted(() => {
   }
 }
 </style>
-
-

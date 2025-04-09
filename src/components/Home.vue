@@ -5,83 +5,83 @@
       <div v-if="user">
         <h2>{{ $t('Welcome') }}, {{ user.username }}</h2>
         <p v-if="user.roles.includes('ROLE_ADMIN')">You have admin claim</p>
+      </div>
 
-        <!-- Category Buttons -->
-        <div v-if="categories.length > 0" class="category-buttons">
-          <div class="button-grid">
-            <button
-              v-for="category in categories"
-              :key="category.id"
-              class="category-button"
-              @click="handleCategoryClick(category.id)"
-              :class="{ selected: selectedCategory === category.id }"
-              :aria-pressed="selectedCategory === category.id"
-              :title="selectedCategory === category.id
+      <!-- Category Buttons -->
+      <div v-if="categories.length > 0" class="category-buttons">
+        <div class="button-grid">
+          <button
+            v-for="category in categories"
+            :key="category.id"
+            class="category-button"
+            @click="handleCategoryClick(category.id)"
+            :class="{ selected: selectedCategory === category.id }"
+            :aria-pressed="selectedCategory === category.id"
+            :title="
+              selectedCategory === category.id
                 ? $t('Click to clear filter')
-                : $t('Filter by') + ' ' + category.name"
-            >
-              {{ category.name }}
-            </button>
-          </div>
-        </div>
-
-        <!-- Listings Section -->
-        <div>
-          <div v-if="listingsLoading">{{ $t('Loading listings...') }}</div>
-          <div v-else-if="listingsError">{{ $t('Error:') }} {{ listingsError }}</div>
-          <div
-            v-else-if="
-              (selectedCategory && categoryListings?.length === 0) ||
-              (!selectedCategory && listings.length === 0)
+                : $t('Filter by') + ' ' + category.name
             "
           >
-            {{ $t('No listings found') }}
-          </div>
-
-          <div class="listing-grid">
-            <ListingCard
-              v-for="listing in selectedCategory ? categoryListings : listings"
-              :key="listing.id"
-              :listing="listing"
-              class="listing-card"
-            />
-          </div>
-
-          <p v-if="listings.length === 0">{{ $t('You have no listings yet.') }}</p>
+            {{ category.name }}
+          </button>
         </div>
       </div>
-      <div v-else>
-        <h2 v-if="error">{{ $t('Error loading user') }}</h2>
-        <h2 v-else>{{ $t('Unauthorized!') }}</h2>
+
+      <!-- Listings Section -->
+      <div>
+        <div v-if="listingsLoading">{{ $t('Loading listings...') }}</div>
+        <div v-else-if="listingsError">{{ $t('Error:') }} {{ listingsError }}</div>
+        <div
+          v-else-if="
+            (selectedCategory && categoryListings?.length === 0) ||
+            (!selectedCategory && listings.length === 0)
+          "
+        >
+          {{ $t('No listings found') }}
+        </div>
+
+        <div class="listing-grid">
+          <ListingCard
+            v-for="listing in selectedCategory ? categoryListings : listings"
+            :key="listing.id"
+            :listing="listing"
+            class="listing-card"
+          />
+        </div>
+
+        <p v-if="listings.length === 0">{{ $t('You have no listings yet.') }}</p>
+      </div>
+
+      <div class="paginationControls" v-if="totalPages > 1">
+        <p>
+          {{ $t('Current Page:') }} {{ pageNumber }}, {{ $t('Total pages:') }}
+          {{ totalPages }}
+        </p>
+        <button @click="prevPage" :disabled="pageNumber === 1">{{ $t('Previous') }}</button>
+        <button @click="nextPage" :disabled="pageNumber === totalPages">{{ $t('Next') }}</button>
       </div>
     </div>
-
-    <div class="paginationControls">
-    <div v-if="totalPages > 1" class="paginationControls">
-      <p>
-        {{ $t('Current Page:') }} {{ pageNumber }}, {{ $t('Total pages:') }}
-        {{ totalPages }}
-      </p>
-      <button @click="prevPage" :disabled="pageNumber === 1">{{ $t('Previous') }}</button>
-      <button @click="nextPage" :disabled="pageNumber === totalPages">{{ $t('Next') }}</button>
-    </div>
-  </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useCurrentUser } from '@/composables/useCurrentUser'
 import { getAllCategories } from '@/services/categoryApi'
-import { getListingsByCategory, getRecommendedListingsPage } from '@/services/listingApi.ts'
+import {
+  getListingsByCategory,
+  getPublicListingsPage,
+  getRecommendedListingsPage,
+} from '@/services/listingApi.ts'
 import { useFavorites } from '@/composables/useFavorites'
 import type { CategoryResponse, ListingResponse } from '@/types/dto.ts'
 import ListingCard from '@/components/ListingCard.vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
-
 const { user, isLoading, error } = useCurrentUser()
+const { fetchFavorites } = useFavorites()
 
 const listings = ref<ListingResponse[]>([])
 const categories = ref<CategoryResponse[]>([])
@@ -91,23 +91,36 @@ const listingsLoading = ref(true)
 const listingsError = ref<string | null>(null)
 const pageNumber = ref(1)
 const totalPages = ref<number>(1)
-const { fetchFavorites } = useFavorites()
+
+const fetchListings = async () => {
+  listingsLoading.value = true
+  listingsError.value = null
+
+  try {
+    const listingsPage = user.value
+      ? await getRecommendedListingsPage(pageNumber.value)
+      : await getPublicListingsPage(pageNumber.value)
+
+    listings.value = listingsPage.content
+    totalPages.value = listingsPage.totalPages
+  } catch (err: any) {
+    listingsError.value = err.message || t('Failed to load listings')
+  } finally {
+    listingsLoading.value = false
+  }
+}
 
 async function nextPage() {
   if (pageNumber.value < totalPages.value) {
-    console.log('Getting page ' + (pageNumber.value + 1))
     pageNumber.value++
-    const listingsPage = await getRecommendedListingsPage(pageNumber.value)
-    listings.value = listingsPage.content
+    await fetchListings()
   }
 }
 
 async function prevPage() {
   if (pageNumber.value > 1) {
-    console.log('Getting page ' + (pageNumber.value - 1))
     pageNumber.value--
-    const listingsPage = await getRecommendedListingsPage(pageNumber.value)
-    listings.value = listingsPage.content
+    await fetchListings()
   }
 }
 
@@ -123,8 +136,7 @@ const handleCategoryClick = async (categoryId: number) => {
   listingsError.value = null
 
   try {
-    const result = await getListingsByCategory(categoryId)
-    categoryListings.value = result
+    categoryListings.value = await getListingsByCategory(categoryId)
   } catch (err: any) {
     listingsError.value = err.message || t('Failed to load listings by category')
     categoryListings.value = null
@@ -134,17 +146,15 @@ const handleCategoryClick = async (categoryId: number) => {
 }
 
 onMounted(async () => {
-  try {
-    const listingsPage = await getRecommendedListingsPage(pageNumber.value)
-    await fetchFavorites()
-    listings.value = listingsPage.content
-    totalPages.value = listingsPage.totalPages
-    categories.value = await getAllCategories()
-  } catch (err: any) {
-    listingsError.value = err.message || t('Failed to load listings')
-  } finally {
-    listingsLoading.value = false
-  }
+  await fetchListings()
+  await fetchFavorites()
+  categories.value = await getAllCategories()
+})
+
+// Hvis bruker logger inn etter å ha åpnet siden, vil den reacte:
+watch(user, async () => {
+  pageNumber.value = 1
+  await fetchListings()
 })
 </script>
 
@@ -156,42 +166,28 @@ onMounted(async () => {
   text-align: center;
 }
 
-/*
-   listing-grid:
-   - 3 kolonner fra 992px og opp
-   - 2 kolonner under 992px (aldri 1 kolonne)
-*/
 .listing-grid {
   display: grid;
   gap: 1rem;
   margin-top: 2rem;
 }
 
-/* Fra 992px og opp: 3 kolonner. Sentrer ved å gi maks bredde. */
 @media (min-width: 992px) {
   .listing-grid {
     grid-template-columns: repeat(3, 1fr);
-    max-width: 900px;  /* juster til ønsket bredde per kolonne */
+    max-width: 900px;
     margin: 0 auto;
   }
 }
 
-/* Under 992px: 2 kolonner uansett hvor smalt. */
 @media (max-width: 991px) {
   .listing-grid {
     grid-template-columns: repeat(2, 1fr);
-    max-width: 650px; /* litt mindre totalbredde, men du kan justere */
+    max-width: 650px;
     margin: 0 auto;
   }
 }
 
-/* Eventuelt kan du la .listing-card ha en minbredde
-   om du er redd for at de blir *for* smale.
-   .listing-card { min-width: 220px; }
-   men da vil gridet muligens få scrollbar i stedet.
-*/
-
-/* Kategori-knapper, paginering, etc. */
 .category-buttons {
   margin-top: 2rem;
 }
@@ -212,8 +208,11 @@ onMounted(async () => {
   font-size: 0.9rem;
   background-color: #f4f4f4;
   color: #022b3a;
-  transition: background-color 0.3s ease, transform 0.2s ease,
-  box-shadow 0.2s ease, color 0.2s ease;
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    color 0.2s ease;
 }
 
 .category-button:hover {
@@ -233,5 +232,4 @@ onMounted(async () => {
 .paginationControls {
   margin-top: 2rem;
 }
-
 </style>

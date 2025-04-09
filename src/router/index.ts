@@ -58,22 +58,21 @@ const router = createRouter({
 })
 
 
-router.beforeEach((to) => {
+router.beforeEach(async (to) => {
   const userStore = useUserStore();
-  console.log('Auth status:', userStore.authenticated);
 
-  if (!userStore.authenticated && to.name !== 'Login' && to.name !== 'Register') {
+  // Admin check
+  if (to.path.startsWith('/admin') && !userStore.isAdmin()) {
+    return { name: 'Home' };
+  }
+
+  // Prevent accessing profile routes if not authenticated
+  if (to.path.startsWith('/profile') && !userStore.authenticated) {
     return { name: 'Login' };
   }
 
   if (to.name === 'Login' && userStore.authenticated) {
     return { name: 'Home' };
-  }
-
-  if (to.path.startsWith('/admin')) {
-    if (!userStore.isAdmin) {
-      return { name: 'Home' };
-    }
   }
 });
 
