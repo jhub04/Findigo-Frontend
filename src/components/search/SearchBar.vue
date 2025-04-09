@@ -28,7 +28,6 @@
   </div>
 </template>
 
-
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -49,7 +48,7 @@ const performSearch = () => {
 
 <style scoped>
 .scalable-wrapper {
-  width: 650px; /* Designbredden */
+  width: 650px;
   max-width: 100%;
   margin: 0 auto;
   transform-origin: top left;
@@ -64,6 +63,7 @@ const performSearch = () => {
 
 .search-container {
   position: relative;
+  display: flex;
   width: 100%;
   margin: 10px 0;
   box-sizing: border-box;
@@ -82,13 +82,10 @@ const performSearch = () => {
 
 .search-icon {
   position: absolute;
+  right: 0.6rem;
   top: 50%;
   transform: translateY(-50%);
   color: #666;
   cursor: pointer;
 }
-
-
-
 </style>
-
