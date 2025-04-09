@@ -112,11 +112,11 @@ const getOtherUsername = computed(() => {
       <textarea
         v-model="newMessageText"
         :disabled="sending"
-        :placeholder="t('Write a message...')"
+        :placeholder="$t('Write a message...')"
         rows="3"
       ></textarea>
       <button @click="sendMessageToUser" :disabled="!canSend">
-        {{ sending ? t('Sending...') : t('Send') }}
+        {{ sending ? $t('Sending...') : $t('Send') }}
       </button>
     </div>
   </div>

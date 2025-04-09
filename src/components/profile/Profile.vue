@@ -26,8 +26,8 @@ const logout = () => {
       <div v-if="user">
         <h3>{{ user.username }}</h3>
         
-        <button class="logout-button" @click="logout">Log out</button>
-        <button class="edit-button" @click="navigateToProfile">To profile</button>
+        <button class="logout-button" @click="logout">{{ t("Log out")}}</button>
+        <button class="edit-button" @click="navigateToProfile">{{ t("To profile")}}</button>
       </div>
       <div v-else-if="error">
         <p>{{ t('Failed to load user data') }}</p>
