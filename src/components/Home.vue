@@ -31,7 +31,7 @@
       <!-- Listings Section -->
       <div>
         <div v-if="listingsLoading">{{ $t('Loading listings...') }}</div>
-        <div v-else-if="listingsError">{{ $t('Error:') }} {{ listingsError }}</div>
+        <div v-else-if="listingsError">{{ $t('Error:') }} {{ handleApiError(listingsError) }}</div>
         <div
           v-else-if="
             (selectedCategory && categoryListings?.length === 0) ||
@@ -85,6 +85,8 @@ import { useFavorites } from '@/composables/useFavorites'
 import type { CategoryResponse, ListingResponse } from '@/types/dto.ts'
 import ListingCard from '@/components/ListingCard.vue'
 import { useI18n } from 'vue-i18n'
+import { useUserStore } from '@/stores/user.ts'
+import { handleApiError } from '../utils/handleApiError.ts'
 
 const { t } = useI18n()
 const { user, isLoading } = useCurrentUser()
@@ -100,6 +102,8 @@ const totalPages = ref<number>(1)
 const categoryPage = ref(1)
 const categoryTotalPages = ref(1)
 const { fetchFavorites } = useFavorites()
+
+const userStore = useUserStore();
 
 const fetchListings = async () => {
   listingsLoading.value = true
@@ -182,7 +186,9 @@ const handleCategoryClick = async (categoryId: number) => {
 
 onMounted(async () => {
   await fetchListings()
-  await fetchFavorites()
+  if (userStore.authenticated) {
+    await fetchFavorites()
+  }
   categories.value = await getAllCategories()
 })
 
