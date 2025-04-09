@@ -16,7 +16,7 @@ coverage
 
 /cypress/videos/
 /cypress/screenshots/
-.nyc_output/*
+.nyc_output
 
 # Editor directories and files
 .idea
