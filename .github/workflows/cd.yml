@@ -1,0 +1,39 @@
+name: Deploy Vue Frontend
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+
+    - name: Copy .env file before build
+      run: cp /home/student/secrets/findigo-frontend.env .env
+      working-directory: ${{ github.workspace }}
+
+    - name: Install dependencies
+      run: npm install
+      working-directory: ${{ github.workspace }}
+
+    - name: Build frontend
+      run: npm run build
+      working-directory: ${{ github.workspace }}
+
+    - name: Deploy to Nginx
+      if: github.event_name == 'push'
+      run: |
+        sudo rm -rf /var/www/html/*
+        sudo cp -r dist/* /var/www/html/
+      working-directory: ${{ github.workspace }}
