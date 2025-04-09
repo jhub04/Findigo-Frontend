@@ -1,18 +1,17 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useUserStore } from '@/stores/user'
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from 'vue-router'
 import { handleApiError } from '@/utils/handleApiError.ts'
 import type { AuthRequest } from '@/types/dto.ts'
 
 const userStore = useUserStore();
 const router = useRouter();
+const route = useRoute();
 
 const username = ref("");
 const password = ref("");
 const loginStatus = ref("");
-
-userStore.authenticated = false;
 
 const handleLoginClick = async () => {
   try {
@@ -21,7 +20,9 @@ const handleLoginClick = async () => {
       password: password.value
     }
     await userStore.loginAndSaveUser(user);
-    await router.push("/home");
+
+    const redirectPath = (route.query.redirect as string) || "/home";
+    await router.push(redirectPath);
   } catch(error) {
     loginStatus.value = handleApiError(error)
   }

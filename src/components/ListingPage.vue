@@ -11,16 +11,19 @@ import router from '@/router'
 import { getCurrentUser } from '@/services/userApi'
 import { otherUsername } from '@/composables/useMessageThread'
 import type { UserResponse } from '@/types/dto.ts'
+import { useUserStore } from '@/stores/user.ts'
+
 
 const currentUser = ref<UserResponse | null>(null)
 const { t } = useI18n()
 const { images, loading, error, fetchImagesForListing } = useImages()
-const { favorites, addToFavorites, removeFromFavorites, isFavorited, fetchFavorites } =
+const { addToFavorites, removeFromFavorites, isFavorited, fetchFavorites } =
   useFavorites()
 
 const route = useRoute()
 const id = Number(route.params.id)
 const listing = ref<ListingResponse | null>(null)
+const userstore = useUserStore();
 
 const formatDate = (iso: string) => new Date(iso).toLocaleString()
 
@@ -39,7 +42,11 @@ onMounted(async () => {
     if (listing.value.numberOfImages > 0) {
       await fetchImagesForListing(listing.value.id, listing.value.numberOfImages)
     }
-    currentUser.value = await getCurrentUser()
+
+    if (userstore.authenticated) {
+      currentUser.value = await getCurrentUser()
+    }
+
     await fetchFavorites()
   } catch (e: any) {
     error.value = t('Failed to load listing')
@@ -67,14 +74,21 @@ const toggleFavorite = async () => {
 
       <div v-else-if="listing" class="listing">
         <div class="listing-image-wrapper">
-          <div class="favorite-icon-wrapper" @click="toggleFavorite">
+          <div
+            class="favorite-icon-wrapper"
+            :class="{ disabled: !userstore.authenticated }"
+            @click="userstore.authenticated && toggleFavorite()"
+            :title="!userstore.authenticated ? 'Log in to your account to add to favorites' : ''"
+          >
             <v-icon
               :name="isFavorited(listing.id) ? 'oi-star-fill' : 'md-staroutline-round'"
               scale="2"
               fill="gold"
               class="favorite-icon"
             />
+            <span v-if="!userstore.authenticated" class="favorite-hint">Log in to save</span>
           </div>
+
 
           <div class="image-slideshow">
             <ImageSlideshow :images="images" />
@@ -86,7 +100,16 @@ const toggleFavorite = async () => {
             <h1 class="title">{{ listing.briefDescription }}</h1>
             <p class="price">{{ listing.price }} NOK</p>
 
-            <button v-if="listing.user.username !== currentUser?.username" class="buy-button" @click="router.push(`/listing/${listing.id}/checkout`)">{{ t('Buy Now') }}</button>
+            <button
+              v-if="listing.user.username !== currentUser?.username"
+              class="buy-button"
+              :class="{ disabled: !userstore.authenticated }"
+              :disabled="!userstore.authenticated"
+              @click="router.push(`/listing/${listing.id}/checkout`)"
+            >
+              {{ t('Buy Now') }}
+            </button>
+
 
             <p class="description">{{ listing.fullDescription }}</p>
             <p class="location">{{ listing.postalCode }}, {{ listing.address }}</p>
@@ -106,7 +129,17 @@ const toggleFavorite = async () => {
             <h2>{{ t('Seller') }}</h2>
             <p>{{ t('Username') }}: {{ listing.user.username }}</p>
             <p v-if="listing.user.phoneNumber">{{ t('Phone number') }}: {{ listing.user.phoneNumber }}</p>
-            <button v-if="listing.user.username !== currentUser?.username" class="send-message-button" @click="sendMessage">{{ $t('Send Message')}} </button>
+
+            <button
+              v-if="listing.user.username !== currentUser?.username"
+              class="send-message-button"
+              @click="sendMessage"
+              :class="{ disabled: !userstore.authenticated }"
+              :disabled="!userstore.authenticated"
+            >
+              {{ $t('Send Message')}}
+            </button>
+
           </div>
         </div>
       </div>
@@ -115,10 +148,26 @@ const toggleFavorite = async () => {
 </template>
 
 <style scoped>
+
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+
 /* Global box-sizing */
 * {
   box-sizing: border-box;
 }
+
+.favorite-hint {
+  margin-top: 0.3rem; /* Endre fra margin-left til margin-top */
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+
 
 /* Main listing page container */
 .listing-page {
@@ -152,15 +201,18 @@ const toggleFavorite = async () => {
   top: 10px;
   right: 10px;
   display: flex;
+  flex-direction: column; /* Legg til */
   align-items: center;
   justify-content: center;
   padding: 0.5rem;
   background-color: rgba(255, 255, 255, 0.8);
   border: 1px solid #ccc;
-  border-radius: 50%;
+  border-radius: 8px; /* Endre fra sirkel til rektangel */
   cursor: pointer;
   transition: background-color 0.2s ease;
   z-index: 1;
+  width: auto; /* Fjern fast bredde */
+  height: auto; /* Fjern fast høyde */
 }
 
 .favorite-icon-wrapper:hover {

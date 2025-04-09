@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import AdminUser from '@/components/admin/AdminUser.vue'
+import AdminEditUser from '@/components/admin/AdminEditUser.vue'
 </script>
 
 <template>
-  <div>
-
-  </div>
+  <AdminEditUser />
 </template>

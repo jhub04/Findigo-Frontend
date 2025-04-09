@@ -15,7 +15,7 @@ const navigateToProfile = () => {
 
 const logout = () => {
   tokenStore.logout()
-  router.push('/login')
+  router.push('/home')
 }
 </script>
 
