@@ -36,7 +36,7 @@ const props = defineProps<{
   listing: ListingResponse
 }>()
 
-const { isFavorited, addToFavorites, removeFromFavorites } = useFavorites()
+const { isFavorited, addToFavorites, removeFromFavorites } = useFavorites();
 const { firstImage, fetchFirstImageForListing } = useImages()
 
 const isFavorite = computed(() => isFavorited(props.listing.id))
