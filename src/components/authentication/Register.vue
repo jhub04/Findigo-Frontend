@@ -41,7 +41,7 @@ const register = async () => {
       <h2>Register</h2>
       <form @submit.prevent="register">
         <div class="form-group">
-          <label for="username">"{{$t('Username:')}}"</label>
+          <label for="username">'Username:"</label>
           <input
             id="username"
             name="username"
@@ -49,7 +49,7 @@ const register = async () => {
             type="text"
             required
             placeholder=
-            '{{ $t("Choose a username") }}'
+            "Choose a username"
           />
         </div>
 
