@@ -77,7 +77,7 @@
 import { ref, onMounted } from 'vue'
 import { useCurrentUser } from '@/composables/useCurrentUser'
 import { getAllCategories } from '@/services/categoryApi'
-import { getListingsByCategory, getRecommendedListingsPage,getListingsByCategoryPaginated } from '@/services/listingApi.ts'
+import { getRecommendedListingsPage,getListingsByCategoryPaginated } from '@/services/listingApi.ts'
 import { useFavorites } from '@/composables/useFavorites'
 import type { CategoryResponse, ListingResponse } from '@/types/dto.ts'
 import ListingCard from '@/components/ListingCard.vue'
