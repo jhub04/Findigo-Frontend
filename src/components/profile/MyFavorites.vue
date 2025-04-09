@@ -5,13 +5,16 @@ import { getFavorites } from '@/services/userApi'
 import { useCurrentUser } from '@/composables/useCurrentUser'
 import ListingCard from '../ListingCard.vue'
 import { useI18n } from 'vue-i18n'
+import { useFavorites } from '@/composables/useFavorites.ts'
 
 const { t } = useI18n()
 const favorites = ref<ListingResponse[]>([])
 const { user, isLoading, error } = useCurrentUser()
 const loading = ref(true)
+const { fetchFavorites } = useFavorites()
 
 onMounted(async () => {
+  await fetchFavorites();
   try {
     favorites.value = await getFavorites()
   } catch (e: any) {
