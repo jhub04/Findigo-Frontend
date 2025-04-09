@@ -119,8 +119,7 @@ async function submitForm() {
     isEditing.value = false
     router.push("/profile");
   } catch (error: any) {
-    handleApiError(error)
-    errorMessage.value = 'Something went wrong. Please try again.'
+    errorMessage.value = handleApiError(error);
   } finally {
     loading.value = false
   }
