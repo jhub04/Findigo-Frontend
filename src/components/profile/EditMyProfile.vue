@@ -1,7 +1,7 @@
 <template>
   <div class="edit-profile-container">
     <div class="header">
-      <h2>My Profile</h2>
+      <h2>{{t("My Profile")}}</h2>
       <div class="icon-group">
         <v-icon name="md-arrowback" class="back-icon" @click="goBack" />
         <v-icon name="md-edit" class="edit-icon" @click="toggleEdit" />
@@ -10,7 +10,7 @@
 
     <form v-if="currentUser" @submit.prevent="submitForm">
       <div class="form-group">
-        <label for="username">Username</label>
+        <label for="username">{{$t("Username")}}</label>
         <input
           id="username"
           v-model="form.username"
@@ -21,7 +21,7 @@
       </div>
 
       <div class="form-group">
-        <label for="password">Password</label>
+        <label for="password">{{ t("Password")}}</label>
         <input
           id="password"
           v-model="form.password"
@@ -33,7 +33,7 @@
       </div>
 
       <div class="form-group">
-        <label for="phoneNumber">Phone Number</label>
+        <label for="phoneNumber">{{t("Phone Number")}}</label>
         <input
           id="phoneNumber"
           v-model.number="form.phoneNumber"
@@ -72,7 +72,9 @@ import { useRouter } from 'vue-router'
 import { editMyProfile, getCurrentUser } from '@/services/userApi'
 import { handleApiError } from '@/utils/handleApiError.ts'
 import type { UserResponse } from '@/types/dto.ts'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const router = useRouter()
 
 const form = ref({

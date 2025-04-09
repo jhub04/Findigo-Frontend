@@ -19,7 +19,7 @@
           <FilterPrice />
           <FilterDates />
         </div>
-        <button v-if="isMobile" class="close-btn" @click="toggleSidebar">Close Filters</button>
+        <button v-if="isMobile" class="close-btn" @click="toggleSidebar">{{$t("Close Filters")}}</button>
       </div>
     </div>
   </div>
