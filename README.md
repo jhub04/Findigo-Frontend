@@ -14,7 +14,19 @@ Link to the hosted Findigo: https://idatt2105-09.idi.ntnu.no
 - Mikael Stray Frøyshov
 
 ## Table of contents
-...
+1. [Overview](#Overview)
+2. [Features](#Features)
+3. [System Architecture](#System-Architecture)
+4. [ER Diagram](#ER-Diagram)
+5. [Setup for Development and Test Environments](#Setup-for-Development-and-Test-Environments)
+      1. [Prerequisites](#Prerequisites)
+      2. [Setting up the Development Environment](#Setting-up-the-Development-Environment)
+      3. [Admin user credentials (use on login)](#Admin-user-credentials-(use-on-login))
+      4. [Running Tests](#Running-Tests)
+6. [Continuous Deployment](#Continuous-Deployment)
+      1. [Hosting Environment](#Hosting-Environment)
+      2. [Self-hosted runners](#Self-hosted-runners)
+
 
 ## Overview
 The project is a full-stack web-application aiming to provide a user-friendly
@@ -44,13 +56,17 @@ More ...
 ## System Architecture
 <img width="766" alt="Screenshot 2025-04-06 at 19 17 28" src="https://github.com/user-attachments/assets/7645299b-3fe0-474c-b22d-4bb96667d6af" />
 
+## ER Diagram
+![image](https://github.com/user-attachments/assets/a2be6e4a-e77e-4629-9c1f-aeb35cc3fc0d)
+
+
 ## Setup for Development and Test Environments 
 NB! See [Findigo-Backend](https://github.com/jhub04/Findigo.git) for how to run the backend
 
-#### Prerequisites 
+### Prerequisites 
 - Node.js 
 
-### Setting up the development environment
+### Setting up the Development Environment
 Before compiling the frontend development environment make sure that the backend is using the dev spring profile. You can find more information about this [here](https://github.com/jhub04/Findigo/blob/master/README.md)
 
 1. Clone the project
@@ -70,7 +86,7 @@ Before compiling the frontend development environment make sure that the backend
    npm run dev
    ```
 
-#### Admin user credentials (use on login)
+### Admin user credentials (use on login)
 - Username: admin
 - Password: admin123
 
@@ -104,7 +120,7 @@ The project is deployed on an Ubuntu-based virtual machine using the following s
 We created self-hosted runner for both of the repos, so that it was possible to communicate with the NTNU virtual machine from Github.
 The continuous deployment workflows were configured to:
 - Backend: Build the backend application into a self-contained JAR and set up a systemd service for automatic startup and easier management.
-- Frontend: Deployed the static build files to Nginx's root directory.  
+- Frontend: Deploy the static build files to Nginx's root directory.  
 
 
 
