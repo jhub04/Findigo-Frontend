@@ -16,7 +16,7 @@ import { useUserStore } from '@/stores/user.ts'
 const currentUser = ref<UserResponse | null>(null)
 const { t } = useI18n()
 const { images, loading, error, fetchImagesForListing } = useImages()
-const { favorites, addToFavorites, removeFromFavorites, isFavorited, fetchFavorites } =
+const { addToFavorites, removeFromFavorites, isFavorited, fetchFavorites } =
   useFavorites()
 
 const route = useRoute()
@@ -41,7 +41,9 @@ onMounted(async () => {
     if (listing.value.numberOfImages > 0) {
       await fetchImagesForListing(listing.value.id, listing.value.numberOfImages)
     }
-    currentUser.value = await getCurrentUser()
+    if (userstore.authenticated) {
+      currentUser.value = await getCurrentUser()
+    }
     await fetchFavorites()
   } catch (e: any) {
     error.value = t('Failed to load listing')

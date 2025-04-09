@@ -69,6 +69,7 @@
       <button @click="nextPage" :disabled="pageNumber === totalPages">{{ $t('Next') }}</button>
     </div>
   </div>
+</div>
 </template>
 
 <script setup lang="ts">
@@ -76,19 +77,17 @@ import { onMounted, ref, watch } from 'vue'
 import { useCurrentUser } from '@/composables/useCurrentUser'
 import { getAllCategories } from '@/services/categoryApi'
 import {
-  getListingsByCategory,
+  getListingsByCategoryPaginated,
   getPublicListingsPage,
-  getRecommendedListingsPage,
+  getRecommendedListingsPage
 } from '@/services/listingApi.ts'
-import { getRecommendedListingsPage,getListingsByCategoryPaginated } from '@/services/listingApi.ts'
 import { useFavorites } from '@/composables/useFavorites'
 import type { CategoryResponse, ListingResponse } from '@/types/dto.ts'
 import ListingCard from '@/components/ListingCard.vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
-const { user, isLoading, error } = useCurrentUser()
-const { fetchFavorites } = useFavorites()
+const { user, isLoading } = useCurrentUser()
 
 const listings = ref<ListingResponse[]>([])
 const categories = ref<CategoryResponse[]>([])

@@ -30,12 +30,12 @@
         </div>
       </div>
     </div>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted } from 'vue'
 import noImage from '@/assets/no-image.jpg'
 import type { ListingResponse } from '@/types/dto'
 import { navigateToListing } from '@/utils/navigationUtil.ts'
