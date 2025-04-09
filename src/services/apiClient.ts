@@ -2,7 +2,7 @@ import axios from 'axios'
 import { useUserStore } from '@/stores/user'
 
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: 'https://localhost:8080/api',
   withCredentials: true
 });
 

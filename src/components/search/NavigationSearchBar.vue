@@ -1,40 +1,43 @@
 <template>
-  <div class="nav-search">
-    <!-- Hidden element used to calculate dynamic width for the dropdown -->
-    <span ref="categoryWidthRef" class="invisible-text">
-      {{
-        selectedCategory === 'all'
-          ? $t('All')
-          : categories.find(cat => cat.id === selectedCategory)?.name || ''
-      }}
-    </span>
+  <div class="scalable-wrapper">
+    <div class="nav-search">
+      <!-- Hidden element used to calculate dynamic width for the dropdown -->
+      <span ref="categoryWidthRef" class="invisible-text">
+        {{
+          selectedCategory === 'all'
+            ? $t('All')
+            : categories.find(cat => cat.id === selectedCategory)?.name || ''
+        }}
+      </span>
 
-    <!-- Main search form -->
-    <form class="search-form" @submit.prevent="performSearch">
-      <!-- Dropdown category selector -->
-      <select ref="selectRef" v-model="selectedCategory" class="search-category">
-        <option :value="'all'">{{ $t('All') }}</option>
-        <option v-for="cat in categories" :key="cat.id" :value="cat.id">
-          {{ cat.name }}
-        </option>
-      </select>
+      <!-- Main search form -->
+      <form class="search-form" @submit.prevent="performSearch">
+        <!-- Dropdown category selector -->
+        <select ref="selectRef" v-model="selectedCategory" class="search-category">
+          <option :value="'all'">{{ $t('All') }}</option>
+          <option v-for="cat in categories" :key="cat.id" :value="cat.id">
+            {{ cat.name }}
+          </option>
+        </select>
 
-      <!-- Text input for query -->
-      <input
-        v-model="searchQuery"
-        type="text"
-        :placeholder="$t('Search')"
-        name="findigo-search"
-        autocomplete="off"
-      />
+        <!-- Text input for query -->
+        <input
+          v-model="searchQuery"
+          type="text"
+          :placeholder="$t('Search')"
+          name="findigo-search"
+          autocomplete="off"
+        />
 
-      <!-- Button triggers performSearch() on click -->
-      <button type="submit">
-        <i class="fa fa-search"></i>
-      </button>
-    </form>
+        <!-- Button triggers performSearch() on click -->
+        <button type="submit">
+          <i class="fa fa-search"></i>
+        </button>
+      </form>
+    </div>
   </div>
 </template>
+
 
 <script setup lang="ts">
 import { ref, nextTick, onMounted, watch } from 'vue'
@@ -58,7 +61,7 @@ const { selectedCategory } = useSelectedCategory()
 
 function updateSelectWidth() {
   if (categoryWidthRef.value && selectRef.value) {
-    const width = categoryWidthRef.value.offsetWidth + 40 
+    const width = categoryWidthRef.value.offsetWidth + 40
     selectRef.value.style.width = `${width}px`
   }
 }
@@ -93,6 +96,26 @@ function performSearch() {
 </script>
 
 <style scoped>
+.scalable-wrapper {
+  width: 650px; /* Designbredden – denne verdien bør være lik den opprinnelige maksbredden */
+  max-width: 100%;
+  margin: 0 auto;
+  transform-origin: top left;
+}
+
+@media (max-width: 650px) {
+  .scalable-wrapper {
+    transform: scale(calc(100vw / 650));
+  }
+}
+
+/* De opprinnelige stilene beholdes slik: */
+.nav-search {
+  width: 100%;
+  padding: 0 1rem;
+  box-sizing: border-box;
+}
+
 .search-form {
   display: flex;
   width: 100%;
@@ -127,10 +150,6 @@ function performSearch() {
   outline: none;
 }
 
-.nav-search {
-  width: 100%;
-}
-
 .search-form button {
   background-color: #BFDBF7;
   margin: 0;
@@ -156,4 +175,6 @@ function performSearch() {
   font-size: 16px;
   padding: 10px 10px 10px 20px;
 }
+
+
 </style>

@@ -2,13 +2,13 @@
   <form @submit.prevent="submit" class="form-container">
     <h2>Edit Listing</h2>
 
-    <input v-model="briefDescription" placeholder="Listing title" required />
-    <textarea v-model="fullDescription" placeholder="Description" required rows="5" />
-    <input v-model="address" placeholder="Street address" required />
-    <input v-model="postNumber" placeholder="Postal code" required />
-    <input v-model.number="price" type="number" placeholder="Price" required />
+    <input v-model="briefDescription" placeholder="Listing title"  />
+    <textarea v-model="fullDescription" placeholder="Description" rows="5" />
+    <input v-model="address" placeholder="Street address"  />
+    <input v-model="postNumber" placeholder="Postal code"  />
+    <input v-model.number="price" type="number" placeholder="Price"  />
 
-    <select v-model="selectedCategoryId" required>
+    <select v-model="selectedCategoryId" data-testid="category-select">
       <option disabled value="">Select category</option>
       <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
     </select>
@@ -20,7 +20,7 @@
           :id="'attr-' + attr.id"
           v-model="attributeInputs[attr.id]"
           :type="attr.type === 'number' ? 'number' : 'text'"
-          required
+
         />
       </div>
     </div>
@@ -34,14 +34,15 @@
         <span v-if="loading" class="spinner"></span>
         <span v-else>Save Changes</span>
       </button>
-      <button class="cancel-button" type="button" @click="cancelEdit">Cancel</button>
+      <button class="cancel-button" type="button" @click="cancelEdit">
+        Cancel
+      </button>
     </div>
 
     <transition name="fade">
       <div v-if="successMessage" class="success-message">{{ successMessage }}</div>
     </transition>
   </form>
-
   <div class="edit-images">
     <div class="image-grid">
       <div v-for="(image, index) in images" :key="index">
@@ -133,6 +134,7 @@ onMounted(async () => {
     errorMessage.value = 'Failed to load listing data.'
   }
 })
+
 
 const selectedCategory = computed(
   () => categories.value.find((cat) => cat.id === selectedCategoryId.value) ?? null,
@@ -470,5 +472,7 @@ label {
   filter: grayscale(100%);
   border: 2px dashed #dc3545;
   border-radius: 8px;
+  border: 1px solid #ccc;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
 </style>

@@ -35,19 +35,20 @@ const handleLoginClick = async () => {
       <form @submit.prevent="handleLoginClick">
         <div class="form-group">
           <label for="username">Username:</label>
-          <input
-            id="username"
-            v-model="username"
-            type="text"
-            required
-            placeholder="Enter your username"
-          />
+          <input id="username"
+                 name="username"
+                 v-model="username"
+                 type="text"
+                 required
+                 placeholder="Enter your username" />
+
         </div>
 
         <div class="form-group">
           <label for="password">Password:</label>
           <input
             id="password"
+            name="password"
             v-model="password"
             type="password"
             required
