@@ -132,6 +132,9 @@
       margin-right: 85px;
     }
   }
+  .no-results, .loading {
+    margin-left: 100px;
+  }
   .pagination-controls {
     margin-top: 2rem;
     text-align: center;

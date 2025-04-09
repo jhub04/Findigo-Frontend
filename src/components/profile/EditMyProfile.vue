@@ -114,8 +114,10 @@ async function submitForm() {
 
   try {
     await editMyProfile(form.value)
+    alert("Profile updated successfully")
     successMessage.value = 'Profile updated successfully!'
     isEditing.value = false
+    router.push("/profile");
   } catch (error: any) {
     handleApiError(error)
     errorMessage.value = 'Something went wrong. Please try again.'
@@ -128,7 +130,6 @@ function cancelEdit() {
   if (currentUser.value) {
     form.value.username = currentUser.value.username
     form.value.phoneNumber = currentUser.value.phoneNumber
-    form.value.password = ''
   }
   successMessage.value = ''
   errorMessage.value = ''
@@ -143,7 +144,7 @@ function goBack() {
 <style scoped>
 .edit-profile-container {
   max-width: 450px;
-  margin: 2rem auto;
+  margin: auto;
   padding: 2rem;
   background-color: white; /* Lavender */
   border-radius: 12px;
@@ -201,6 +202,7 @@ label {
 input {
   width: 100%;
   padding: 0.75rem;
+  padding-right: 0;
   border: 1px solid #bfd8f7; /* Columbia blue */
   border-radius: 6px;
   font-size: 1rem;

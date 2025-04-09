@@ -8,9 +8,11 @@ import { useImages } from '@/composables/useImages'
 import { useFavorites } from '@/composables/useFavorites'
 import { useI18n } from 'vue-i18n'
 import router from '@/router'
+import { getCurrentUser } from '@/services/userApi'
 import { otherUsername } from '@/composables/useMessageThread'
+import type { UserResponse } from '@/types/dto.ts'
 
-
+const currentUser = ref<UserResponse | null>(null)
 const { t } = useI18n()
 const { images, loading, error, fetchImagesForListing } = useImages()
 const { favorites, addToFavorites, removeFromFavorites, isFavorited, fetchFavorites } =
@@ -37,7 +39,7 @@ onMounted(async () => {
     if (listing.value.numberOfImages > 0) {
       await fetchImagesForListing(listing.value.id, listing.value.numberOfImages)
     }
-
+    currentUser.value = await getCurrentUser()
     await fetchFavorites()
   } catch (e: any) {
     error.value = t('Failed to load listing')
@@ -84,7 +86,7 @@ const toggleFavorite = async () => {
             <h1 class="title">{{ listing.briefDescription }}</h1>
             <p class="price">{{ listing.price }} NOK</p>
 
-            <button class="buy-button" @click="router.push(`/listing/${listing.id}/checkout`)">{{ t('Buy Now') }}</button>
+            <button v-if="listing.user.username !== currentUser?.username" class="buy-button" @click="router.push(`/listing/${listing.id}/checkout`)">{{ t('Buy Now') }}</button>
 
             <p class="description">{{ listing.fullDescription }}</p>
             <p class="location">{{ listing.postalCode }}, {{ listing.address }}</p>
@@ -104,7 +106,7 @@ const toggleFavorite = async () => {
             <h2>{{ t('Seller') }}</h2>
             <p>{{ t('Username') }}: {{ listing.user.username }}</p>
             <p v-if="listing.user.phoneNumber">{{ t('Phone number') }}: {{ listing.user.phoneNumber }}</p>
-            <button class="send-message-button" @click="sendMessage">{{ $t('Send Message')}} </button>
+            <button v-if="listing.user.username !== currentUser?.username" class="send-message-button" @click="sendMessage">{{ $t('Send Message')}} </button>
           </div>
         </div>
       </div>

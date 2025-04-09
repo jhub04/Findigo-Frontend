@@ -121,9 +121,9 @@ function onMarkerClick(lat: number, lng: number) {
       font-weight: 600;
       line-height: 1.2;
     `
-    content.appendChild(title)
+    content.appendChild(title);
 
-    const img = document.createElement('img')
+    const img = document.createElement('img');
     await fetchFirstImageForListing(listing);
     img.src = firstImage.value
     img.alt = t('Listing image')

@@ -25,7 +25,9 @@ const register = async () => {
       }, 2000);
     }
   } catch (error) {
+    console.log("error")
     errorMessage.value = handleApiError(error);
+    console.log(errorMessage.value)
   }
 };
 </script>
