@@ -1,4 +1,3 @@
-<!--
 <template>
   <div class="edit-profile-container">
     <div class="header">
@@ -85,7 +84,7 @@ const form = ref<AdminUserRequest>({
 })
 
 const user = ref<UserResponse | null>(null)
-const availableRoles = ref<Role[]>(['USER', 'ADMIN'])
+const availableRoles = ref<Role[]>(['ROLE_USER', 'ROLE_ADMIN'])
 
 const loading = ref(false)
 const successMessage = ref('')
@@ -237,4 +236,3 @@ select {
   text-align: center;
 }
 </style>
--->

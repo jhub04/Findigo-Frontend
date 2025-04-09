@@ -1,23 +1,25 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { login, clearCookie, isAuthenticated } from '@/services/authApi.ts';
-import type { AuthRequest } from '@/types/dto.ts'
+import type { AuthRequest, UserResponse } from '@/types/dto.ts'
+import { getCurrentUser } from '@/services/userApi.ts'
+import { handleApiError } from '@/utils/handleApiError.ts'
 
 export const useUserStore = defineStore("token", () => {
-  const loggedInUser = ref<string | null>(sessionStorage.getItem("loggedInUser"));
   const authenticated = ref(false);
+  const currentUser = ref<UserResponse | null>(null);
 
   const initializeAuthStatus = async () => {
     authenticated.value = await isAuthenticated();
+    if (authenticated.value) {
+      currentUser.value = await getCurrentUser();
+    }
   };
 
-  initializeAuthStatus();
-
   const loginAndSaveUser = async (data: AuthRequest) => {
-    await login(data); //This can throw error
-    loggedInUser.value = data.username;
-    sessionStorage.setItem("loggedInUser", data.username);
+    await login(data);
     authenticated.value = await isAuthenticated();
+    currentUser.value = await getCurrentUser();
   };
 
   const logout = async () => {
@@ -25,15 +27,18 @@ export const useUserStore = defineStore("token", () => {
       await clearCookie();
     } catch (error) {
       console.error("Error during logout:", error);
+      handleApiError(error)
       return;
     }
 
-    // After logout request, redirect to login page
-    window.location.href = "/login";
     authenticated.value = false;
-    loggedInUser.value = null;
-    sessionStorage.clear();
+    currentUser.value = null;
   };
 
-  return { loggedInUser, authenticated, loginAndSaveUser, logout };
+  const isAdmin = () => {
+    return currentUser.value?.roles.includes('ROLE_ADMIN') ?? false;
+  };
+
+  return { authenticated, currentUser, loginAndSaveUser, logout, initializeAuthStatus, isAdmin };
 });
+

@@ -13,19 +13,28 @@
           <p>{{ daysSinceCreated }}</p>
         </div>
         <div class="favorite-btn" @click.stop="toggleFavorite">
+        <div
+          class="favorite-btn"
+          :class="{ disabled: !userStore.authenticated }"
+          @click.stop="userStore.authenticated && toggleFavorite()"
+          :title="!userStore.authenticated ? 'Log in to your account to add to favorites' : ''"
+        >
           <v-icon
             :name="isFavorited(props.listing.id) ? 'oi-star-fill' : 'md-staroutline-round'"
             scale="2"
             fill="gold"
             class="favorite-icon"
           />
+          <span v-if="!userStore.authenticated" class="favorite-hint">Log in to save</span>
+        </div>
         </div>
       </div>
     </div>
-  </div>
 </template>
 
 <script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { computed, onMounted, ref } from 'vue'
 import noImage from '@/assets/no-image.jpg'
 import type { ListingResponse } from '@/types/dto'
@@ -33,6 +42,7 @@ import { navigateToListing } from '@/utils/navigationUtil.ts'
 import { useFavorites } from '@/composables/useFavorites'
 import { useImages } from '@/composables/useImages'
 import { useI18n } from 'vue-i18n'
+import { useUserStore } from '@/stores/user.ts'
 
 
 const { t } = useI18n()
@@ -43,7 +53,15 @@ const props = defineProps<{
 
 const { isFavorited, addToFavorites, removeFromFavorites } = useFavorites();
 const { firstImage, fetchFirstImageForListing } = useImages()
+
 const isFavorite = computed(() => isFavorited(props.listing.id))
+const userStore = useUserStore();
+const router = useRouter();
+const route = useRoute()
+
+function redirectToLogin() {
+  router.push({ name: 'Login', query: { redirect: route.fullPath } })
+}
 
 const daysSinceCreated = computed(() => {
   if (!props.listing.dateCreated) return '';
@@ -64,6 +82,11 @@ const daysSinceCreated = computed(() => {
 });
 
 async function toggleFavorite() {
+  if (!userStore.authenticated) {
+    redirectToLogin();
+    return
+  }
+
   if (isFavorite.value) {
     await removeFromFavorites(props.listing.id)
   } else {

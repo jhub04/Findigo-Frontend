@@ -8,7 +8,7 @@ export interface AttributeRequest {
   categoryId: number;
 }
 
-export type Role = 'USER' | 'ADMIN';
+export type Role = 'ROLE_USER' | 'ROLE_ADMIN';
 
 export interface AdminUserRequest {
   username: string;

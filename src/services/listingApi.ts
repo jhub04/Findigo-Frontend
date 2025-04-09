@@ -50,6 +50,12 @@ export const getRecommendedListingsPage = async (pageNumber:number) => {
   return response.data;
 }
 
+export const getPublicListingsPage = async (pageNumber: number) => {
+  const response = await apiClient.get(`/listings/public/${pageNumber}`);
+  console.log(response.data);
+  return response.data;
+}
+
 export const getFilteredListingsPage = async (filter: FilterRequest,
                                               pageNumber: number) => {
   const response = await apiClient.post(`/listings/all/${pageNumber}`, filter);
@@ -72,7 +78,7 @@ export const markListingAsArchived = async (listingId: number): Promise<void> =>
   await apiClient.put(`/listings/archive/${listingId}`);
 }
 
-// Mark listing as active 
+// Mark listing as active
 export const markListingAsActive = async (listingId: number): Promise<void> => {
   await apiClient.put(`/listings/activate/${listingId}`);
 }
