@@ -25,7 +25,7 @@ const listing = ref<ListingResponse | null>(null)
 const formatDate = (iso: string) => new Date(iso).toLocaleString()
 
 const sendMessage = () => {
-  if (!listing.value) return
+  if (!listing.value) return;
   otherUsername.value = listing.value.user.username
   router.push(`/messages/${listing.value.user.id}`)
 }
@@ -86,13 +86,7 @@ const toggleFavorite = async () => {
             <h1 class="title">{{ listing.briefDescription }}</h1>
             <p class="price">{{ listing.price }} NOK</p>
 
-            <button
-              v-if="listing.user.username !== currentUser?.username"
-              class="buy-button"
-              @click="router.push(`/listing/${listing.id}/checkout`)"
-            >
-              {{ t('Buy Now') }}
-            </button>
+            <button v-if="listing.user.username !== currentUser?.username" class="buy-button" @click="router.push(`/listing/${listing.id}/checkout`)">{{ t('Buy Now') }}</button>
 
             <p class="description">{{ listing.fullDescription }}</p>
             <p class="location">{{ listing.postalCode }}, {{ listing.address }}</p>
@@ -111,16 +105,8 @@ const toggleFavorite = async () => {
           <div class="contact-info">
             <h2>{{ t('Seller') }}</h2>
             <p>{{ t('Username') }}: {{ listing.user.username }}</p>
-            <p v-if="listing.user.phoneNumber">
-              {{ t('Phone number') }}: {{ listing.user.phoneNumber }}
-            </p>
-            <button
-              v-if="listing.user.username !== currentUser?.username"
-              class="send-message-button"
-              @click="sendMessage"
-            >
-              {{ $t('Send Message') }}
-            </button>
+            <p v-if="listing.user.phoneNumber">{{ t('Phone number') }}: {{ listing.user.phoneNumber }}</p>
+            <button v-if="listing.user.username !== currentUser?.username" class="send-message-button" @click="sendMessage">{{ $t('Send Message')}} </button>
           </div>
         </div>
       </div>
@@ -337,6 +323,7 @@ const toggleFavorite = async () => {
   .price {
     font-size: 1.2rem;
   }
+
 }
 
 .image-slideshow {
@@ -352,4 +339,5 @@ const toggleFavorite = async () => {
   height: auto;
   display: block;
 }
+
 </style>

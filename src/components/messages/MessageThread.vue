@@ -73,11 +73,15 @@ const canSend = computed(
 )
 
 const getOtherUsername = computed(() => {
-  const msg = messages.value.find((m) => m.fromUserId !== user.value?.id) ?? messages.value[0]
+  if (otherUsername.value) return otherUsername.value;
+  
+  const msg = messages.value.find(
+    (m) => m.fromUserId !== user.value?.id
+  ) ?? messages.value[0]
 
   return msg?.fromUserId === user.value?.id
     ? msg?.toUsername
-    : (msg?.fromUsername ?? t('Other user'))
+    : msg?.fromUsername ?? t('Other user')
 })
 </script>
 
