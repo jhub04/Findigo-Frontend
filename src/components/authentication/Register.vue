@@ -22,7 +22,7 @@ const register = async () => {
       successMessage.value = "Registration successful! You can now log in.";
       setTimeout(() => {
         router.push("/home");
-      }, 2000);
+      }, 1000);
     }
   } catch (error) {
     console.log("error")
