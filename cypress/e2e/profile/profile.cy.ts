@@ -23,7 +23,7 @@ describe('test my profile', () => {
     cy.get('input[name="username"]').type('newName')
     cy.get('input[name="password"]').type('12345')
     cy.get('button[type="submit"]').click()
-    cy.visit('http://localhost:5173/profile')
+    cy.get('[href="/profile"]').click()
     cy.contains('My Profile').click()
     cy.contains('To profile').click()
     cy.get('#username').should('have.value', 'newName')
