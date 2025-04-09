@@ -41,7 +41,7 @@ const register = async () => {
       <h2>Register</h2>
       <form @submit.prevent="register">
         <div class="form-group">
-          <label for="username">'Username:"</label>
+          <label for="username">Username:</label>
           <input
             id="username"
             name="username"
@@ -54,14 +54,14 @@ const register = async () => {
         </div>
 
         <div class="form-group">
-          <label for="password">"{{$t('Password:')}}"</label>
+          <label for="password">Password:</label>
           <input
             id="password"
             name="password"
             v-model="password"
             type="password"
             required
-            placeholder='{{ $t("Create a strong password") }}'
+            placeholder='Create a strong password'
           />
         </div>
 
