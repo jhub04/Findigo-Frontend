@@ -6,9 +6,8 @@
   "scripts": {
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
-    "dev": "vite",
+    "dev": "vite --mode development",
     "dev:test": "vite --mode test",
-    "test": "start-server-and-test dev:test http://localhost:8080 cypress:run",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "test:unit": "vitest",
