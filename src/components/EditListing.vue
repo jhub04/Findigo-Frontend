@@ -2,13 +2,13 @@
   <form @submit.prevent="submit" class="form-container">
     <h2>Edit Listing</h2>
 
-    <input v-model="briefDescription" placeholder="Listing title" required />
-    <textarea v-model="fullDescription" placeholder="Description" required rows="5" />
-    <input v-model="address" placeholder="Street address" required />
-    <input v-model="postNumber" placeholder="Postal code" required />
-    <input v-model.number="price" type="number" placeholder="Price" required />
+    <input v-model="briefDescription" placeholder="Listing title"  />
+    <textarea v-model="fullDescription" placeholder="Description"  rows="3" />
+    <input v-model="address" placeholder="Street address"  />
+    <input v-model="postNumber" placeholder="Postal code"  />
+    <input v-model.number="price" type="number" placeholder="Price"  />
 
-    <select v-model="selectedCategoryId" required>
+    <select v-model="selectedCategoryId" >
       <option disabled value="">Select category</option>
       <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
     </select>
@@ -20,7 +20,7 @@
           :id="'attr-' + attr.id"
           v-model="attributeInputs[attr.id]"
           :type="attr.type === 'number' ? 'number' : 'text'"
-          required
+
         />
       </div>
     </div>
@@ -50,7 +50,7 @@
           <button @click="deleteImageByIndex(index)">Delete image</button>
         </div>
       </div>
-      
+
       <input type="file" multiple accept="image/*" @change="handleImageUpload"/>
     </div>
 </template>

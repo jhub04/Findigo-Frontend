@@ -11,7 +11,6 @@ describe('Edit Listing', () => {
       cy.url().should('include', '/home');
     });
   });
-
   it('går via Manage Listing og inn på Edit Listing-skjemaet', () => {
     cy.intercept('GET', '**/users/me/activeListings').as('getActiveListings');
     cy.visit('http://localhost:5173/profile/listings');
@@ -105,7 +104,7 @@ describe('Edit Listing - Ekstra tester', () => {
     cy.get('form.form-container').should('exist');
   }
 
-  it('viser feilmelding hvis obligatoriske felter mangler', () => {
+  it('Kan ikke submitte hvis felt mangler', () => {
     openEditListing();
 
     cy.get('input[placeholder="Listing title"]').clear();
@@ -113,9 +112,6 @@ describe('Edit Listing - Ekstra tester', () => {
     cy.get('input[placeholder="Street address"]').clear();
     cy.get('input[placeholder="Postal code"]').clear();
     cy.get('input[placeholder="Price"]').clear();
-
-    cy.get('select').first().select('Select category', { force: true });
-
     cy.get('button.save-button[type="submit"]').click({ force: true });
     cy.get('.error-message', { timeout: 10000 }).should('contain', 'All fields including address and price are required');
   });
