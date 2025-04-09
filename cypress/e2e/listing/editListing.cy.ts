@@ -1,20 +1,17 @@
 describe('Edit Listing', () => {
   beforeEach(() => {
-    cy.session('login-session', () => {
-      cy.resetDatabase();
-      cy.initializeTestData();
-      cy.visit('http://localhost:5173/login');
-      cy.get('input[name="username"]').type('testuser');
-      cy.get('input[name="password"]').type('1234');
-      cy.get('button[type="submit"]').click();
-      cy.url().should('include', '/home');
-    });
+    cy.resetDatabase();
+    cy.initializeTestData();
+    cy.visit('http://localhost:5173/login');
+    cy.get('input[name="username"]').type('testuser');
+    cy.get('input[name="password"]').type('1234');
+    cy.get('button[type="submit"]').click();
+    cy.url().should('include', '/home');
 
     cy.visit('http://localhost:5173/home');
-    cy.contains('My Profile').click();
-    cy.contains('div.mylistings', 'Your Posted Listings').click();
+    cy.visit('http://localhost:5173/profile/listings');
     cy.get('.listing-card').first().click();
-    cy.contains('button', 'Edit Listing').click();
+    cy.get('button').contains('Edit Listing').click();
   });
 
   it('displays all input fields', () => {
@@ -63,25 +60,4 @@ describe('Edit Listing', () => {
   });
 });
 
-describe('View Listing', () => {
-  beforeEach(() => {
-    cy.session('login-session', () => {
-      cy.resetDatabase();
-      cy.initializeTestData();
-      cy.visit('http://localhost:5173/login');
-      cy.get('input[name="username"]').type('testuser');
-      cy.get('input[name="password"]').type('1234');
-      cy.get('button[type="submit"]').click();
-      cy.url().should('include', '/home');
-    });
-
-    cy.visit('http://localhost:5173/home');
-    cy.contains('My Profile').click();
-    cy.contains('div.mylistings', 'Your Posted Listings').click();
-    cy.get('.listing-card').first().click();
-    cy.contains('button', 'Edit Listing').click();
-  });
-
-
-});
 
