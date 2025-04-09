@@ -79,5 +79,18 @@
   "Go to listing": "Go to listing",
   "No title": "No title",
   "Listing image": "Listing image",
-  "Failed to fetch listings": "Failed to fetch listings"
+  "Failed to fetch listings": "Failed to fetch listings",
+  "Username:": "Username:",
+  "Password:": "Password:",
+  "Choose a username": "Choose a username",
+  "Create a strong password": "Create a strong password",
+  "Register": "Register",
+  "Registration successful! You can now log in.": "Registration successful! You can now log in.",
+  "Already have an account?": "Already have an account?",
+  "Login here": "Login here",
+  "Login": "Login",
+  "Enter your username": "Enter your username",
+  "Enter your password": "Enter your password",
+  "Don't have an account?": "Don't have an account?",
+  "Register here": "Register here"
 }

@@ -4,6 +4,9 @@ import { useRouter } from "vue-router";
 import authApi from '@/services/authApi.ts'
 import { handleApiError } from '@/utils/handleApiError.ts'
 import type { AuthRequest } from '@/types/dto.ts'
+import {usei18n} from "vue-i18n";
+
+const {t} = usei18n();
 
 const router = useRouter();
 const username = ref("");
@@ -19,7 +22,7 @@ const register = async () => {
     }
     const response = await authApi.registerUser(newUser);
     if (response) {
-      successMessage.value = "Registration successful! You can now log in.";
+      successMessage.value = t("Registration successful! You can now log in.");
       setTimeout(() => {
         router.push("/home");
       }, 1000);
@@ -38,30 +41,31 @@ const register = async () => {
       <h2>Register</h2>
       <form @submit.prevent="register">
         <div class="form-group">
-          <label for="username">Username:</label>
+          <label for="username">{{$t("Username:")}}</label>
           <input
             id="username"
             name="username"
             v-model="username"
             type="text"
             required
-            placeholder="Choose a username"
+            placeholder=
+            '{{ $t("Choose a username") }}'
           />
         </div>
 
         <div class="form-group">
-          <label for="password">Password:</label>
+          <label for="password">{{$t("Password:")}}</label>
           <input
             id="password"
             name="password"
             v-model="password"
             type="password"
             required
-            placeholder="Create a strong password"
+            placeholder='{{ $t("Create a strong password") }}'
           />
         </div>
 
-        <button type="submit" class="submit-btn">Register</button>
+        <button type="submit" class="submit-btn">{{$t("Register")}}</button>
       </form>
 
       <p
@@ -79,8 +83,8 @@ const register = async () => {
       </p>
 
       <p class="login-link">
-        Already have an account?
-        <router-link to="/login">Login here</router-link>
+        {{$t("Already have an account?")}}
+        <router-link to="/login">{{$t('Login here')}}</router-link>
       </p>
     </div>
   </div>
