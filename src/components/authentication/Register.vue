@@ -24,7 +24,7 @@ const register = async () => {
     if (response) {
       successMessage.value = t("Registration successful! You can now log in.");
       setTimeout(() => {
-        router.push("/loginu");
+        router.push("/login");
       }, 1000);
     }
   } catch (error) {
