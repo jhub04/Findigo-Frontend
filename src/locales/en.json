@@ -92,5 +92,15 @@
   "Enter your username": "Enter your username",
   "Enter your password": "Enter your password",
   "Don't have an account?": "Don't have an account?",
-  "Register here": "Register here"
+  "Register here": "Register here",
+  "Close Filters":"Close Filters",
+  "To profile":"To profile",
+  "Your Sold Listings":"Your Sold Listings",
+  "Your Archived Listings":"Your Archived Listings",
+  "View all your archived listings":"View all your archived listings",
+  "View all your previously sold listings":"View all your previously sold listings",
+  "You have not archived any listings yet.":"You have not archived any listings yet.",
+  "Phone Number":"Phone Number",
+  "Dates":"Dates",
+  "Password":"Password"
 }

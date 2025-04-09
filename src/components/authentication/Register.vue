@@ -4,9 +4,9 @@ import { useRouter } from "vue-router";
 import authApi from '@/services/authApi.ts'
 import { handleApiError } from '@/utils/handleApiError.ts'
 import type { AuthRequest } from '@/types/dto.ts'
-import {usei18n} from "vue-i18n";
+import {useI18n} from "vue-i18n";
 
-const {t} = usei18n();
+const {t} = useI18n();
 
 const router = useRouter();
 const username = ref("");
