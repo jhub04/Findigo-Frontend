@@ -5,11 +5,11 @@ describe('test search for listigns', () => {
     cy.visit('http://localhost:5173/register')
     cy.get('input[name="username"]').type('newuser')
     cy.get('input[name="password"]').type('test')
-    cy.get('button[type="submit"]').click()
+    cy.get('.submit-btn').click()
     cy.visit('http://localhost:5173/login')
     cy.get('input[name="username"]').type('newuser')
     cy.get('input[name="password"]').type('test')
-    cy.get('button[type="submit"]').click()
+    cy.get('.submit-btn').click()
   })
 
   it('Search for a specific listing', () => {
