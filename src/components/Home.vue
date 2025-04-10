@@ -3,7 +3,7 @@
     <div v-if="isLoading">{{ $t('Loading user...') }}</div>
     <div v-else>
       <div v-if="user">
-        <h2>{{ $t('Welcome') }}, {{ user.username }}</h2>
+        <h2>{{ $t('Welcome') }} {{ userStore.currentUser?.username }}</h2>
         <p v-if="user.roles.includes('ROLE_ADMIN')">You have admin claim</p>
       </div>
 
@@ -112,7 +112,7 @@ const fetchListings = async () => {
   listingsError.value = null
 
   try {
-    const listingsPage = user.value
+    const listingsPage = userStore.currentUser
       ? await getRecommendedListingsPage(pageNumber.value)
       : await getPublicListingsPage(pageNumber.value)
 

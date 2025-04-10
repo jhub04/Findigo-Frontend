@@ -49,8 +49,6 @@ The project utilizes the following technologies:
 - **Admin functionality:** Admin users can do administrate actions such as adding, modifying, and deleting categories and listings
 - **Internationalization:** The application has support language support for English, Norwegian, Spanish, as well as Nepali and Urdu
 
-More ...
-
 ## System Architecture
 <img width="766" alt="Screenshot 2025-04-06 at 19 17 28" src="https://github.com/user-attachments/assets/7645299b-3fe0-474c-b22d-4bb96667d6af" />
 
@@ -84,8 +82,6 @@ Before compiling the frontend development environment make sure that the backend
    npm run dev
    ```
 
-You can find the swagger API documentation [here] (add link to swagger docs)
-
 ### Admin user credentials (use on login)
 - Username: admin
 - Password: admin123
@@ -102,7 +98,7 @@ Then run:
 ```bash
 npx cypress run
 ```
-
+To see the test coverage go to root directory and then go to coverage/Icov-report/index.html
 ## Continuous Deployment
 Findigo is deployed at https://idatt2105-09.idi.ntnu.no, hosted on a dedicated virtual machine within the NTNU network. The application will remain online until the administrator at NTNU shuts it down.
 

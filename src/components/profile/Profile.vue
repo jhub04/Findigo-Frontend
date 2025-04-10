@@ -15,6 +15,7 @@ const navigateToProfile = () => {
 
 const logout = () => {
   tokenStore.logout()
+  user.value=null;
   router.push('/home')
 }
 </script>
