@@ -60,10 +60,13 @@ The project utilizes the following technologies:
 NB! See [Findigo-Backend](https://github.com/jhub04/Findigo.git) for how to run the backend
 
 ### Prerequisites 
-- Node.js 
+- Node.js
+
 
 ### Setting up the Development Environment
 Before compiling the frontend development environment make sure that the backend is using the dev spring profile. You can find more information about this [here](https://github.com/jhub04/Findigo/blob/master/README.md)
+
+You also need a .env file with the api-key for Google Maps (you need to get from an developer). 
 
 1. Clone the project
     ```bash
