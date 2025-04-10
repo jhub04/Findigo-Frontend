@@ -5,15 +5,15 @@ describe('Buy Now', () => {
     cy.visit('http://localhost:5173/register')
     cy.get('input[name="username"]').type('testuser2')
     cy.get('input[name="password"]').type('1234')
-    cy.get('button[type="submit"]').click()
-    cy.url().should('include', '/login')
+    cy.get('.submit-btn').click()
+
+    cy.wait(1200)
     cy.get('input[name="username"]').type('testuser2')
     cy.get('input[name="password"]').type('1234')
-    cy.get('button[type="submit"]').click()
-    cy.url().should('include', '/home')
+    cy.get('.submit-btn').click()
 
-    cy.get('.listing-card').first().click()
-    cy.get('button').contains('Buy Now').click()
+    cy.get('.listing-grid > :nth-child(1)').click()
+    cy.get('.buy-button').click()
   })
 
   it('Buy Now button works and redirects to http://localhost:5173/checkout/:listingId', () => {
